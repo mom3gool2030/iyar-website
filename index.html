@@ -4,119 +4,236 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>عيار العقارية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+
+<!--
+  ╔══════════════════════════════════════════════╗
+  ║  ضع مفتاح Google Maps API هنا               ║
+  ║  احصل عليه من: console.cloud.google.com      ║
+  ╚══════════════════════════════════════════════╝
+-->
+<script>window.MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY_HERE";</script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:#F8F4EE;direction:rtl;min-height:100vh}
-:root{--g:#1A3226;--g2:#2A4A38;--gold:#A67B40;--goldL:#C89A5A;--cream:#E8D090;--sand:#F8F4EE;--dark:#1A1A1A;--gray:#888}
+:root{
+  --g:#0D2B1E;--g2:#1A3D2B;--g3:#255C40;
+  --gold:#B8892A;--goldL:#D4A84B;--goldXL:#F0C97A;
+  --sand:#F7F2EA;--white:#FFFFFF;
+  --dark:#111810;--mid:#3A4A3E;--muted:#7A8C80;
+  --border:#DDD5BE;--border2:#E8DFCC;
+  --radius:14px;--rsm:10px;
+  --sh:0 2px 16px rgba(0,0,0,.07),0 1px 4px rgba(0,0,0,.05);
+  --shm:0 4px 28px rgba(0,0,0,.11),0 2px 8px rgba(0,0,0,.07);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Tajawal',system-ui,sans-serif;background:var(--sand);color:var(--dark);direction:rtl;min-height:100vh;font-size:15px;line-height:1.6}
 
-/* header */
-.hdr{background:linear-gradient(135deg,var(--g),var(--g2));padding:12px 14px 0}
-.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.logo{color:var(--cream);font-size:20px;font-weight:900;line-height:1}
-.logo small{display:block;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;font-weight:400}
-.login-btns{display:flex;gap:7px}
-.btn-login{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:7px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
-.btn-owner{background:linear-gradient(135deg,var(--gold),var(--goldL));border:none;color:var(--dark);border-radius:8px;padding:7px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+/* HEADER */
+.hdr{background:linear-gradient(160deg,var(--g) 0%,var(--g2) 55%,var(--g3) 100%);position:sticky;top:0;z-index:50}
+.hdr-in{max-width:900px;margin:0 auto;padding:14px 20px 0;display:flex;flex-direction:column}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.logo-main{color:var(--goldXL);font-size:24px;font-weight:900;letter-spacing:-.5px}
+.logo-sub{color:rgba(255,255,255,.4);font-size:11px;letter-spacing:2px;margin-right:6px}
+.hdr-btns{display:flex;gap:8px}
+.btn-ghost{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);border-radius:var(--rsm);padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s;white-space:nowrap}
+.btn-ghost:hover{background:rgba(255,255,255,.18)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--goldL));border:none;color:var(--g);border-radius:var(--rsm);padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s;white-space:nowrap}
+.btn-gold:hover{filter:brightness(1.08)}
 
-/* tabs */
-.tabs{display:flex;gap:5px;background:rgba(0,0,0,.2);border-radius:10px 10px 0 0;padding:4px 4px 0}
-.tab{flex:1;padding:9px 6px;border:none;border-radius:7px 7px 0 0;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,.55);transition:.15s}
-.tab.on{background:#fff;color:var(--g)}
+/* TICKER */
+.ticker-wrap{background:rgba(0,0,0,.25);border-top:1px solid rgba(255,255,255,.07);overflow:hidden;white-space:nowrap;padding:7px 0;margin:0 -20px}
+.ticker-track{display:inline-flex;gap:32px;animation:ticker 32s linear infinite;padding-right:32px}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick{font-size:11px;color:rgba(255,255,255,.6);display:inline-flex;align-items:center;gap:5px;flex-shrink:0}
+.tick strong{color:rgba(255,255,255,.9);font-weight:700}
+.up{color:#5DE89A}.dn{color:#FF7B7B}
 
-/* content */
-.content{padding:16px 14px;max-width:520px;margin:0 auto}
+/* TABS */
+.tabs{display:flex;gap:2px;margin:0 -20px;background:rgba(0,0,0,.2);padding:6px 20px 0}
+.tab{flex:1;padding:10px 6px;border:none;border-radius:var(--rsm) var(--rsm) 0 0;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,.5);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.tab:hover:not(.on){background:rgba(255,255,255,.08);color:rgba(255,255,255,.75)}
+.tab.on{background:var(--sand);color:var(--g)}
+
+/* CONTENT */
+.content{max-width:900px;margin:0 auto;padding:20px 16px 48px}
 .section{display:none}.section.on{display:block}
+.page-hd{margin-bottom:18px}
+.page-title{font-size:20px;font-weight:900;color:var(--g);margin-bottom:3px}
+.page-sub{font-size:13px;color:var(--muted)}
 
-/* card */
-.card{background:#fff;border-radius:12px;border:1px solid #E8DCC8;padding:16px 14px;margin-bottom:12px}
-.card-title{font-size:17px;font-weight:900;color:var(--g);margin-bottom:3px}
-.card-sub{font-size:11px;color:var(--gray);margin-bottom:14px}
+/* CARD */
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border2);padding:20px;margin-bottom:16px;box-shadow:var(--sh)}
+.card-hd{font-size:15px;font-weight:800;color:var(--g);margin-bottom:14px}
 
-/* form */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-label{font-size:11px;color:var(--gray);font-weight:600;display:block;margin-bottom:5px}
-input,select{width:100%;background:#fff;border:1.5px solid #DDD5C0;border-radius:9px;padding:11px 13px;font-family:inherit;font-size:13px;color:var(--dark);outline:none;-webkit-appearance:none}
-input:focus,select:focus{border-color:var(--gold)}
+/* FORM */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(min-width:700px){.g2{grid-template-columns:repeat(4,1fr)}}
+.fld{display:flex;flex-direction:column;gap:5px}
+label{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.3px}
+input,select{width:100%;background:var(--sand);border:1.5px solid var(--border);border-radius:var(--rsm);padding:11px 13px;font-family:'Tajawal',sans-serif;font-size:14px;color:var(--dark);outline:none;-webkit-appearance:none;transition:border-color .2s,background .2s}
+input:focus,select:focus{border-color:var(--gold);background:#fff}
+input::placeholder{color:#BBB}
 .toggle{display:flex;gap:6px}
-.tog{flex:1;padding:10px;border:1.5px solid #DDD;border-radius:8px;background:#fff;color:var(--dark);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.tog{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--rsm);background:var(--sand);color:var(--mid);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s}
+.tog:hover:not(.on){border-color:var(--gold);color:var(--gold)}
 .tog.on{background:var(--g);color:#fff;border-color:var(--g)}
 
-/* buttons */
-.btn-main{width:100%;padding:13px;background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px}
-.btn-main:disabled{background:#BBB;cursor:default}
-.btn-gold{background:linear-gradient(135deg,var(--gold),var(--goldL));color:var(--dark)}
-.btn-outline{background:#fff;color:var(--g);border:1.5px solid var(--g)}
+/* BTN */
+.btn-main{width:100%;padding:14px;background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;border:none;border-radius:var(--radius);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:4px}
+.btn-main:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px);box-shadow:var(--shm)}
+.btn-main:active{transform:translateY(0)}
+.btn-main:disabled{background:#CCC;cursor:default}
+.btn-main.gold{background:linear-gradient(135deg,var(--gold),var(--goldL));color:var(--g)}
 
-/* result */
-.result{background:#fff;border-radius:12px;border:1.5px solid rgba(166,123,64,.3);padding:18px 16px;text-align:center;margin-bottom:10px}
-.result-meta{font-size:11px;color:var(--gray);margin-bottom:6px}
-.result-sum{font-size:12px;color:var(--dark);font-weight:600;margin-bottom:10px;line-height:1.6}
-.result-price{font-size:32px;font-weight:900;color:var(--g);margin-bottom:4px}
-.result-range{font-size:11px;color:var(--gray);margin-bottom:10px}
-.verdict{display:inline-block;padding:5px 16px;border-radius:16px;font-size:11px;font-weight:700;margin:3px}
-.monthly{background:rgba(26,50,38,.08);color:var(--g);padding:5px 14px;border-radius:16px;font-size:11px;font-weight:700}
-.tip-box{background:#FFFBF0;border-radius:10px;border:1px solid rgba(166,123,64,.25);padding:13px 14px;margin-bottom:10px}
-.tip-title{font-size:10px;color:var(--gold);font-weight:700;margin-bottom:5px}
-.tip-text{font-size:12px;color:var(--dark);line-height:1.75}
-.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.btns2 button{padding:11px;border-radius:9px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:none}
-
-/* finance result */
-.fin-result{background:#fff;border-radius:12px;padding:18px 16px;text-align:center;margin-bottom:10px}
-.fin-price{font-size:30px;font-weight:900;margin-bottom:4px}
-.fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-.fin-item{border-radius:8px;padding:10px}
-.disclaimer{background:#FFF8F0;border-radius:10px;border:1px solid #FFCC8044;padding:13px 14px;margin-bottom:10px}
-.disc-title{font-size:10px;color:#E65100;font-weight:700;margin-bottom:5px}
-.disc-text{font-size:11px;color:#5A3A1A;line-height:1.8}
-
-/* loading */
-.loading{text-align:center;padding:28px;color:var(--gray);font-size:13px}
-.spinner{display:inline-block;width:24px;height:24px;border:2px solid #DDD;border-top-color:var(--g);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px;vertical-align:middle;margin-left:6px}
+/* LOADING */
+.loading{text-align:center;padding:32px 20px;color:var(--muted);font-size:14px}
+.spinner{display:inline-block;width:26px;height:26px;border:2.5px solid var(--border);border-top-color:var(--g);border-radius:50%;animation:spin .75s linear infinite;margin-bottom:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* modal */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;display:none;align-items:flex-end}
+/* RESULT */
+.result{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--border2);padding:22px 20px;text-align:center;margin-bottom:14px;box-shadow:var(--sh);animation:fadeUp .35s ease}
+.r-meta{font-size:11px;color:var(--muted);margin-bottom:8px}
+.r-sum{font-size:13px;color:var(--mid);margin-bottom:14px;line-height:1.7}
+.r-price{font-size:38px;font-weight:900;color:var(--g);line-height:1;margin-bottom:4px}
+.r-unit{font-size:15px;font-weight:500;color:var(--muted)}
+.r-range{font-size:12px;color:var(--muted);margin-bottom:14px}
+.badge{display:inline-block;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:800;margin:3px}
+.badge-mo{background:rgba(13,43,30,.08);color:var(--g);padding:6px 16px;border-radius:20px;font-size:13px;font-weight:800}
+.r-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.r-acts button{padding:11px;border-radius:var(--rsm);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+
+/* TIPS */
+.tip{background:#FFFBF0;border-radius:var(--rsm);border:1px solid rgba(184,137,42,.25);padding:15px 16px;margin-bottom:14px;animation:fadeUp .35s ease .1s both}
+.tip-lbl{font-size:11px;color:var(--gold);font-weight:800;margin-bottom:5px}
+.tip-body{font-size:13px;color:var(--dark);line-height:1.8}
+.disc{background:#FFF8F0;border-radius:var(--rsm);border:1px solid #FFCC8055;padding:14px 15px;margin-bottom:14px;animation:fadeUp .35s ease .1s both}
+.disc-lbl{font-size:11px;color:#D4600A;font-weight:800;margin-bottom:5px}
+.disc-body{font-size:12px;color:#5A3A1A;line-height:1.85}
+
+/* FIN */
+.fin-card{background:var(--white);border-radius:var(--radius);padding:22px 20px;text-align:center;margin-bottom:14px;box-shadow:var(--sh);animation:fadeUp .35s ease}
+.fin-big{font-size:36px;font-weight:900;margin:4px 0}
+.fin-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.fin-i{border-radius:var(--rsm);padding:13px 12px;text-align:center}
+.fin-il{font-size:11px;color:var(--muted);margin-bottom:4px}
+.fin-iv{font-size:17px;font-weight:800}
+
+/* MAP */
+.key-notice{background:linear-gradient(135deg,#1A3D2B,#255C40);border-radius:var(--radius);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.key-notice p{font-size:12px;color:rgba(255,255,255,.75);margin:0;line-height:1.7}
+.key-notice strong{color:var(--goldXL);font-weight:800}
+.key-notice code{background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px;font-size:11px;color:#fff;font-family:monospace}
+
+#map-wrap{border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border2);margin-bottom:14px;box-shadow:var(--sh);position:relative;height:420px;background:#E8EDF0}
+@media(max-width:520px){#map-wrap{height:300px}}
+
+.map-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-size:13px;text-align:center;padding:20px}
+.map-ph .ph-icon{font-size:42px;opacity:.35}
+.map-ph a{color:var(--gold);font-weight:700;text-decoration:underline}
+
+.sel-bar{background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:50px;box-shadow:var(--sh)}
+.sel-lbl{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap;flex-shrink:0}
+.sel-empty{font-size:13px;color:#BBB;font-style:italic}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--g);color:#fff;border-radius:16px;padding:4px 10px 4px 7px;font-size:12px;font-weight:700;animation:fadeUp .2s ease}
+.pill button{background:rgba(255,255,255,.25);border:none;color:#fff;width:16px;height:16px;border-radius:50%;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.pill button:hover{background:rgba(255,255,255,.45)}
+
+.map-legend{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center}
+.leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+
+/* COMPARE RESULT */
+.cmp-hd{background:var(--g);color:#fff;border-radius:var(--radius) var(--radius) 0 0;padding:14px 18px;font-size:15px;font-weight:800}
+.cmp-body{background:var(--white);border:1.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:18px;margin-bottom:14px}
+.cmp-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border2);gap:10px;font-size:14px}
+.cmp-row:last-child{border-bottom:none}
+.cmp-bar-w{flex:1;background:var(--border2);border-radius:4px;height:7px;overflow:hidden}
+.cmp-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--goldL));border-radius:4px;transition:width .6s ease}
+.cmp-v{font-size:11px;font-weight:800;padding:3px 9px;border-radius:10px;flex-shrink:0}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end;backdrop-filter:blur(3px)}
 .overlay.show{display:flex}
-.modal{background:#fff;border-radius:18px 18px 0 0;padding:22px 18px 36px;width:100%;max-width:520px;margin:0 auto}
-.modal-bar{width:38px;height:4px;background:#DDD;border-radius:4px;margin:0 auto 16px}
-.modal-title{font-size:16px;font-weight:800;color:var(--dark);text-align:center;margin-bottom:4px}
-.modal-sub{font-size:11px;color:var(--gray);text-align:center;margin-bottom:18px}
-.modal-inp{width:100%;background:#F8F4EE;border:1.5px solid #DDD5C0;border-radius:9px;padding:11px 13px;font-family:inherit;font-size:13px;color:var(--dark);outline:none;margin-bottom:10px}
-.modal-inp:focus{border-color:var(--gold)}
-.modal-link{text-align:center;font-size:11px;color:var(--gray);margin-top:8px}
-.modal-link span{color:var(--gold);font-weight:700;cursor:pointer}
+.modal{background:var(--white);border-radius:22px 22px 0 0;padding:24px 20px 40px;width:100%;max-width:520px;margin:0 auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(40px);opacity:.6}to{opacity:1;transform:translateY(0)}}
+.modal-h{width:38px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 18px}
+.modal-ti{font-size:18px;font-weight:900;color:var(--dark);text-align:center;margin-bottom:3px}
+.modal-su{font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px}
+.modal-in{width:100%;background:var(--sand);border:1.5px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-family:'Tajawal',sans-serif;font-size:14px;color:var(--dark);outline:none;margin-bottom:10px}
+.modal-in:focus{border-color:var(--gold);background:#fff}
+.modal-ft{text-align:center;font-size:12px;color:var(--muted);margin-top:10px}
+.modal-ft span{color:var(--gold);font-weight:800;cursor:pointer}
+
+@media(max-width:520px){
+  .hdr-in{padding:12px 14px 0}
+  .content{padding:16px 12px 40px}
+  .logo-main{font-size:21px}
+  .r-price{font-size:32px}
+  .tab{font-size:12px}
+}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <div class="hdr">
-  <div class="hdr-top">
-    <div class="logo">عيار <small>العقارية</small></div>
-    <div class="login-btns">
-      <button class="btn-login" onclick="openModal('buyer')">🔑 تسجيل الدخول</button>
-      <button class="btn-owner" onclick="openModal('owner')">🏠 سجّل كمالك</button>
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <div>
+        <span class="logo-main">عيار</span>
+        <span class="logo-sub">العقارية</span>
+      </div>
+      <div class="hdr-btns">
+        <button class="btn-ghost" onclick="openModal('buyer')">تسجيل الدخول</button>
+        <button class="btn-gold" onclick="openModal('owner')">سجّل كمالك</button>
+      </div>
     </div>
-  </div>
-  <div class="tabs">
-    <button class="tab on" onclick="switchTab('estimate',this)">📊 مؤشر التقييم</button>
-    <button class="tab" onclick="switchTab('finance',this)">🏦 حاسبة التمويل</button>
+
+    <div class="ticker-wrap">
+      <div class="ticker-track">
+        <span class="tick">الملقا — شقق <strong>52,000</strong> ر.س <span class="up">↑ 4.2%</span></span>
+        <span class="tick">حطين — فيلل <strong>168,000</strong> ر.س <span class="dn">↓ 1.1%</span></span>
+        <span class="tick">الياسمين — شقق <strong>43,000</strong> ر.س <span class="up">↑ 2.8%</span></span>
+        <span class="tick">العليا — مكاتب <strong>85,000</strong> ر.س <span class="up">↑ 6.3%</span></span>
+        <span class="tick">السليمانية — شقق <strong>58,000</strong> ر.س <span class="up">↑ 3.1%</span></span>
+        <span class="tick">القيروان — دور <strong>72,000</strong> ر.س <span class="dn">↓ 0.8%</span></span>
+        <span class="tick">النرجس — فيلل <strong>142,000</strong> ر.س <span class="up">↑ 5.4%</span></span>
+        <span class="tick">غرناطة — شقق <strong>38,000</strong> ر.س <span class="up">↑ 1.9%</span></span>
+        <span class="tick">الملقا — شقق <strong>52,000</strong> ر.س <span class="up">↑ 4.2%</span></span>
+        <span class="tick">حطين — فيلل <strong>168,000</strong> ر.س <span class="dn">↓ 1.1%</span></span>
+        <span class="tick">الياسمين — شقق <strong>43,000</strong> ر.س <span class="up">↑ 2.8%</span></span>
+        <span class="tick">العليا — مكاتب <strong>85,000</strong> ر.س <span class="up">↑ 6.3%</span></span>
+        <span class="tick">السليمانية — شقق <strong>58,000</strong> ر.س <span class="up">↑ 3.1%</span></span>
+        <span class="tick">القيروان — دور <strong>72,000</strong> ر.س <span class="dn">↓ 0.8%</span></span>
+        <span class="tick">النرجس — فيلل <strong>142,000</strong> ر.س <span class="up">↑ 5.4%</span></span>
+        <span class="tick">غرناطة — شقق <strong>38,000</strong> ر.س <span class="up">↑ 1.9%</span></span>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab('estimate',this)">📊 مؤشر التقييم</button>
+      <button class="tab" onclick="switchTab('finance',this)">🏦 حاسبة التمويل</button>
+      <button class="tab" onclick="switchTab('compare',this)">🗺️ مقارنة الأحياء</button>
+    </div>
   </div>
 </div>
 
+<!-- CONTENT -->
 <div class="content">
 
-  <!-- ══ TAB: مؤشر التقييم ══ -->
+  <!-- TAB 1: تقييم الإيجار -->
   <div id="estimate" class="section on">
-    <div style="margin-bottom:12px;margin-top:4px">
-      <div class="card-title">مؤشر تقييم الإيجار</div>
-      <div class="card-sub">أدخل بيانات العقار واحصل على التقدير الفوري بالذكاء الاصطناعي</div>
+    <div class="page-hd">
+      <div class="page-title">مؤشر تقييم الإيجار</div>
+      <div class="page-sub">أدخل بيانات العقار واحصل على التقدير الفوري بالذكاء الاصطناعي</div>
     </div>
-
     <div class="card">
-      <div class="grid2">
-        <div>
+      <div class="g2">
+        <div class="fld">
           <label>الحي</label>
           <select id="hood">
             <option>الملقا</option><option>حطين</option><option>الياسمين</option>
@@ -126,223 +243,494 @@ input:focus,select:focus{border-color:var(--gold)}
             <option>العريجاء</option><option>شبرا</option><option>الدرعية</option>
           </select>
         </div>
-        <div>
+        <div class="fld">
           <label>نوع العقار</label>
-          <select id="ptype">
-            <option>شقة</option><option>فيلا</option><option>دور</option><option>استوديو</option>
-          </select>
+          <select id="ptype"><option>شقة</option><option>فيلا</option><option>دور</option><option>استوديو</option></select>
         </div>
-        <div>
+        <div class="fld">
           <label>المساحة (م²)</label>
           <input type="number" id="area" placeholder="120">
         </div>
-        <div>
+        <div class="fld">
           <label>عدد الغرف</label>
-          <select id="rooms">
-            <option>1</option><option>2</option><option selected>3</option>
-            <option>4</option><option>5+</option>
-          </select>
+          <select id="rooms"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5+</option></select>
         </div>
-        <div>
+        <div class="fld">
           <label>عمر العقار</label>
-          <select id="age">
-            <option>جديد</option><option selected>3-7 سنوات</option>
-            <option>7-15 سنة</option><option>أكثر من 15</option>
-          </select>
+          <select id="age"><option>جديد</option><option selected>3-7 سنوات</option><option>7-15 سنة</option><option>أكثر من 15</option></select>
         </div>
-        <div>
-          <label>مفروش؟</label>
-          <div class="toggle">
-            <button class="tog" id="furn-no" onclick="setFurn(false)">لا</button>
-            <button class="tog" id="furn-yes" onclick="setFurn(true)">نعم</button>
-          </div>
+        <div class="fld">
+          <label>الطابق</label>
+          <select id="floor"><option>أرضي</option><option>أول</option><option>ثاني</option><option>ثالث+</option><option>بنتهاوس</option></select>
         </div>
       </div>
-      <button class="btn-main" id="est-btn" onclick="doEstimate()">🔍 احصل على التقدير الفوري</button>
+      <div class="fld" style="margin-bottom:14px">
+        <label>مفروش؟</label>
+        <div class="toggle">
+          <button class="tog on" id="furn-no" onclick="setFurn(false)">غير مفروش</button>
+          <button class="tog" id="furn-yes" onclick="setFurn(true)">مفروش بالكامل</button>
+        </div>
+      </div>
+      <button class="btn-main" onclick="doEstimate()">✨ احصل على التقييم الفوري</button>
     </div>
-
-    <div id="est-result"></div>
+    <div id="est-out"></div>
   </div>
 
-  <!-- ══ TAB: حاسبة التمويل ══ -->
+  <!-- TAB 2: حاسبة التمويل -->
   <div id="finance" class="section">
-    <div style="margin-bottom:12px;margin-top:4px">
-      <div class="card-title">حاسبة التمويل العقاري</div>
-      <div class="card-sub">احسب قسطك الشهري المتوقع بسهولة</div>
+    <div class="page-hd">
+      <div class="page-title">حاسبة التمويل العقاري</div>
+      <div class="page-sub">احسب قسطك الشهري ومدى أهليتك للتمويل</div>
     </div>
-
     <div class="card">
-      <div style="display:flex;gap:7px;margin-bottom:14px" id="purpose-tog">
-        <button class="tog on" onclick="setPurpose(this,'شراء سكن')">شراء سكن</button>
-        <button class="tog" onclick="setPurpose(this,'استثمار')">استثمار</button>
-        <button class="tog" onclick="setPurpose(this,'بناء')">بناء</button>
-      </div>
-      <div class="grid2">
-        <div style="grid-column:span 2">
+      <div class="g2">
+        <div class="fld">
           <label>قيمة العقار (ر.س)</label>
           <input type="number" id="propVal" placeholder="800,000">
         </div>
-        <div>
+        <div class="fld">
           <label>الراتب الشهري (ر.س)</label>
           <input type="number" id="salary" placeholder="15,000">
         </div>
-        <div>
-          <label>مدة التمويل (سنة)</label>
-          <select id="years">
-            <option>10</option><option>15</option><option selected>20</option>
-            <option>25</option><option>30</option>
+        <div class="fld">
+          <label>مدة القرض (سنة)</label>
+          <select id="yrs"><option>10</option><option>15</option><option>20</option><option selected>25</option><option>30</option></select>
+        </div>
+        <div class="fld">
+          <label>الدفعة الأولى</label>
+          <select id="dp">
+            <option value="10" selected>10% (الحد الأدنى)</option>
+            <option value="15">15%</option><option value="20">20%</option>
+            <option value="25">25%</option><option value="30">30%</option>
           </select>
+        </div>
+      </div>
+      <div class="fld" style="margin-bottom:14px">
+        <label>غرض التمويل</label>
+        <div class="toggle" id="purp-tog">
+          <button class="tog on" onclick="setPurp(this,'شراء سكن')">شراء سكن</button>
+          <button class="tog" onclick="setPurp(this,'استثمار')">استثمار</button>
+          <button class="tog" onclick="setPurp(this,'تجاري')">تجاري</button>
         </div>
       </div>
       <button class="btn-main" onclick="doFinance()">🧮 احسب القسط الشهري</button>
     </div>
+    <div id="fin-out"></div>
+  </div>
 
-    <div id="fin-result"></div>
+  <!-- TAB 3: مقارنة الأحياء -->
+  <div id="compare" class="section">
+    <div class="page-hd">
+      <div class="page-title">مقارنة الأحياء بالخريطة</div>
+      <div class="page-sub">اضغط على أي حي في الخريطة لاختياره — يمكن اختيار حتى 3 أحياء للمقارنة</div>
+    </div>
+
+    <div class="key-notice" id="key-notice" style="display:none">
+      <div style="font-size:22px;flex-shrink:0">🔑</div>
+      <p>لتفعيل الخريطة، افتح الملف وضع مفتاحك في <code>window.MAPS_API_KEY</code> — احصل عليه مجاناً من <strong>Google Cloud Console</strong></p>
+    </div>
+
+    <!-- شريط الأحياء المختارة -->
+    <div class="sel-bar">
+      <span class="sel-lbl">الأحياء المختارة:</span>
+      <span class="sel-empty" id="sel-empty">اضغط على الخريطة لاختيار حي</span>
+      <div id="sel-pills" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
+
+    <div class="map-legend">
+      <div style="display:flex;align-items:center;gap:5px"><div class="leg-dot" style="background:#0D2B1E"></div><span>متاح</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div class="leg-dot" style="background:#B8892A"></div><span>محدد للمقارنة</span></div>
+      <span style="font-size:11px;color:#aaa">· اضغط مرتين للإلغاء</span>
+    </div>
+
+    <!-- الخريطة -->
+    <div id="map-wrap">
+      <div class="map-ph" id="map-ph">
+        <div class="ph-icon">🗺️</div>
+        <div style="font-weight:700">جاري تحميل الخريطة...</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="fld" style="margin-bottom:12px">
+        <label>نوع العقار للمقارنة</label>
+        <select id="cmp-type"><option>شقة</option><option>فيلا</option><option>دور</option></select>
+      </div>
+      <button class="btn-main" id="cmp-btn" onclick="doCompare()" disabled>🔍 قارن الأحياء المختارة</button>
+    </div>
+
+    <div id="cmp-out"></div>
   </div>
 
 </div>
 
-<!-- MODAL تسجيل الدخول -->
+<!-- MODAL -->
 <div class="overlay" id="modal" onclick="closeModal()">
   <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-bar"></div>
-    <div class="modal-title" id="modal-title">تسجيل الدخول</div>
-    <div class="modal-sub" id="modal-sub">تابع تقييماتك وعقاراتك</div>
-    <input class="modal-inp" placeholder="البريد الإلكتروني أو الجوال">
-    <input class="modal-inp" type="password" placeholder="كلمة المرور">
-    <button class="btn-main" id="modal-btn">دخول</button>
-    <div class="modal-link">ليس لديك حساب؟ <span>إنشاء حساب جديد</span></div>
+    <div class="modal-h"></div>
+    <div class="modal-ti" id="m-ti">تسجيل الدخول</div>
+    <div class="modal-su" id="m-su">تابع تقييماتك وعقاراتك المحفوظة</div>
+    <input class="modal-in" type="email" placeholder="البريد الإلكتروني أو الجوال">
+    <input class="modal-in" type="password" placeholder="كلمة المرور">
+    <button class="btn-main" id="m-btn" style="margin-top:6px">دخول</button>
+    <div class="modal-ft">ليس لديك حساب؟ <span>إنشاء حساب جديد</span></div>
   </div>
 </div>
 
 <script>
-// ── state ──
+/* ════════════════════════════════════
+   بيانات الأحياء — إحداثيات + أسعار
+════════════════════════════════════ */
+const HOODS = [
+  {name:"الملقا",      lat:24.8285,lng:46.6357, rent:{شقة:"45,000–62,000",فيلا:"140,000–180,000",دور:"75,000–95,000"}},
+  {name:"حطين",       lat:24.7964,lng:46.6282, rent:{شقة:"50,000–68,000",فيلا:"155,000–195,000",دور:"85,000–110,000"}},
+  {name:"الياسمين",   lat:24.8407,lng:46.6523, rent:{شقة:"38,000–52,000",فيلا:"110,000–145,000",دور:"65,000–82,000"}},
+  {name:"القيروان",   lat:24.8230,lng:46.5990, rent:{شقة:"35,000–48,000",فيلا:"100,000–135,000",دور:"58,000–75,000"}},
+  {name:"السليمانية", lat:24.7029,lng:46.6814, rent:{شقة:"52,000–72,000",فيلا:"160,000–210,000",دور:"90,000–115,000"}},
+  {name:"العليا",     lat:24.6877,lng:46.6829, rent:{شقة:"55,000–75,000",فيلا:"170,000–220,000",دور:"95,000–125,000"}},
+  {name:"الصحافة",    lat:24.7830,lng:46.6196, rent:{شقة:"42,000–55,000",فيلا:"115,000–148,000",دور:"68,000–85,000"}},
+  {name:"غرناطة",     lat:24.7694,lng:46.7028, rent:{شقة:"40,000–54,000",فيلا:"112,000–145,000",دور:"65,000–82,000"}},
+  {name:"النرجس",     lat:24.8630,lng:46.6467, rent:{شقة:"48,000–65,000",فيلا:"135,000–175,000",دور:"78,000–98,000"}},
+  {name:"الروضة",     lat:24.7342,lng:46.7341, rent:{شقة:"43,000–58,000",فيلا:"120,000–155,000",دور:"70,000–88,000"}},
+  {name:"التعاون",    lat:24.7467,lng:46.7177, rent:{شقة:"44,000–59,000",فيلا:"125,000–160,000",دور:"72,000–90,000"}},
+  {name:"طويق",       lat:24.6267,lng:46.5677, rent:{شقة:"22,000–30,000",فيلا:"65,000–85,000", دور:"38,000–50,000"}},
+  {name:"العريجاء",   lat:24.6467,lng:46.6467, rent:{شقة:"25,000–35,000",فيلا:"70,000–92,000", دور:"42,000–55,000"}},
+  {name:"شبرا",       lat:24.6777,lng:46.7177, rent:{شقة:"28,000–38,000",فيلا:"80,000–105,000",دور:"48,000–62,000"}},
+  {name:"الدرعية",    lat:24.7334,lng:46.5738, rent:{شقة:"36,000–50,000",فيلا:"105,000–140,000",دور:"60,000–78,000"}},
+];
+
+/* ── state ── */
 let furnished = false;
-let purpose = "شراء سكن";
+let selected  = [];   // أحياء مختارة
+let gmap      = null;
+let markers   = {};   // name → {marker, iw, refresh}
+let openIW    = null;
 
+/* ── helpers ── */
 function setFurn(v){
-  furnished = v;
-  document.getElementById('furn-yes').className = 'tog' + (v?' on':'');
-  document.getElementById('furn-no').className  = 'tog' + (!v?' on':'');
+  furnished=v;
+  document.getElementById('furn-yes').className='tog'+(v?' on':'');
+  document.getElementById('furn-no').className='tog'+(!v?' on':'');
 }
-setFurn(false);
-
-function setPurpose(el, val){
-  purpose = val;
-  document.querySelectorAll('#purpose-tog .tog').forEach(b=>b.className='tog');
+function setPurp(el,v){
+  document.querySelectorAll('#purp-tog .tog').forEach(b=>b.className='tog');
   el.className='tog on';
 }
-
-function switchTab(id, el){
+function switchTab(id,el){
   document.querySelectorAll('.section').forEach(s=>s.className='section');
   document.querySelectorAll('.tab').forEach(t=>t.className='tab');
   document.getElementById(id).className='section on';
   el.className='tab on';
+  if(id==='compare' && !gmap) initMap();
 }
-
-function openModal(type){
-  const titles = { buyer:["🔑 تسجيل الدخول","تتبع عمليات البحث والتقييمات"], owner:["🏠 مالك العقار","أضف عقاراتك وأدر إعلاناتك"] };
-  document.getElementById('modal-title').textContent = titles[type][0];
-  document.getElementById('modal-sub').textContent   = titles[type][1];
-  document.getElementById('modal-btn').textContent   = type==='owner'?'دخول كمالك عقار':'تسجيل الدخول';
+function openModal(t){
+  const d={buyer:["🔑 تسجيل الدخول","تابع تقييماتك","دخول"],owner:["🏠 مالك العقار","أضف عقاراتك وأدر إعلاناتك","دخول كمالك"]};
+  document.getElementById('m-ti').textContent=d[t][0];
+  document.getElementById('m-su').textContent=d[t][1];
+  document.getElementById('m-btn').textContent=d[t][2];
   document.getElementById('modal').className='overlay show';
 }
-function closeModal(){ document.getElementById('modal').className='overlay'; }
+function closeModal(){document.getElementById('modal').className='overlay'}
 
-// ── تقدير الإيجار ──
-async function doEstimate(){
-  const area = document.getElementById('area').value;
-  if(!area){ alert('أدخل المساحة أولاً'); return; }
+/* ════════════════════════════════════
+   تهيئة الخريطة
+════════════════════════════════════ */
+function initMap(){
+  const KEY = window.MAPS_API_KEY;
+  if(!KEY || KEY==="YOUR_GOOGLE_MAPS_API_KEY_HERE"){
+    showMapPlaceholder();
+    return;
+  }
+  const s=document.createElement('script');
+  s.src=`https://maps.googleapis.com/maps/api/js?key=${KEY}&language=ar&region=SA&callback=_mapReady`;
+  s.async=true; s.defer=true;
+  document.head.appendChild(s);
+  window._mapReady = buildMap;
+}
 
-  const hood  = document.getElementById('hood').value;
-  const ptype = document.getElementById('ptype').value;
-  const rooms = document.getElementById('rooms').value;
-  const age   = document.getElementById('age').value;
+function showMapPlaceholder(){
+  document.getElementById('key-notice').style.display='flex';
+  document.getElementById('map-ph').innerHTML=`
+    <div class="ph-icon">🗺️</div>
+    <div style="font-weight:700;color:#555;font-size:14px">الخريطة تحتاج API Key</div>
+    <div style="font-size:12px;max-width:280px;line-height:1.75;color:#888">
+      افتح الملف وضع مفتاحك في أول الكود<br>
+      <a href="https://console.cloud.google.com" target="_blank">احصل على المفتاح مجاناً ←</a>
+    </div>`;
+}
 
-  document.getElementById('est-result').innerHTML = `<div class="loading"><span class="spinner"></span> جاري التحليل بالذكاء الاصطناعي...</div>`;
+function markerSVG(sel){
+  const r=sel?20:15, fill=sel?'#B8892A':'#0D2B1E';
+  return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44">`+
+    `<circle cx="22" cy="22" r="${r}" fill="${fill}" opacity="${sel?1:.82}"/>`+
+    `<circle cx="22" cy="22" r="${r}" fill="none" stroke="white" stroke-width="2.2"/>`+
+    `</svg>`);
+}
 
-  const prompt = `قيّم هذا العقار في الرياض:
-الحي: ${hood} | النوع: ${ptype} | المساحة: ${area}م² | الغرف: ${rooms} | العمر: ${age} | مفروش: ${furnished?'نعم':'لا'}
-أجب JSON فقط بدون أي نص إضافي:
-{"min":رقم,"max":رقم,"avg":رقم,"summary":"جملة قصيرة","tip":"نصيحة واحدة مفيدة","verdict":"فرصة أو عادل أو مبالغ فيه"}`;
+function buildMap(){
+  const wrap=document.getElementById('map-wrap');
+  wrap.innerHTML='';
+  gmap=new google.maps.Map(wrap,{
+    center:{lat:24.760,lng:46.670},zoom:11,
+    mapTypeId:'roadmap',disableDefaultUI:true,zoomControl:true,
+    gestureHandling:'cooperative',
+    styles:[
+      {featureType:'poi',stylers:[{visibility:'off'}]},
+      {featureType:'transit',stylers:[{visibility:'off'}]},
+      {elementType:'geometry',stylers:[{color:'#f2ede4'}]},
+      {featureType:'water',elementType:'geometry',stylers:[{color:'#c9d8e8'}]},
+      {featureType:'road',elementType:'geometry',stylers:[{color:'#ffffff'}]},
+      {featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#e8d9b0'}]},
+      {elementType:'labels.text.fill',stylers:[{color:'#5a5a5a'}]},
+      {featureType:'administrative.locality',elementType:'labels.text.fill',stylers:[{color:'#1A3D2B'}]},
+    ]
+  });
 
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:400,
-        messages:[{role:"user",content:prompt}] })
+  HOODS.forEach(h=>{
+    const isSel=()=>selected.includes(h.name);
+
+    const mk=new google.maps.Marker({
+      position:{lat:h.lat,lng:h.lng},map:gmap,title:h.name,
+      icon:{url:markerSVG(false),scaledSize:new google.maps.Size(44,44),anchor:new google.maps.Point(22,22)},
+      label:{text:h.name,fontFamily:"'Tajawal',sans-serif",fontSize:'11px',color:'#ffffff',fontWeight:'700'}
     });
-    const d = await res.json();
-    const txt = d.content[0].text.replace(/```json|```/g,"").trim();
-    const r = JSON.parse(txt);
 
-    const vC={"فرصة":"#2E7D32","عادل":"#1565C0","مبالغ فيه":"#C62828"};
-    const vB={"فرصة":"#E8F5E9","عادل":"#E3F2FD","مبالغ فيه":"#FFEBEE"};
-    const vI={"فرصة":"🔥","عادل":"✅","مبالغ فيه":"⚠️"};
-    const monthly = Math.round(r.avg/12/50)*50;
+    const iw=new google.maps.InfoWindow({maxWidth:210});
 
-    document.getElementById('est-result').innerHTML = `
-      <div class="result" style="border-color:${vB[r.verdict]||'#EEE'}">
-        <div class="result-meta">${ptype} · ${hood} · ${area} م²</div>
-        <div class="result-sum">${r.summary}</div>
-        <div class="result-price">${r.avg?.toLocaleString('ar-SA')} <span style="font-size:14px">ر.س</span></div>
-        <div class="result-range">${r.min?.toLocaleString('ar-SA')} — ${r.max?.toLocaleString('ar-SA')} ر.س / سنة</div>
-        <span class="verdict" style="background:${vB[r.verdict]};color:${vC[r.verdict]}">${vI[r.verdict]} ${r.verdict}</span>
-        <span class="monthly">شهرياً: ${monthly?.toLocaleString('ar-SA')} ر.س</span>
-      </div>
-      <div class="tip-box">
-        <div class="tip-title">💡 نصيحة الخبير</div>
-        <div class="tip-text">${r.tip}</div>
-      </div>
-      <div class="btns2">
-        <button style="background:#fff;color:#1A3226;border:1.5px solid #1A3226" onclick="switchTab('finance',document.querySelectorAll('.tab')[1])">🏦 احسب التمويل</button>
-        <button style="background:linear-gradient(135deg,#1A3226,#2A4A38);color:#fff" onclick="openModal('buyer')">📋 سجّل وتابع</button>
+    function makeIWContent(){
+      const sel=isSel();
+      const t=document.getElementById('cmp-type').value;
+      return `<div style="font-family:'Tajawal',sans-serif;direction:rtl;text-align:right;min-width:145px;padding:2px 0">
+        <div style="font-size:14px;font-weight:800;color:#0D2B1E;margin-bottom:3px">${h.name}</div>
+        <div style="font-size:12px;color:#7A8C80;margin-bottom:8px">إيجار ${t}: <b style="color:#0D2B1E">${h.rent[t]||'—'}</b> ر.س/سنة</div>
+        <button onclick="window.__toggleHood('${h.name}')" style="
+          display:block;width:100%;padding:8px;
+          background:${sel?'#B8892A':'#0D2B1E'};color:#fff;border:none;
+          border-radius:8px;font-family:'Tajawal',sans-serif;font-size:12px;
+          font-weight:700;cursor:pointer">
+          ${sel?'✓ محدد — اضغط لإلغاء':'＋ أضف للمقارنة'}
+        </button>
       </div>`;
-  } catch(e) {
-    document.getElementById('est-result').innerHTML = `<div class="tip-box"><div class="tip-title">⚠️ تنبيه</div><div class="tip-text">تعذّر الاتصال بالذكاء الاصطناعي. تأكد من الاتصال وحاول مجدداً.</div></div>`;
+    }
+
+    mk.addListener('click',()=>{
+      if(openIW) openIW.close();
+      iw.setContent(makeIWContent());
+      iw.open(gmap,mk);
+      openIW=iw;
+    });
+
+    markers[h.name]={
+      marker:mk,
+      iw:iw,
+      refresh(){
+        mk.setIcon({url:markerSVG(isSel()),scaledSize:new google.maps.Size(44,44),anchor:new google.maps.Point(22,22)});
+        if(openIW===iw) iw.setContent(makeIWContent());
+      }
+    };
+  });
+
+  /* global callback from infowindow buttons */
+  window.__toggleHood = function(name){
+    const i=selected.indexOf(name);
+    if(i>-1){ selected.splice(i,1); }
+    else {
+      if(selected.length>=3){ alert('أقصى عدد للمقارنة 3 أحياء — أزل حياً أولاً'); return; }
+      selected.push(name);
+    }
+    markers[name].refresh();
+    renderPills();
+    document.getElementById('cmp-btn').disabled = selected.length<2;
+  };
+
+  /* refresh IW content on type change */
+  document.getElementById('cmp-type').addEventListener('change',()=>{
+    if(openIW){ openIW.close(); openIW=null; }
+  });
+}
+
+function renderPills(){
+  const container=document.getElementById('sel-pills');
+  const empty=document.getElementById('sel-empty');
+  container.innerHTML='';
+  empty.style.display = selected.length===0?'':'none';
+  selected.forEach(name=>{
+    const p=document.createElement('span');
+    p.className='pill';
+    p.innerHTML=`${name}<button onclick="window.__toggleHood('${name}')">✕</button>`;
+    container.appendChild(p);
+  });
+}
+
+/* ════════════════════════════════════
+   تقدير الإيجار (AI)
+════════════════════════════════════ */
+async function doEstimate(){
+  const area=document.getElementById('area').value;
+  if(!area){alert('أدخل المساحة أولاً');return;}
+  const hood=document.getElementById('hood').value,
+        ptype=document.getElementById('ptype').value,
+        rooms=document.getElementById('rooms').value,
+        age=document.getElementById('age').value,
+        floor=document.getElementById('floor').value;
+
+  document.getElementById('est-out').innerHTML=`<div class="loading"><div class="spinner"></div><div>جاري تحليل بيانات السوق...</div></div>`;
+
+  const prompt=`أنت خبير عقاري في الرياض. قيّم هذا العقار:
+الحي: ${hood} | النوع: ${ptype} | المساحة: ${area}م² | الغرف: ${rooms} | العمر: ${age} | الطابق: ${floor} | مفروش: ${furnished?'نعم':'لا'}
+أجب JSON فقط بدون أي نص إضافي:
+{"min":رقم,"max":رقم,"avg":رقم,"summary":"جملة قصيرة واحدة","tip":"نصيحة عملية واحدة","verdict":"فرصة أو عادل أو مبالغ فيه","rentability":"رقم فقط مثل 5.2"}`;
+
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:500,
+        messages:[{role:"user",content:prompt}]})
+    });
+    const d=await res.json();
+    const r=JSON.parse(d.content[0].text.replace(/```json|```/g,"").trim());
+    const vm={"فرصة":{bg:"#E8F5E9",c:"#2E7D32",ic:"🔥"},"عادل":{bg:"#E3F2FD",c:"#1565C0",ic:"✅"},"مبالغ فيه":{bg:"#FFEBEE",c:"#C62828",ic:"⚠️"}};
+    const v=vm[r.verdict]||{bg:"#F5F5F5",c:"#666",ic:"📊"};
+    const mo=Math.round(r.avg/12/50)*50;
+    document.getElementById('est-out').innerHTML=`
+      <div class="result">
+        <div class="r-meta">${ptype} · ${hood} · ${area} م² · ${rooms} غرف</div>
+        <div class="r-sum">${r.summary||''}</div>
+        <div class="r-price">${(r.avg||0).toLocaleString('ar-SA')} <span class="r-unit">ر.س</span></div>
+        <div class="r-range">النطاق: ${(r.min||0).toLocaleString('ar-SA')} — ${(r.max||0).toLocaleString('ar-SA')} ر.س / سنة</div>
+        <div style="margin:10px 0;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+          <span class="badge" style="background:${v.bg};color:${v.c}">${v.ic} ${r.verdict}</span>
+          <span class="badge-mo">شهرياً: ${mo.toLocaleString('ar-SA')} ر.س</span>
+          ${r.rentability?`<span class="badge" style="background:#FFF8E1;color:#E65100">📈 عائد ${r.rentability}%</span>`:''}
+        </div>
+      </div>
+      <div class="tip"><div class="tip-lbl">💡 نصيحة الخبير</div><div class="tip-body">${r.tip||''}</div></div>
+      <div class="r-acts">
+        <button style="background:#fff;color:#0D2B1E;border:2px solid #0D2B1E"
+          onclick="switchTab('finance',document.querySelectorAll('.tab')[1])">🏦 احسب التمويل</button>
+        <button style="background:linear-gradient(135deg,#0D2B1E,#255C40);color:#fff"
+          onclick="switchTab('compare',document.querySelectorAll('.tab')[2])">🗺️ قارن الأحياء</button>
+      </div>`;
+  }catch(e){
+    document.getElementById('est-out').innerHTML=`<div class="tip"><div class="tip-lbl">⚠️ تنبيه</div><div class="tip-body">تعذّر الاتصال. تأكد من الاتصال وحاول مجدداً.</div></div>`;
   }
 }
 
-// ── حاسبة التمويل ──
+/* ════════════════════════════════════
+   حاسبة التمويل
+════════════════════════════════════ */
 function doFinance(){
-  const pv = Number(document.getElementById('propVal').value);
-  const sl = Number(document.getElementById('salary').value);
-  const yr = Number(document.getElementById('years').value);
-  if(!pv||!sl){ alert('أدخل قيمة العقار والراتب'); return; }
-
-  const rate=0.055, loan=pv*0.9;
-  const monthly = Math.round(loan*(rate/12)/(1-Math.pow(1+rate/12,-yr*12)));
-  const pct = Math.round(monthly/sl*100);
-  const eligible = pct <= 33;
-  const down = Math.round(pv*0.1/1000)*1000;
-
-  document.getElementById('fin-result').innerHTML = `
-    <div class="fin-result" style="border:1.5px solid ${eligible?'#4CAF5044':'#EF535044'}">
-      <div style="font-size:26px;margin-bottom:6px">${eligible?'✅':'⚠️'}</div>
-      <div style="font-size:14px;font-weight:800;color:${eligible?'#2E7D32':'#C62828'};margin-bottom:12px">
-        ${eligible?'تبدو مؤهلاً للتمويل':'قد تحتاج مراجعة الملف'}
+  const pv=Number(document.getElementById('propVal').value);
+  const sl=Number(document.getElementById('salary').value);
+  const yr=Number(document.getElementById('yrs').value);
+  const dp=Number(document.getElementById('dp').value)/100;
+  if(!pv||!sl){alert('أدخل قيمة العقار والراتب');return;}
+  const rate=0.055, loan=pv*(1-dp);
+  const mo=Math.round(loan*(rate/12)/(1-Math.pow(1+rate/12,-yr*12)));
+  const pct=Math.round(mo/sl*100);
+  const down=Math.round(pv*dp/1000)*1000;
+  const total=mo*yr*12, interest=total-loan;
+  const ok=pct<=33;
+  document.getElementById('fin-out').innerHTML=`
+    <div class="fin-card" style="border:1.5px solid ${ok?'#4CAF5044':'#EF535044'}">
+      <div style="font-size:28px;margin-bottom:6px">${ok?'✅':'⚠️'}</div>
+      <div style="font-size:16px;font-weight:800;color:${ok?'#2E7D32':'#C62828'};margin-bottom:14px">
+        ${ok?'تبدو مؤهلاً للتمويل':'قد تحتاج مراجعة الملف'}
       </div>
-      <div style="background:#F8F4EE;border-radius:9px;padding:13px;margin-bottom:12px">
-        <div style="font-size:11px;color:#888;margin-bottom:4px">القسط الشهري التقديري</div>
-        <div class="fin-price" style="color:#1A3226">${monthly.toLocaleString('ar-SA')} <span style="font-size:13px">ر.س</span></div>
-        <div style="font-size:10px;color:#888;margin-top:2px">على مدة ${yr} سنة · تمويل 90%</div>
+      <div style="background:#F7F2EA;border-radius:10px;padding:15px;margin-bottom:4px">
+        <div style="font-size:12px;color:#7A8C80;margin-bottom:4px">القسط الشهري التقديري</div>
+        <div class="fin-big" style="color:#0D2B1E">${mo.toLocaleString('ar-SA')} <span style="font-size:14px;font-weight:400">ر.س</span></div>
+        <div style="font-size:11px;color:#7A8C80;margin-top:3px">على مدة ${yr} سنة · تمويل ${100-dp*100}%</div>
       </div>
-      <div class="fin-grid">
-        <div class="fin-item" style="background:rgba(26,50,38,.08)">
-          <div style="font-size:9px;color:#888">الدفعة الأولى</div>
-          <div style="font-size:14px;font-weight:800;color:#1A3226;margin-top:3px">${down.toLocaleString('ar-SA')} ر.س</div>
+      <div class="fin-g">
+        <div class="fin-i" style="background:rgba(13,43,30,.07)">
+          <div class="fin-il">الدفعة الأولى</div>
+          <div class="fin-iv" style="color:#0D2B1E">${down.toLocaleString('ar-SA')} <small style="font-size:11px;font-weight:400">ر.س</small></div>
         </div>
-        <div class="fin-item" style="background:rgba(166,123,64,.12)">
-          <div style="font-size:9px;color:#888">نسبة القسط</div>
-          <div style="font-size:14px;font-weight:800;color:#A67B40;margin-top:3px">${pct}% من الراتب</div>
+        <div class="fin-i" style="background:rgba(184,137,42,.1)">
+          <div class="fin-il">نسبة القسط من الراتب</div>
+          <div class="fin-iv" style="color:#B8892A">${pct}%</div>
+        </div>
+        <div class="fin-i" style="background:rgba(13,43,30,.07)">
+          <div class="fin-il">إجمالي الفوائد</div>
+          <div class="fin-iv" style="color:#0D2B1E;font-size:14px">${Math.round(interest).toLocaleString('ar-SA')} <small style="font-size:11px;font-weight:400">ر.س</small></div>
+        </div>
+        <div class="fin-i" style="background:rgba(184,137,42,.1)">
+          <div class="fin-il">إجمالي المدفوعات</div>
+          <div class="fin-iv" style="color:#B8892A;font-size:14px">${Math.round(total).toLocaleString('ar-SA')} <small style="font-size:11px;font-weight:400">ر.س</small></div>
         </div>
       </div>
     </div>
-    <div class="disclaimer">
-      <div class="disc-title">📌 تنبيه مهم</div>
-      <div class="disc-text">هذا تقدير مبدئي لأغراض التخطيط فقط بناءً على البيانات المدخلة. <strong>الرقم الفعلي سيتم إخطارك به من الجهة الممولة</strong> بعد مراجعة ملفك الائتماني وتطبيق الشروط البنكية المعتمدة.</div>
+    <div class="disc"><div class="disc-lbl">📌 تنبيه مهم</div>
+      <div class="disc-body">هذا تقدير مبدئي لأغراض التخطيط. الرقم الفعلي يُحدَّد من الجهة الممولة بعد مراجعة ملفك الائتماني وتطبيق شروط البنك.</div>
     </div>
-    <button class="btn-main btn-gold" onclick="openModal('buyer')" style="font-size:12px">📲 تواصل مع جهة التمويل</button>`;
+    <button class="btn-main gold" onclick="openModal('buyer')" style="font-size:13px">📲 تواصل مع جهة التمويل</button>`;
+}
+
+/* ════════════════════════════════════
+   مقارنة الأحياء (AI)
+════════════════════════════════════ */
+async function doCompare(){
+  if(selected.length<2){alert('اختر حيّين على الأقل من الخريطة');return;}
+  const cType=document.getElementById('cmp-type').value;
+  document.getElementById('cmp-out').innerHTML=`<div class="loading"><div class="spinner"></div><div>جاري تحليل ومقارنة الأحياء...</div></div>`;
+
+  const prompt=`أنت خبير عقاري متخصص في سوق الرياض. قارن هذه الأحياء لنوع "${cType}":
+${selected.join('، ')}
+أجب JSON فقط بدون أي نص إضافي:
+{
+  "neighborhoods":[
+    {"name":"اسم الحي","avgRent":رقم,"verdict":"ممتاز أو جيد أو متوسط","pros":"ميزة رئيسية","cons":"عيب رئيسي","invest":"ضعيف أو متوسط أو جيد أو ممتاز"}
+  ],
+  "recommendation":"توصية نهائية بجملتين",
+  "bestFor":"اسم أفضل حي"
+}`;
+
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:800,
+        messages:[{role:"user",content:prompt}]})
+    });
+    const d=await res.json();
+    const r=JSON.parse(d.content[0].text.replace(/```json|```/g,"").trim());
+    const vC={"ممتاز":"#2E7D32","جيد":"#1565C0","متوسط":"#E65100"},
+          vB={"ممتاز":"#E8F5E9","جيد":"#E3F2FD","متوسط":"#FFF3E0"},
+          iC={"ممتاز":"#2E7D32","جيد":"#1565C0","متوسط":"#E65100","ضعيف":"#C62828"},
+          iB={"ممتاز":"#E8F5E9","جيد":"#E3F2FD","متوسط":"#FFF3E0","ضعيف":"#FFEBEE"};
+    const maxR=Math.max(...r.neighborhoods.map(n=>n.avgRent||0));
+    const rows=r.neighborhoods.map(n=>`
+      <div class="cmp-row" style="${n.name===r.bestFor?'background:#F8FFF8;border-radius:8px;padding:11px 8px;':''}">
+        <div style="min-width:80px">
+          <div style="font-weight:800;color:#0D2B1E">${n.name===r.bestFor?'⭐ ':''}${n.name}</div>
+          <div style="font-size:11px;color:#7A8C80;margin-top:2px">${n.pros}</div>
+        </div>
+        <div class="cmp-bar-w">
+          <div class="cmp-bar" style="width:${maxR>0?Math.round((n.avgRent/maxR)*100):50}%"></div>
+        </div>
+        <div style="text-align:left;min-width:95px">
+          <div style="font-weight:800;font-size:15px;color:#111">${(n.avgRent||0).toLocaleString('ar-SA')} ر.س</div>
+          <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap">
+            <span class="cmp-v" style="background:${vB[n.verdict]||'#F5F5F5'};color:${vC[n.verdict]||'#666'}">${n.verdict}</span>
+            <span class="cmp-v" style="background:${iB[n.invest]||'#F5F5F5'};color:${iC[n.invest]||'#666'}">استثمار ${n.invest}</span>
+          </div>
+        </div>
+      </div>`).join('');
+
+    document.getElementById('cmp-out').innerHTML=`
+      <div style="animation:fadeUp .35s ease">
+        <div class="cmp-hd">📊 مقارنة ${cType} · ${selected.join(' · ')}</div>
+        <div class="cmp-body">
+          <div style="font-size:11px;color:#7A8C80;margin-bottom:12px;text-align:center">الإيجار السنوي التقديري</div>
+          ${rows}
+        </div>
+      </div>
+      <div class="tip"><div class="tip-lbl">🏆 توصية الخبير</div><div class="tip-body">${r.recommendation||''}</div></div>
+      <button class="btn-main" onclick="openModal('buyer')" style="font-size:13px">📋 احفظ المقارنة في حسابك</button>`;
+  }catch(e){
+    document.getElementById('cmp-out').innerHTML=`<div class="tip"><div class="tip-lbl">⚠️ تنبيه</div><div class="tip-body">تعذّر إتمام المقارنة. تأكد من الاتصال وحاول مجدداً.</div></div>`;
+  }
 }
 </script>
 </body>
