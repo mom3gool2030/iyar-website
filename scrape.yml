@@ -1,0 +1,49 @@
+name: 🔄 تحديث بيانات الأسعار
+
+on:
+  # يشتغل كل يوم الساعة 3 صباحاً (بتوقيت السعودية = 12 منتصف الليل UTC)
+  schedule:
+    - cron: "0 0 * * *"
+
+  # يشتغل كمان لما تعمل push على الـ main branch
+  push:
+    branches: [main]
+
+  # تقدر تشغّله يدوياً من GitHub في أي وقت
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    name: سحب البيانات وتحديث الموقع
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. نسخ الريبو
+      - name: 📥 سحب الكود
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. تثبيت Python
+      - name: 🐍 إعداد Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      # 3. تثبيت المكتبات
+      - name: 📦 تثبيت المكتبات
+        run: pip install -r requirements.txt
+
+      # 4. تشغيل السكريبت
+      - name: 🔍 تشغيل سكريبت السحب
+        run: python scraper.py
+
+      # 5. رفع التغييرات للـ GitHub
+      - name: 📤 رفع data/prices.json
+        run: |
+          git config user.name  "عيار-بوت"
+          git config user.email "bot@iyar.sa"
+          git add data/prices.json
+          git diff --staged --quiet || git commit -m "⬆️ تحديث الأسعار $(date +'%Y-%m-%d %H:%M') UTC"
+          git push
