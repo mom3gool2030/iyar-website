@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -761,21 +762,13 @@ function renderPills(){
    Gemini AI Helper
 ══════════════════════════════ */
 async function callGemini(prompt){
-  const res = await fetch(CFG.openai_url,{
+  const res = await fetch('/.netlify/functions/ai',{
     method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'Authorization':`Bearer ${CFG.openai_key}`
-    },
-    body:JSON.stringify({
-      model:'gpt-4o-mini',
-      messages:[{role:'user',content:prompt}],
-      max_tokens:800,
-      temperature:0.3
-    })
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({prompt})
   });
   const d = await res.json();
-  return d.choices[0].message.content.replace(/```json|```/g,'').trim();
+  return d.text.replace(/```json|```/g,'').trim();
 }
 
 /* ══════════════════════════════
