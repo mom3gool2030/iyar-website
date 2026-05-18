@@ -18,8 +18,8 @@
 const CFG = {
   supabase_url:  "https://ojgrxarzmalfdxiqddrb.supabase.co",
   supabase_key:  "sb_publishable_yY2q3CSVJwLHcTmmTpkdtQ_XDwIQRiW",
-  gemini_key:    "AIzaSyABnLe3B4_rX3w7ZgqvQ8u2j6ZrzA03R0o",
-  gemini_url:    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+  openai_key:    "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",
+  openai_url:    "https://api.openai.com/v1/chat/completions"
 };
 </script>
 
@@ -761,13 +761,21 @@ function renderPills(){
    Gemini AI Helper
 ══════════════════════════════ */
 async function callGemini(prompt){
-  const res = await fetch(`${CFG.gemini_url}?key=${CFG.gemini_key}`,{
+  const res = await fetch(CFG.openai_url,{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':`Bearer ${CFG.openai_key}`
+    },
+    body:JSON.stringify({
+      model:'gpt-4o-mini',
+      messages:[{role:'user',content:prompt}],
+      max_tokens:800,
+      temperature:0.3
+    })
   });
   const d = await res.json();
-  return d.candidates[0].content.parts[0].text.replace(/```json|```/g,'').trim();
+  return d.choices[0].message.content.replace(/```json|```/g,'').trim();
 }
 
 /* ══════════════════════════════
