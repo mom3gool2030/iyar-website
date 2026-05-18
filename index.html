@@ -836,7 +836,7 @@ function calcEstimate(hood, ptype, area, rooms, age, floor, furnished, dbPrice){
   return JSON.stringify({min:mn, max:mx, avg, summary, tip, verdict, rentability});
 }
 
-async function callGemini(prompt, meta={}){
+function callGemini(prompt, meta={}){
   // نستخدم نظام التقييم المحلي
   if(meta.type === 'estimate'){
     return calcEstimate(meta.hood, meta.ptype, meta.area, meta.rooms, meta.age, meta.floor, meta.furnished, meta.dbPrice);
@@ -906,15 +906,15 @@ async function doEstimate(){
         age=document.getElementById('age').value,
         floor=document.getElementById('floor').value;
 
-  document.getElementById('est-out').innerHTML=`<div class="loading"><div class="spinner"></div><div>جاري تحليل بيانات السوق بالذكاء الاصطناعي...</div></div>`;
+  document.getElementById('est-out').innerHTML=`<div class="loading"><div class="spinner"></div><div>جاري تحليل بيانات السوق...</div></div>`;
 
-  // نجلب بيانات السوق من Supabase أولاً
+  // نجلب بيانات السوق من Supabase أولاً — اختياري
   let dbPrice = null;
   try{
     const {data} = await sb.from('prices').select('avg_price,min_price,max_price,change_pct,source')
       .eq('neighborhood',hood).eq('type',ptype).maybeSingle();
     if(data) dbPrice = data;
-  }catch(e){}
+  }catch(e){ /* نكمل بدون Supabase */ }
 
   const marketContext = dbPrice
     ? `بيانات السوق الفعلية: متوسط ${dbPrice.avg_price?.toLocaleString('ar-SA')} ر.س، نطاق ${dbPrice.min_price?.toLocaleString('ar-SA')}–${dbPrice.max_price?.toLocaleString('ar-SA')} ر.س، تغير ${dbPrice.change_pct}%`
@@ -1036,7 +1036,7 @@ async function doCompare(){
 {"neighborhoods":[{"name":"اسم","avgRent":رقم,"verdict":"ممتاز أو جيد أو متوسط","pros":"ميزة","cons":"عيب","invest":"ضعيف أو متوسط أو جيد أو ممتاز"}],"recommendation":"توصية بجملتين","bestFor":"أفضل حي"}`;
 
   try{
-    const txt = await callGemini(prompt, {type:'compare', selected, cType});
+    const txt = callGemini(prompt, {type:'compare', selected, cType});
     const r = JSON.parse(txt);
     const vC={"ممتاز":"#2E7D32","جيد":"#1565C0","متوسط":"#E65100"},
           vB={"ممتاز":"#E8F5E9","جيد":"#E3F2FD","متوسط":"#FFF3E0"},
