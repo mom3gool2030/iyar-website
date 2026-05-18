@@ -583,13 +583,12 @@ async function doEstimate(){
 {"min":رقم,"max":رقم,"avg":رقم,"summary":"جملة قصيرة واحدة","tip":"نصيحة عملية واحدة","verdict":"فرصة أو عادل أو مبالغ فيه","rentability":"رقم فقط مثل 5.2"}`;
 
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{
+    const res=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyABnLe3B4_rX3w7ZgqvQ8u2j6ZrzA03R0o",{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:500,
-        messages:[{role:"user",content:prompt}]})
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
     });
     const d=await res.json();
-    const r=JSON.parse(d.content[0].text.replace(/```json|```/g,"").trim());
+    const r=JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json|```/g,"").trim());
     const vm={"فرصة":{bg:"#E8F5E9",c:"#2E7D32",ic:"🔥"},"عادل":{bg:"#E3F2FD",c:"#1565C0",ic:"✅"},"مبالغ فيه":{bg:"#FFEBEE",c:"#C62828",ic:"⚠️"}};
     const v=vm[r.verdict]||{bg:"#F5F5F5",c:"#666",ic:"📊"};
     const mo=Math.round(r.avg/12/50)*50;
@@ -688,13 +687,12 @@ ${selected.join('، ')}
 }`;
 
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{
+    const res=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyABnLe3B4_rX3w7ZgqvQ8u2j6ZrzA03R0o",{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:800,
-        messages:[{role:"user",content:prompt}]})
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
     });
     const d=await res.json();
-    const r=JSON.parse(d.content[0].text.replace(/```json|```/g,"").trim());
+    const r=JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json|```/g,"").trim());
     const vC={"ممتاز":"#2E7D32","جيد":"#1565C0","متوسط":"#E65100"},
           vB={"ممتاز":"#E8F5E9","جيد":"#E3F2FD","متوسط":"#FFF3E0"},
           iC={"ممتاز":"#2E7D32","جيد":"#1565C0","متوسط":"#E65100","ضعيف":"#C62828"},
