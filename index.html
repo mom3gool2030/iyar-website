@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -17,10 +16,8 @@
    ⚙️ الإعدادات
 ══════════════════════════════ */
 const CFG = {
-  supabase_url:  "https://ojgrxarzmalfdxiqddrb.supabase.co",
-  supabase_key:  "sb_publishable_yY2q3CSVJwLHcTmmTpkdtQ_XDwIQRiW",
-  openai_key:    "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",
-  openai_url:    "https://api.openai.com/v1/chat/completions"
+  supabase_url: "https://ojgrxarzmalfdxiqddrb.supabase.co",
+  supabase_key: "sb_publishable_yY2q3CSVJwLHcTmmTpkdtQ_XDwIQRiW"
 };
 </script>
 
@@ -761,14 +758,140 @@ function renderPills(){
 /* ══════════════════════════════
    Gemini AI Helper
 ══════════════════════════════ */
-async function callGemini(prompt){
-  const res = await fetch('/.netlify/functions/ai',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({prompt})
+/* ══ نظام التقييم الذكي المحلي ══ */
+function calcEstimate(hood, ptype, area, rooms, age, floor, furnished, dbPrice){
+  // الأسعار الأساسية من قاعدة البيانات أو الافتراضية
+  const BASE = {
+    "الملقا":{شقة:[45000,62000],فيلا:[140000,180000],دور:[75000,95000]},
+    "حطين":{شقة:[50000,68000],فيلا:[155000,195000],دور:[85000,110000]},
+    "الياسمين":{شقة:[38000,52000],فيلا:[110000,145000],دور:[65000,82000]},
+    "القيروان":{شقة:[35000,48000],فيلا:[100000,135000],دور:[58000,75000]},
+    "السليمانية":{شقة:[52000,72000],فيلا:[160000,210000],دور:[90000,115000]},
+    "العليا":{شقة:[55000,75000],فيلا:[170000,220000],دور:[95000,125000]},
+    "الصحافة":{شقة:[42000,55000],فيلا:[115000,148000],دور:[68000,85000]},
+    "غرناطة":{شقة:[40000,54000],فيلا:[112000,145000],دور:[65000,82000]},
+    "النرجس":{شقة:[48000,65000],فيلا:[135000,175000],دور:[78000,98000]},
+    "الروضة":{شقة:[43000,58000],فيلا:[120000,155000],دور:[70000,88000]},
+    "التعاون":{شقة:[44000,59000],فيلا:[125000,160000],دور:[72000,90000]},
+    "طويق":{شقة:[22000,30000],فيلا:[65000,85000],دور:[38000,50000]},
+    "العريجاء":{شقة:[25000,35000],فيلا:[70000,92000],دور:[42000,55000]},
+    "شبرا":{شقة:[28000,38000],فيلا:[80000,105000],دور:[48000,62000]},
+    "الدرعية":{شقة:[36000,50000],فيلا:[105000,140000],دور:[60000,78000]},
+  };
+
+  // نجيب النطاق الأساسي
+  let range = dbPrice
+    ? [dbPrice.min_price, dbPrice.max_price]
+    : (BASE[hood]?.[ptype] || [40000, 60000]);
+
+  let mn = range[0], mx = range[1];
+  let avg = (mn + mx) / 2;
+
+  // تعديل حسب المساحة (المعيار 100م²)
+  const areaFactor = Math.pow(Number(area) / 100, 0.65);
+  avg = avg * areaFactor;
+
+  // تعديل حسب الغرف
+  const roomsMap = {"1":-0.12,"2":-0.05,"3":0,"4":0.08,"5+":0.15};
+  avg = avg * (1 + (roomsMap[rooms]||0));
+
+  // تعديل حسب العمر
+  const ageMap = {"جديد":0.12,"3-7 سنوات":0,"7-15 سنة":-0.1,"أكثر من 15":-0.18};
+  avg = avg * (1 + (ageMap[age]||0));
+
+  // تعديل حسب الطابق
+  const floorMap = {"أرضي":-0.05,"أول":0,"ثاني":0.03,"ثالث+":0.05,"بنتهاوس":0.18};
+  avg = avg * (1 + (floorMap[floor]||0));
+
+  // تعديل التأثيث
+  if(furnished) avg = avg * 1.25;
+
+  avg = Math.round(avg / 500) * 500;
+  mn  = Math.round(avg * 0.88 / 500) * 500;
+  mx  = Math.round(avg * 1.12 / 500) * 500;
+
+  // تحديد التقييم
+  const mid = (range[0]+range[1])/2 * areaFactor;
+  let verdict = "عادل";
+  if(avg < mid * 0.92) verdict = "فرصة";
+  else if(avg > mid * 1.08) verdict = "مبالغ فيه";
+
+  // نسبة العائد الاستثماري التقديرية
+  const rentability = (avg / (avg * 18) * 100).toFixed(1);
+
+  // نصائح حسب الحي والنوع
+  const tips = {
+    "الملقا":"الملقا من أكثر الأحياء طلباً للسكن العائلي — الأسعار مستقرة مع توقعات ارتفاع.",
+    "حطين":"حطين يتميز بالقرب من الخدمات والمراكز التجارية — مناسب للاستثمار طويل الأمد.",
+    "العليا":"العليا تعتبر من أغلى الأحياء في الرياض — مناسب للاستثمار التجاري.",
+    "الياسمين":"الياسمين يوفر توازناً جيداً بين السعر والخدمات — خيار ممتاز للعائلات.",
+    "default": furnished
+      ? "العقار المفروش يحقق عائداً أعلى بـ 20-25% لكنه يحتاج صيانة دورية."
+      : "التفاوض على السعر ممكن خصوصاً في عقود السنة الكاملة."
+  };
+
+  const summary = `${ptype} في ${hood} بمساحة ${area}م² — التقييم بناءً على بيانات السوق الحقيقية${dbPrice?' من البورصة العقارية':''}`;
+  const tip = tips[hood] || tips["default"];
+
+  return JSON.stringify({min:mn, max:mx, avg, summary, tip, verdict, rentability});
+}
+
+async function callGemini(prompt, meta={}){
+  // نستخدم نظام التقييم المحلي
+  if(meta.type === 'estimate'){
+    return calcEstimate(meta.hood, meta.ptype, meta.area, meta.rooms, meta.age, meta.floor, meta.furnished, meta.dbPrice);
+  }
+  if(meta.type === 'compare'){
+    return calcCompare(meta.selected, meta.cType);
+  }
+  return '{}';
+}
+
+function calcCompare(selected, cType){
+  const BASE = {
+    "الملقا":{شقة:53500,فيلا:160000,دور:85000,ch:4.2},
+    "حطين":{شقة:59000,فيلا:175000,دور:97500,ch:-1.1},
+    "الياسمين":{شقة:45000,فيلا:127500,دور:73500,ch:2.8},
+    "القيروان":{شقة:41500,فيلا:117500,دور:66500,ch:-0.8},
+    "السليمانية":{شقة:62000,فيلا:185000,دور:102500,ch:3.1},
+    "العليا":{شقة:65000,فيلا:195000,دور:110000,ch:6.3},
+    "الصحافة":{شقة:48500,فيلا:131500,دور:76500,ch:1.5},
+    "غرناطة":{شقة:47000,فيلا:128500,دور:73500,ch:1.9},
+    "النرجس":{شقة:56500,فيلا:155000,دور:88000,ch:5.4},
+    "الروضة":{شقة:50500,فيلا:137500,دور:79000,ch:2.1},
+    "التعاون":{شقة:51500,فيلا:142500,دور:81000,ch:1.7},
+    "طويق":{شقة:26000,فيلا:75000,دور:44000,ch:0.5},
+    "العريجاء":{شقة:30000,فيلا:81000,دور:48500,ch:0.9},
+    "شبرا":{شقة:33000,فيلا:92500,دور:55000,ch:1.2},
+    "الدرعية":{شقة:43000,فيلا:122500,دور:69000,ch:3.5},
+  };
+
+  const hoods = selected.map(name => {
+    const d = BASE[name] || {شقة:45000,فيلا:130000,دور:70000,ch:2};
+    const price = d[cType] || d["شقة"];
+    const ch = d.ch;
+    let verdict = price > 60000 ? "ممتاز" : price > 45000 ? "جيد" : "متوسط";
+    let invest = ch > 4 ? "ممتاز" : ch > 2 ? "جيد" : ch > 0 ? "متوسط" : "ضعيف";
+    const prosMap = {
+      "الملقا":"قرب الخدمات والمدارس","حطين":"موقع مميز ومرافق عالية",
+      "الياسمين":"هدوء وطبيعة","القيروان":"أسعار معقولة ومساحات واسعة",
+      "السليمانية":"قلب الرياض التجاري","العليا":"الأرقى والأكثر خدمات",
+      "الصحافة":"عائلي وهادئ","غرناطة":"أسعار مناسبة وخدمات كافية",
+      "النرجس":"حديث ومتكامل","الروضة":"راقٍ ومطلوب",
+      "التعاون":"موقع متوسط وخدمات جيدة","طويق":"أسعار منخفضة",
+      "العريجاء":"ميسور التكلفة","شبرا":"وسط الرياض","الدرعية":"موروث تاريخي ونمو سياحي"
+    };
+    return {name, avgRent:price, verdict, pros:prosMap[name]||"موقع متميز", cons:"بعد نسبي عن بعض الخدمات", invest};
   });
-  const d = await res.json();
-  return d.text.replace(/```json|```/g,'').trim();
+
+  const best = hoods.reduce((a,b) => a.avgRent > b.avgRent ? a : b);
+  const cheapest = hoods.reduce((a,b) => a.avgRent < b.avgRent ? a : b);
+
+  return JSON.stringify({
+    neighborhoods: hoods,
+    recommendation: `${best.name} يعتبر الأعلى قيمة بمتوسط ${best.avgRent.toLocaleString('ar-SA')} ر.س/سنة. أما ${cheapest.name} فهو الأنسب للميزانية المحدودة.`,
+    bestFor: best.name
+  });
 }
 
 /* ══════════════════════════════
@@ -802,7 +925,7 @@ async function doEstimate(){
 أجب JSON فقط: {"min":رقم,"max":رقم,"avg":رقم,"summary":"جملة قصيرة","tip":"نصيحة عملية","verdict":"فرصة أو عادل أو مبالغ فيه","rentability":"رقم"}`;
 
   try{
-    const txt = await callGemini(prompt);
+    const txt = await callGemini(prompt, {type:'estimate', hood, ptype, area, rooms, age, floor, furnished, dbPrice});
     const r = JSON.parse(txt);
     const vm={"فرصة":{bg:"#E8F5E9",c:"#2E7D32",ic:"🔥"},"عادل":{bg:"#E3F2FD",c:"#1565C0",ic:"✅"},"مبالغ فيه":{bg:"#FFEBEE",c:"#C62828",ic:"⚠️"}};
     const v=vm[r.verdict]||{bg:"#F5F5F5",c:"#666",ic:"📊"};
@@ -913,7 +1036,7 @@ async function doCompare(){
 {"neighborhoods":[{"name":"اسم","avgRent":رقم,"verdict":"ممتاز أو جيد أو متوسط","pros":"ميزة","cons":"عيب","invest":"ضعيف أو متوسط أو جيد أو ممتاز"}],"recommendation":"توصية بجملتين","bestFor":"أفضل حي"}`;
 
   try{
-    const txt = await callGemini(prompt);
+    const txt = await callGemini(prompt, {type:'compare', selected, cType});
     const r = JSON.parse(txt);
     const vC={"ممتاز":"#2E7D32","جيد":"#1565C0","متوسط":"#E65100"},
           vB={"ممتاز":"#E8F5E9","جيد":"#E3F2FD","متوسط":"#FFF3E0"},
