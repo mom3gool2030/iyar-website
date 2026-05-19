@@ -1,5 +1,4 @@
-name: 🔄 تحديث بيانات الأسعار
-
+name: Update Prices
 on:
   schedule:
     - cron: "0 0 * * *"
@@ -9,24 +8,31 @@ on:
 
 jobs:
   scrape:
-    name: سحب البيانات وتحديث الموقع
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
-      - name: 📥 سحب الكود
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 🐍 إعداد Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: "pip"
 
-      - name: 📦 تثبيت المكتبات
-        run: pip install requests beautifulsoup4 lxml
+      - name: Install deps
+        run: pip install requests
 
-      - name: 🔍 تشغيل سكريبت السحب
+      - name: Run scraper
         env:
           SUPABASE_URL: https://ojgrxarzmalfdxiqddrb.supabase.co
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python scraper.py
+
+      - name: Commit prices.json
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data/prices.json
+          git diff --staged --quiet || git commit -m "Update prices.json"
+          git push
