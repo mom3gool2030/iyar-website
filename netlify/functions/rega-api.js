@@ -1,5 +1,12 @@
 const BASE = "https://rentalrei.rega.gov.sa/RegaIndicatorsAPIs/api/IndicatorEjar";
 
+var BROWSER_HEADERS = {
+  "Content-Type": "application/json",
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Referer": "https://rentalrei.rega.gov.sa/",
+  "Origin": "https://rentalrei.rega.gov.sa"
+};
+
 exports.handler = async function(event) {
   var h = {
     "Access-Control-Allow-Origin": "*",
@@ -15,7 +22,7 @@ exports.handler = async function(event) {
   try {
     var tokenRes = await fetch(BASE + "/GetToken", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: BROWSER_HEADERS,
       body: "{}"
     });
     var token = (await tokenRes.text()).replace(/"/g, "").trim();
@@ -25,10 +32,10 @@ exports.handler = async function(event) {
     var url = BASE + "/" + seg + qs;
 
     var res = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
+      method: "GET",
+      headers: Object.assign({}, BROWSER_HEADERS, {
         "Authorization": "Bearer " + token
-      }
+      })
     });
 
     var data = await res.json();
