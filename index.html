@@ -3,47 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>عيار العقارية — مؤشر العقارات في الرياض</title>
+<title>عيار العقارية — اعرف القيمة الإيجارية للعقار بالرياض</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-/* ══════════════════════════════
-   ⚙️ الإعدادات
-══════════════════════════════ */
-const CFG = {
-  supabase_url: "https://ojgrxarzmalfdxiqddrb.supabase.co",
-  supabase_key: "sb_publishable_yY2q3CSVJwLHcTmmTpkdtQ_XDwIQRiW"
-};
+const CFG={supabase_url:"https://ojgrxarzmalfdxiqddrb.supabase.co",supabase_key:"sb_publishable_yY2q3CSVJwLHcTmmTpkdtQ_XDwIQRiW"};
 </script>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --g:#0D2B1E;--g2:#1A3D2B;--g3:#255C40;--g4:#0A2018;
-  --gold:#B8892A;--goldL:#D4A84B;--goldXL:#F0C97A;
-  --sand:#F7F2EA;--sand2:#F0E8D8;--white:#FFFFFF;
-  --dark:#111810;--mid:#3A4A3E;--muted:#7A8C80;
-  --border:#DDD5BE;--border2:#E8DFCC;
-  --radius:16px;--rsm:10px;--rxl:22px;
-  --sh:0 2px 20px rgba(0,0,0,.07);
-  --shm:0 8px 40px rgba(0,0,0,.14);
-}
+:root{--g:#0D2B1E;--g2:#1A3D2B;--g3:#255C40;--g4:#0A2018;--gold:#B8892A;--goldL:#D4A84B;--goldXL:#F0C97A;--sand:#F7F2EA;--white:#FFFFFF;--dark:#111810;--mid:#3A4A3E;--muted:#7A8C80;--border:#DDD5BE;--border2:#E8DFCC;--radius:16px;--rsm:10px;--rxl:22px;--sh:0 2px 20px rgba(0,0,0,.07);--shm:0 8px 40px rgba(0,0,0,.14)}
 html{scroll-behavior:smooth}
 body{font-family:'Tajawal',system-ui,sans-serif;background:var(--sand);color:var(--dark);direction:rtl;min-height:100vh}
-
-/* ── HEADER ── */
 .hdr{background:linear-gradient(160deg,var(--g4) 0%,var(--g) 40%,var(--g2) 75%,var(--g3) 100%);position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.06)}
 .hdr-in{max-width:960px;margin:0 auto;padding:13px 20px 0;display:flex;flex-direction:column}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
-.logo{display:flex;align-items:baseline;gap:7px;cursor:default;user-select:none}
-.logo-ar{color:var(--goldXL);font-size:26px;font-weight:900;letter-spacing:-1px}
-.logo-dot{color:var(--gold);font-size:26px}
-.logo-tag{color:rgba(255,255,255,.38);font-size:10px;letter-spacing:2.5px;font-weight:400}
 .hdr-right{display:flex;align-items:center;gap:8px}
 .user-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:40px;padding:5px 14px 5px 6px;cursor:pointer;transition:all .2s}
 .user-chip:hover{background:rgba(255,255,255,.16)}
@@ -53,8 +30,6 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--sand);color:var
 .btn-login:hover{background:rgba(255,255,255,.18)}
 .btn-signup{background:linear-gradient(135deg,var(--gold),var(--goldL));border:none;color:var(--g);border-radius:var(--rsm);padding:7px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s}
 .btn-signup:hover{filter:brightness(1.08)}
-
-/* ── TICKER ── */
 .ticker-wrap{background:rgba(0,0,0,.22);border-top:1px solid rgba(255,255,255,.06);overflow:hidden;padding:6px 0;margin:0 -20px}
 .ticker-track{display:inline-flex;gap:28px;animation:ticker 35s linear infinite;padding-right:28px;white-space:nowrap}
 .ticker-track:hover{animation-play-state:paused}
@@ -63,57 +38,37 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--sand);color:var
 .tick strong{color:rgba(255,255,255,.88);font-weight:700}
 .tick .up{color:#5DE89A}.tick .dn{color:#FF8080}
 .tick-src{font-size:9px;color:rgba(255,255,255,.3);margin-right:3px}
-
-/* ── TABS ── */
-.tabs{display:flex;gap:2px;margin:0 -20px;background:rgba(0,0,0,.18);padding:6px 20px 0}
-.tab{flex:1;padding:10px 4px;border:none;border-radius:var(--rsm) var(--rsm) 0 0;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,.45);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.tabs{display:flex;gap:2px;margin:0 -20px;background:rgba(0,0,0,.18);padding:6px 20px 0;overflow-x:auto}
+.tab{flex:1;min-width:80px;padding:10px 4px;border:none;border-radius:var(--rsm) var(--rsm) 0 0;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,.45);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
 .tab:hover:not(.on){background:rgba(255,255,255,.07);color:rgba(255,255,255,.7)}
 .tab.on{background:var(--sand);color:var(--g)}
-
-/* ── CONTENT ── */
 .wrap{max-width:960px;margin:0 auto;padding:22px 16px 60px}
 .sec{display:none}.sec.on{display:block;animation:fadeUp .3s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── PAGE HEAD ── */
 .ph{margin-bottom:20px}
 .ph-title{font-size:21px;font-weight:900;color:var(--g);margin-bottom:3px}
 .ph-sub{font-size:13px;color:var(--muted)}
-
-/* ── CARD ── */
 .card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border2);padding:20px;margin-bottom:16px;box-shadow:var(--sh)}
-.card-hd{font-size:15px;font-weight:800;color:var(--g);margin-bottom:16px;display:flex;align-items:center;gap:7px}
-
-/* ── FORM ── */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
-@media(min-width:700px){.g2{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:700px){.g2{grid-template-columns:repeat(4,1fr)}}
 .fld{display:flex;flex-direction:column;gap:5px}
-label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:none}
-input,select{width:100%;background:var(--sand);border:1.5px solid var(--border);border-radius:var(--rsm);padding:11px 13px;font-family:'Tajawal',sans-serif;font-size:14px;color:var(--dark);outline:none;-webkit-appearance:none;transition:border-color .2s,background .2s}
-input:focus,select:focus{border-color:var(--gold);background:#fff}
-input::placeholder{color:#C0B8A8}
+label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.4px}
+input,select,textarea{width:100%;background:var(--sand);border:1.5px solid var(--border);border-radius:var(--rsm);padding:11px 13px;font-family:'Tajawal',sans-serif;font-size:14px;color:var(--dark);outline:none;-webkit-appearance:none;transition:border-color .2s,background .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);background:#fff}
+input::placeholder,textarea::placeholder{color:#C0B8A8}
+textarea{resize:vertical;min-height:90px}
 .tog-row{display:flex;gap:6px}
 .tog{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--rsm);background:var(--sand);color:var(--mid);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s}
 .tog:hover:not(.on){border-color:var(--gold);color:var(--gold)}
 .tog.on{background:var(--g);color:#fff;border-color:var(--g)}
-
-/* ── MAIN BTN ── */
-.btn-main{width:100%;padding:14px;background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;border:none;border-radius:var(--radius);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:6px;letter-spacing:.2px}
+.btn-main{width:100%;padding:14px;background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;border:none;border-radius:var(--radius);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:6px}
 .btn-main:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px);box-shadow:var(--shm)}
-.btn-main:active{transform:translateY(0)}
-.btn-main:disabled{background:#CCC;cursor:default;filter:none;transform:none;box-shadow:none}
-.btn-gold{background:linear-gradient(135deg,var(--gold),var(--goldL));color:var(--g)}
-.btn-outline{background:#fff;color:var(--g);border:2px solid var(--g)}
-
-/* ── LOADING ── */
+.btn-main:disabled{background:#CCC;cursor:default;filter:none;transform:none}
 .loading{text-align:center;padding:36px 20px;color:var(--muted);font-size:14px}
 .spinner{display:inline-block;width:28px;height:28px;border:2.5px solid var(--border2);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── AI RESULT ── */
 .ai-result{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--border2);padding:24px 20px;text-align:center;margin-bottom:14px;box-shadow:var(--sh)}
-.ai-meta{font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:.3px}
+.ai-meta{font-size:11px;color:var(--muted);margin-bottom:8px}
 .ai-sum{font-size:13px;color:var(--mid);margin-bottom:16px;line-height:1.75}
 .ai-price{font-size:40px;font-weight:900;color:var(--g);line-height:1;margin-bottom:3px}
 .ai-unit{font-size:14px;font-weight:500;color:var(--muted)}
@@ -122,12 +77,7 @@ input::placeholder{color:#C0B8A8}
 .badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:800}
 .ai-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .ai-acts button{padding:11px;border-radius:var(--rsm);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
-.tip-box{background:#FFFBF0;border-radius:var(--rsm);border:1px solid rgba(184,137,42,.2);padding:15px 16px;margin-bottom:14px}
-.tip-lbl{font-size:11px;color:var(--gold);font-weight:800;margin-bottom:5px;letter-spacing:.3px}
-.tip-body{font-size:13px;color:var(--dark);line-height:1.85}
 .src-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(13,43,30,.08);color:var(--g);padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-bottom:10px}
-
-/* ── FINANCE ── */
 .fin-card{background:var(--white);border-radius:var(--radius);padding:22px 20px;text-align:center;margin-bottom:14px;box-shadow:var(--sh)}
 .fin-big{font-size:38px;font-weight:900;margin:4px 0}
 .fin-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
@@ -137,20 +87,18 @@ input::placeholder{color:#C0B8A8}
 .disc{background:#FFF8F0;border-radius:var(--rsm);border:1px solid #FFCC8055;padding:13px 15px;margin-bottom:14px}
 .disc-lbl{font-size:11px;color:#D4600A;font-weight:800;margin-bottom:4px}
 .disc-body{font-size:12px;color:#5A3A1A;line-height:1.85}
-
-/* ── MAP ── */
-#map-el{border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border2);height:420px;margin-bottom:14px;box-shadow:var(--sh)}
-@media(max-width:520px){#map-el{height:300px}}
+#map-el{border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border2);height:480px;box-shadow:var(--sh)}
+@media(max-width:650px){
+  #map-el{height:300px}
+  #compare .sec > div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
+}
 .sel-bar{background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:48px;box-shadow:var(--sh)}
 .sel-lbl{font-size:12px;color:var(--muted);font-weight:700;flex-shrink:0}
 .sel-empty{font-size:13px;color:#C0B8A8;font-style:italic}
-.pill{display:inline-flex;align-items:center;gap:5px;background:var(--g);color:#fff;border-radius:16px;padding:4px 10px 4px 7px;font-size:12px;font-weight:700;animation:fadeUp .2s ease}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--g);color:#fff;border-radius:16px;padding:4px 10px 4px 7px;font-size:12px;font-weight:700}
 .pill button{background:rgba(255,255,255,.22);border:none;color:#fff;width:16px;height:16px;border-radius:50%;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0}
-.pill button:hover{background:rgba(255,255,255,.4)}
-.map-legend{display:flex;gap:14px;margin-bottom:10px;font-size:12px;color:var(--muted);align-items:center;flex-wrap:wrap}
+.map-legend{display:flex;gap:14px;margin-bottom:10px;font-size:12px;color:var(--muted);align-items:center}
 .leg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
-
-/* ── CMP RESULT ── */
 .cmp-hd{background:var(--g);color:#fff;border-radius:var(--radius) var(--radius) 0 0;padding:14px 18px;font-size:15px;font-weight:800}
 .cmp-body{background:var(--white);border:1.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:18px;margin-bottom:14px}
 .cmp-row{display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--border2);gap:10px;font-size:14px}
@@ -158,8 +106,33 @@ input::placeholder{color:#C0B8A8}
 .cmp-bar-w{flex:1;background:var(--border2);border-radius:4px;height:7px;overflow:hidden}
 .cmp-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--goldL));border-radius:4px;transition:width .7s ease}
 .cmp-v{font-size:11px;font-weight:800;padding:3px 8px;border-radius:10px;flex-shrink:0}
-
-/* ── AUTH MODAL ── */
+.listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:600px){.listings-grid{grid-template-columns:1fr}}
+.listing-card{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--border2);overflow:hidden;box-shadow:var(--sh);transition:all .2s}
+.listing-card:hover{transform:translateY(-2px);box-shadow:var(--shm)}
+.listing-img{height:150px;background:linear-gradient(135deg,var(--g2),var(--g3));display:flex;align-items:center;justify-content:center;position:relative}
+.listing-badge{position:absolute;top:10px;right:10px;background:var(--gold);color:var(--g);font-size:10px;font-weight:800;padding:3px 10px;border-radius:12px}
+.listing-body{padding:14px}
+.listing-title{font-size:15px;font-weight:800;color:var(--g);margin-bottom:4px}
+.listing-loc{font-size:12px;color:var(--muted);margin-bottom:8px}
+.listing-price{font-size:22px;font-weight:900;color:var(--g);margin-bottom:8px}
+.listing-price span{font-size:12px;font-weight:400;color:var(--muted)}
+.listing-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.listing-tag{background:var(--sand);border:1px solid var(--border);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--mid)}
+.listing-owner{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border2)}
+.listing-owner-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--goldL));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--g);flex-shrink:0}
+.listing-owner-info{flex:1}
+.listing-owner-name{font-size:12px;font-weight:700;color:var(--dark)}
+.listing-owner-date{font-size:10px;color:var(--muted)}
+.listing-contact{background:var(--g);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;flex-shrink:0;text-decoration:none;display:inline-block}
+.add-listing-box{background:linear-gradient(135deg,rgba(13,43,30,.06),rgba(37,92,64,.08));border:2px dashed var(--g3);border-radius:var(--radius);padding:28px 20px;text-align:center;margin-bottom:20px;cursor:pointer;transition:all .2s}
+.add-listing-box:hover{border-color:var(--gold)}
+.filters-bar{background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:12px 16px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;box-shadow:var(--sh)}
+.filter-select{background:var(--sand);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Tajawal',sans-serif;font-size:13px;color:var(--dark);outline:none;cursor:pointer;min-width:110px}
+.owner-notice{background:#FFF8E1;border:1.5px solid #FFD54F;border-radius:var(--rsm);padding:14px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px}
+.owner-checkbox{display:flex;align-items:center;gap:10px;background:var(--sand);border:1.5px solid var(--border);border-radius:var(--rsm);padding:12px 14px;margin-bottom:12px;cursor:pointer}
+.owner-checkbox input[type=checkbox]{width:18px;height:18px;accent-color:var(--g);cursor:pointer;flex-shrink:0}
+.owner-checkbox label{font-size:13px;font-weight:700;color:var(--g);cursor:pointer}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 .overlay.show{display:flex}
 .modal{background:var(--white);border-radius:var(--rxl) var(--rxl) 0 0;padding:24px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s ease}
@@ -177,26 +150,18 @@ input::placeholder{color:#C0B8A8}
 .modal-ok{background:#E8F5E9;border-radius:var(--rsm);padding:10px 14px;font-size:13px;color:#2E7D32;margin-bottom:10px;display:none}
 .modal-ok.show{display:block}
 .modal-ft{text-align:center;font-size:12px;color:var(--muted);margin-top:12px}
-
-/* ── TOAST ── */
+.listing-modal{background:var(--white);border-radius:var(--rxl) var(--rxl) 0 0;padding:24px 20px 44px;width:100%;max-width:520px;animation:slideUp .3s ease;max-height:90vh;overflow-y:auto}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--g);color:#fff;padding:12px 22px;border-radius:40px;font-size:13px;font-weight:700;z-index:600;transition:transform .3s ease;box-shadow:var(--shm);pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
-
-/* ── RESPONSIVE ── */
-@media(max-width:520px){
-  .hdr-in{padding:11px 14px 0}
-  .wrap{padding:16px 12px 50px}
-  .logo-ar{font-size:22px}
-  .ai-price{font-size:34px}
-  .tab{font-size:11px}
-  .logo-tag{display:none}
-}
-
-/* ── LEAFLET POPUP OVERRIDE ── */
-.leaflet-popup-content-wrapper{border-radius:12px !important;box-shadow:var(--shm) !important;font-family:'Tajawal',sans-serif !important;direction:rtl}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:14px}
+.empty-title{font-size:16px;font-weight:800;color:var(--g);margin-bottom:6px}
+.empty-sub{font-size:13px;line-height:1.7}
+@media(max-width:520px){.hdr-in{padding:11px 14px 0}.wrap{padding:16px 12px 50px}.ai-price{font-size:34px}.tab{font-size:10px;min-width:60px}}
+.leaflet-popup-content-wrapper{border-radius:12px !important;font-family:'Tajawal',sans-serif !important;direction:rtl}
 .leaflet-popup-content{margin:14px 16px !important;font-size:13px}
 .hood-popup-name{font-size:15px;font-weight:800;color:var(--g);margin-bottom:5px}
-.hood-popup-price{color:var(--muted);margin-bottom:10px;font-size:12px}
+.hood-popup-price{color:var(--muted);margin-bottom:8px;font-size:12px}
 .hood-popup-price b{color:var(--dark)}
 .hood-popup-btn{display:block;width:100%;padding:9px;background:var(--g);color:#fff;border:none;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center}
 .hood-popup-btn.sel{background:var(--gold);color:var(--g)}
@@ -204,86 +169,61 @@ input::placeholder{color:#C0B8A8}
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="hdr">
   <div class="hdr-in">
     <div class="hdr-top">
-      <div class="logo">
-        <div>
-          <div style="color:#F0C97A;font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1.1">عيار العقارية</div>
-          <div style="color:rgba(255,255,255,.45);font-size:10px;letter-spacing:2px;font-weight:400">مؤشر العقارات في الرياض</div>
-        </div>
+      <div>
+        <div style="color:#F0C97A;font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1.1">عيار العقارية</div>
+        <div style="color:rgba(255,255,255,.45);font-size:10px;letter-spacing:2px;font-weight:400">اعرف القيمة الإيجارية للعقار بالرياض</div>
       </div>
       <div class="hdr-right" id="auth-area">
         <button class="btn-login" onclick="openAuth('login')">دخول</button>
         <button class="btn-signup" onclick="openAuth('signup')">حساب جديد</button>
       </div>
     </div>
-
     <div class="ticker-wrap">
       <div class="ticker-track" id="ticker">
         <span class="tick"><span class="tick-src">●</span>الملقا — شقق <strong>52,000</strong> ر.س <span class="up">↑ 4.2%</span></span>
         <span class="tick"><span class="tick-src">●</span>حطين — فيلل <strong>168,000</strong> ر.س <span class="dn">↓ 1.1%</span></span>
         <span class="tick"><span class="tick-src">●</span>الياسمين — شقق <strong>43,000</strong> ر.س <span class="up">↑ 2.8%</span></span>
-        <span class="tick"><span class="tick-src">●</span>العليا — مكاتب <strong>85,000</strong> ر.س <span class="up">↑ 6.3%</span></span>
-        <span class="tick"><span class="tick-src">●</span>السليمانية — شقق <strong>58,000</strong> ر.س <span class="up">↑ 3.1%</span></span>
-        <span class="tick"><span class="tick-src">●</span>القيروان — دور <strong>72,000</strong> ر.س <span class="dn">↓ 0.8%</span></span>
-        <span class="tick"><span class="tick-src">●</span>النرجس — فيلل <strong>142,000</strong> ر.س <span class="up">↑ 5.4%</span></span>
-        <span class="tick"><span class="tick-src">●</span>غرناطة — شقق <strong>38,000</strong> ر.س <span class="up">↑ 1.9%</span></span>
+        <span class="tick"><span class="tick-src">●</span>العليا — شقق <strong>65,000</strong> ر.س <span class="up">↑ 6.3%</span></span>
+        <span class="tick"><span class="tick-src">●</span>السليمانية — شقق <strong>62,000</strong> ر.س <span class="up">↑ 3.1%</span></span>
+        <span class="tick"><span class="tick-src">●</span>القيروان — دور <strong>41,500</strong> ر.س <span class="dn">↓ 0.8%</span></span>
+        <span class="tick"><span class="tick-src">●</span>النرجس — فيلل <strong>155,000</strong> ر.س <span class="up">↑ 5.4%</span></span>
+        <span class="tick"><span class="tick-src">●</span>غرناطة — شقق <strong>47,000</strong> ر.س <span class="up">↑ 1.9%</span></span>
         <span class="tick"><span class="tick-src">●</span>الملقا — شقق <strong>52,000</strong> ر.س <span class="up">↑ 4.2%</span></span>
         <span class="tick"><span class="tick-src">●</span>حطين — فيلل <strong>168,000</strong> ر.س <span class="dn">↓ 1.1%</span></span>
         <span class="tick"><span class="tick-src">●</span>الياسمين — شقق <strong>43,000</strong> ر.س <span class="up">↑ 2.8%</span></span>
-        <span class="tick"><span class="tick-src">●</span>العليا — مكاتب <strong>85,000</strong> ر.س <span class="up">↑ 6.3%</span></span>
-        <span class="tick"><span class="tick-src">●</span>السليمانية — شقق <strong>58,000</strong> ر.س <span class="up">↑ 3.1%</span></span>
-        <span class="tick"><span class="tick-src">●</span>القيروان — دور <strong>72,000</strong> ر.س <span class="dn">↓ 0.8%</span></span>
-        <span class="tick"><span class="tick-src">●</span>النرجس — فيلل <strong>142,000</strong> ر.س <span class="up">↑ 5.4%</span></span>
-        <span class="tick"><span class="tick-src">●</span>غرناطة — شقق <strong>38,000</strong> ر.س <span class="up">↑ 1.9%</span></span>
+        <span class="tick"><span class="tick-src">●</span>العليا — شقق <strong>65,000</strong> ر.س <span class="up">↑ 6.3%</span></span>
+        <span class="tick"><span class="tick-src">●</span>السليمانية — شقق <strong>62,000</strong> ر.س <span class="up">↑ 3.1%</span></span>
+        <span class="tick"><span class="tick-src">●</span>القيروان — دور <strong>41,500</strong> ر.س <span class="dn">↓ 0.8%</span></span>
+        <span class="tick"><span class="tick-src">●</span>النرجس — فيلل <strong>155,000</strong> ر.س <span class="up">↑ 5.4%</span></span>
+        <span class="tick"><span class="tick-src">●</span>غرناطة — شقق <strong>47,000</strong> ر.س <span class="up">↑ 1.9%</span></span>
       </div>
     </div>
-
     <div class="tabs">
       <button class="tab on" onclick="switchTab('estimate',this)">📊 مؤشر التقييم</button>
-      <button class="tab" onclick="switchTab('finance',this)">🏦 حاسبة التمويل</button>
+      <button class="tab" onclick="switchTab('finance',this)">🧮 حاسبة الإيجار</button>
       <button class="tab" onclick="switchTab('compare',this)">🗺️ مقارنة الأحياء</button>
+      <button class="tab" onclick="switchTab('listings',this)">🏠 الإعلانات</button>
     </div>
   </div>
 </div>
 
-
-<!-- HERO SECTION -->
 <div style="background:linear-gradient(160deg,var(--g4) 0%,var(--g) 45%,var(--g2) 100%);padding:48px 20px 56px;position:relative;overflow:hidden">
-
-  <!-- خلفية زخرفية -->
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(184,137,42,.12) 0%,transparent 60%);pointer-events:none"></div>
-  <div style="position:absolute;top:-60px;left:-60px;width:300px;height:300px;border:1px solid rgba(255,255,255,.04);border-radius:50%;pointer-events:none"></div>
-  <div style="position:absolute;bottom:-80px;right:-40px;width:220px;height:220px;border:1px solid rgba(255,255,255,.03);border-radius:50%;pointer-events:none"></div>
-
-  <div style="max-width:960px;margin:0 auto;position:relative">
-
-    <!-- الجملة الرئيسية -->
-    <div style="text-align:center;margin-bottom:36px">
-      <div style="display:inline-block;background:rgba(184,137,42,.15);border:1px solid rgba(184,137,42,.3);border-radius:20px;padding:5px 16px;font-size:11px;font-weight:700;color:#F0C97A;letter-spacing:1px;margin-bottom:16px">
-        🏙️ مؤشر العقارات في الرياض
-      </div>
-      <h1 style="font-family:'Tajawal',sans-serif;font-size:clamp(26px,5vw,42px);font-weight:900;color:#fff;line-height:1.25;margin-bottom:12px;letter-spacing:-.5px">
-        اعرف القيمة الحقيقية<br>
-        <span style="color:#F0C97A">لأي عقار في الرياض</span>
-      </h1>
-      <p style="font-size:15px;color:rgba(255,255,255,.55);max-width:480px;margin:0 auto;line-height:1.7">
-        تقييم فوري بالذكاء الاصطناعي مع بيانات السوق الحقيقية من البورصة العقارية ومنصة سكني
-      </p>
-    </div>
-
-
+  <div style="max-width:960px;margin:0 auto;position:relative;text-align:center">
+    <div style="display:inline-block;background:rgba(184,137,42,.15);border:1px solid rgba(184,137,42,.3);border-radius:20px;padding:5px 16px;font-size:11px;font-weight:700;color:#F0C97A;letter-spacing:1px;margin-bottom:16px">🏙️ مؤشر إيجار العقارات في الرياض</div>
+    <h1 style="font-family:'Tajawal',sans-serif;font-size:clamp(26px,5vw,42px);font-weight:900;color:#fff;line-height:1.25;margin-bottom:12px;letter-spacing:-.5px">اعرف القيمة الإيجارية<br><span style="color:#F0C97A">للعقار بالرياض</span></h1>
+    <p style="font-size:15px;color:rgba(255,255,255,.55);max-width:480px;margin:0 auto;line-height:1.7">بيانات رسمية مفتوحة من الهيئة العامة للعقار — مؤشر إيجار عقار</p>
   </div>
 </div>
 
-<!-- كيف يعمل الموقع -->
 <div style="background:var(--white);border-bottom:1px solid var(--border2);padding:32px 20px">
   <div style="max-width:960px;margin:0 auto">
     <div style="text-align:center;margin-bottom:24px">
       <div style="font-size:18px;font-weight:900;color:var(--g);font-family:'Tajawal',sans-serif">كيف يعمل عيار؟</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:4px">3 خطوات بسيطة للحصول على تقييم دقيق</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px">3 خطوات بسيطة لمعرفة القيمة الإيجارية</div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
       <div style="text-align:center;padding:20px 16px">
@@ -291,39 +231,36 @@ input::placeholder{color:#C0B8A8}
         <div style="font-size:14px;font-weight:800;color:var(--g);font-family:'Tajawal',sans-serif;margin-bottom:6px">أدخل بيانات العقار</div>
         <div style="font-size:12px;color:var(--muted);line-height:1.7">الحي، النوع، المساحة، وعدد الغرف</div>
       </div>
-      <div style="text-align:center;padding:20px 16px;position:relative">
-        <div style="position:absolute;top:36px;right:-8px;width:16px;height:2px;background:var(--border);display:none"></div>
-        <div style="width:52px;height:52px;background:rgba(13,43,30,.08);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">🤖</div>
-        <div style="font-size:14px;font-weight:800;color:var(--g);font-family:'Tajawal',sans-serif;margin-bottom:6px">الذكاء الاصطناعي يحلّل</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.7">يقارن مع بيانات السوق الفعلية من مصادر رسمية</div>
+      <div style="text-align:center;padding:20px 16px">
+        <div style="width:52px;height:52px;background:rgba(13,43,30,.08);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">📡</div>
+        <div style="font-size:14px;font-weight:800;color:var(--g);font-family:'Tajawal',sans-serif;margin-bottom:6px">بيانات رسمية مفتوحة</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">من الهيئة العامة للعقار</div>
       </div>
       <div style="text-align:center;padding:20px 16px">
         <div style="width:52px;height:52px;background:rgba(13,43,30,.08);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">📊</div>
-        <div style="font-size:14px;font-weight:800;color:var(--g);font-family:'Tajawal',sans-serif;margin-bottom:6px">احصل على التقييم</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.7">سعر عادل، نطاق، ونسبة العائد الاستثماري</div>
+        <div style="font-size:14px;font-weight:800;color:var(--g);font-family:'Tajawal',sans-serif;margin-bottom:6px">احصل على القيمة</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">السعر المناسب والنطاق والقسط الشهري</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- CONTENT -->
 <div class="wrap">
 
-  <!-- TAB 1: التقييم -->
+  <!-- مؤشر التقييم -->
   <div id="estimate" class="sec on">
-    <div class="ph">
-      <div class="ph-title">مؤشر تقييم الإيجار</div>
-      <div class="ph-sub">تقييم فوري بالذكاء الاصطناعي مع بيانات السوق الحقيقية</div>
-    </div>
+    <div class="ph"><div class="ph-title">مؤشر تقييم الإيجار</div><div class="ph-sub">اعرف القيمة الإيجارية بناءً على بيانات الهيئة العامة للعقار</div></div>
     <div class="card">
       <div class="g2">
         <div class="fld"><label>الحي</label>
           <select id="hood">
-            <option>الملقا</option><option>حطين</option><option>الياسمين</option>
-            <option>القيروان</option><option>السليمانية</option><option>العليا</option>
-            <option>الصحافة</option><option>غرناطة</option><option>النرجس</option>
-            <option>الروضة</option><option>التعاون</option><option>طويق</option>
-            <option>العريجاء</option><option>شبرا</option><option>الدرعية</option>
+            <option>الملقا</option><option>حطين</option><option>الياسمين</option><option>القيروان</option>
+            <option>السليمانية</option><option>العليا</option><option>الصحافة</option><option>غرناطة</option>
+            <option>النرجس</option><option>الروضة</option><option>التعاون</option><option>طويق</option>
+            <option>العريجاء</option><option>شبرا</option><option>الدرعية</option><option>الرائد</option>
+            <option>الواحة</option><option>الرمال</option><option>المونسية</option><option>الحمراء</option>
+            <option>اليرموك</option><option>الربوة</option><option>الوادي</option><option>عرقة</option>
+            <option>بدر</option><option>الحائر</option><option>النسيم</option><option>الشفا</option>
           </select>
         </div>
         <div class="fld"><label>نوع العقار</label>
@@ -349,74 +286,175 @@ input::placeholder{color:#C0B8A8}
           <button class="tog" id="fyes" onclick="setFurn(true)">مفروش بالكامل</button>
         </div>
       </div>
-      <button class="btn-main" onclick="doEstimate()">✨ احصل على التقييم الفوري</button>
+      <button class="btn-main" onclick="doEstimate()">📊 احسب القيمة الإيجارية</button>
     </div>
     <div id="est-out"></div>
   </div>
 
-  <!-- TAB 2: التمويل -->
+  <!-- حاسبة الإيجار -->
   <div id="finance" class="sec">
-    <div class="ph">
-      <div class="ph-title">حاسبة التمويل العقاري</div>
-      <div class="ph-sub">احسب قسطك الشهري ومدى أهليتك للتمويل</div>
+    <div class="ph"><div class="ph-title">حاسبة تمويل الإيجار</div><div class="ph-sub">البنك يدفع الإيجار للمالك، وأنت تسدد للبنك على أقساط + رسوم 2%</div></div>
+
+    <!-- شرح آلية العمل -->
+    <div style="background:linear-gradient(135deg,rgba(13,43,30,.05),rgba(184,137,42,.05));border:1px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">
+      <div>
+        <div style="font-size:22px;margin-bottom:6px">🏠</div>
+        <div style="font-size:12px;font-weight:800;color:var(--g);margin-bottom:3px">المستأجر</div>
+        <div style="font-size:11px;color:var(--muted)">يطلب تمويل الإيجار من البنك</div>
+      </div>
+      <div>
+        <div style="font-size:22px;margin-bottom:6px">🏦</div>
+        <div style="font-size:12px;font-weight:800;color:var(--g);margin-bottom:3px">البنك</div>
+        <div style="font-size:11px;color:var(--muted)">يدفع الإيجار للمالك كاملاً + يأخذ 2% رسوم</div>
+      </div>
+      <div>
+        <div style="font-size:22px;margin-bottom:6px">📅</div>
+        <div style="font-size:12px;font-weight:800;color:var(--g);margin-bottom:3px">السداد</div>
+        <div style="font-size:11px;color:var(--muted)">المستأجر يسدد للبنك على أقساط شهرية</div>
+      </div>
     </div>
+
     <div class="card">
       <div class="g2">
-        <div class="fld"><label>قيمة العقار (ر.س)</label>
-          <input type="number" id="propVal" placeholder="800,000">
+        <div class="fld"><label>قيمة الإيجار السنوي (ر.س)</label>
+          <input type="number" id="rentVal" placeholder="50,000">
         </div>
-        <div class="fld"><label>الراتب الشهري (ر.س)</label>
-          <input type="number" id="salary" placeholder="15,000">
+        <div class="fld"><label>مدة التمويل</label>
+          <select id="supportMonths">
+            <option value="6">6 أشهر</option>
+            <option value="12" selected>12 شهر (سنة)</option>
+            <option value="18">18 شهر</option>
+            <option value="24">24 شهر (سنتان)</option>
+          </select>
         </div>
-        <div class="fld"><label>مدة القرض (سنة)</label>
-          <select id="yrs"><option>10</option><option>15</option><option>20</option><option selected>25</option><option>30</option></select>
+        <div class="fld"><label>نوع العقار</label>
+          <select id="rentType"><option>شقة</option><option>فيلا</option><option>دور</option><option>استوديو</option></select>
         </div>
-        <div class="fld"><label>الدفعة الأولى</label>
-          <select id="dp"><option value="10" selected>10%</option><option value="15">15%</option><option value="20">20%</option><option value="25">25%</option><option value="30">30%</option></select>
+        <div class="fld"><label>طريقة السداد للبنك</label>
+          <select id="payFreq">
+            <option value="12" selected>شهري</option>
+            <option value="4">ربع سنوي</option>
+            <option value="2">نصف سنوي</option>
+          </select>
         </div>
       </div>
-      <div class="fld" style="margin-bottom:14px">
-        <label>غرض التمويل</label>
-        <div class="tog-row" id="purp-tog">
-          <button class="tog on" onclick="setPurp(this)">شراء سكن</button>
-          <button class="tog" onclick="setPurp(this)">استثمار</button>
-          <button class="tog" onclick="setPurp(this)">تجاري</button>
-        </div>
-      </div>
-      <button class="btn-main" onclick="doFinance()">🧮 احسب القسط الشهري</button>
+      <button class="btn-main" onclick="doRentCalc()">🧮 احسب تمويل الإيجار</button>
     </div>
     <div id="fin-out"></div>
   </div>
 
-  <!-- TAB 3: مقارنة الأحياء -->
+  <!-- مقارنة الأحياء -->
   <div id="compare" class="sec">
-    <div class="ph">
-      <div class="ph-title">مقارنة الأحياء بالخريطة</div>
-      <div class="ph-sub">اضغط على أي حي في الخريطة لاختياره — حتى 3 أحياء</div>
-    </div>
+    <div class="ph"><div class="ph-title">مؤشر إيجار الرياض</div><div class="ph-sub">بيانات رسمية مفتوحة من الهيئة العامة للعقار · <a href="https://rentalrei.rega.gov.sa/indicatorejar" target="_blank" style="color:var(--gold);text-decoration:none">rentalrei.rega.gov.sa ↗</a></div></div>
 
-    <div class="sel-bar">
-      <span class="sel-lbl">الأحياء المختارة:</span>
-      <span class="sel-empty" id="sel-empty">اضغط على الخريطة لاختيار حي</span>
-      <div id="sel-pills" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-    </div>
-
-    <div class="map-legend">
-      <div style="display:flex;align-items:center;gap:5px"><div class="leg-dot" style="background:#0D2B1E"></div><span>متاح</span></div>
-      <div style="display:flex;align-items:center;gap:5px"><div class="leg-dot" style="background:#B8892A"></div><span>محدد</span></div>
-      <span style="font-size:11px;color:#aaa">· اضغط مرتين لإلغاء التحديد</span>
-    </div>
-
-    <div id="map-el"></div>
-
-    <div class="card" style="margin-bottom:14px">
-      <div class="fld" style="margin-bottom:12px">
-        <label>نوع العقار للمقارنة</label>
-        <select id="cmp-type"><option>شقة</option><option>فيلا</option><option>دور</option></select>
+    <!-- فلاتر مثل REGA -->
+    <div style="background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:12px 16px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;box-shadow:var(--sh)">
+      <div class="tog-row" id="use-tog" style="flex:none;gap:6px">
+        <button class="tog on" id="use-res" onclick="setUseType('سكني',this)">سكني</button>
+        <button class="tog" id="use-com" onclick="setUseType('تجاري',this)">تجاري</button>
       </div>
-      <button class="btn-main" id="cmp-btn" onclick="doCompare()" disabled>🔍 قارن الأحياء المختارة</button>
+      <div class="fld" style="flex:1;min-width:140px;margin-bottom:0">
+        <select id="cmp-type" onchange="updateRegaTable()" style="margin-bottom:0">
+          <option value="شقة">شقة</option>
+          <option value="فيلا">فيلا</option>
+          <option value="دور">دور</option>
+          <option value="استديو">استديو</option>
+          <option value="دوبلاكس">دوبلاكس</option>
+        </select>
+      </div>
+      <div class="fld" style="flex:1;min-width:140px;margin-bottom:0">
+        <select id="cmp-period" onchange="updateRegaTable()" style="margin-bottom:0">
+          <option value="شهري">شهري</option>
+          <option value="ربع سنوي">ربع سنوي</option>
+        </select>
+      </div>
     </div>
+
+    <!-- مصدر البيانات -->
+    <div style="background:rgba(13,43,30,.04);border:1px solid rgba(13,43,30,.1);border-radius:var(--rsm);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid)">
+      <span style="font-size:16px">📡</span>
+      <span>البيانات من <strong>مؤشر إيجار عقار</strong> — الهيئة العامة للعقار · آخر تحديث: إبريل 2026</span>
+    </div>
+
+    <!-- خريطة + جدول بجانب بعض -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+
+      <!-- الخريطة -->
+      <div>
+        <div class="map-legend" style="margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:5px"><div class="leg-dot" style="background:#0D2B1E"></div><span>متاح</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><div class="leg-dot" style="background:#B8892A"></div><span>محدد</span></div>
+          <span style="font-size:10px;color:#aaa">· حتى 3 أحياء</span>
+        </div>
+        <div id="map-el" style="height:480px"></div>
+      </div>
+
+      <!-- جدول البيانات مثل REGA -->
+      <div>
+        <!-- ملخص المدينة -->
+        <div style="background:var(--g);color:#fff;border-radius:var(--rsm) var(--rsm) 0 0;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:14px;font-weight:800">متوسطات الرياض الكاملة</span>
+          <span style="font-size:10px;opacity:.6">ر.س / سنة</span>
+        </div>
+        <div id="rega-overview-table" style="background:var(--white);border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--rsm) var(--rsm);margin-bottom:14px">
+          <!-- يتعبأ بـ JS -->
+        </div>
+
+        <!-- الأحياء المختارة -->
+        <div style="background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:12px 14px;margin-bottom:10px;box-shadow:var(--sh)">
+          <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">الأحياء المختارة للمقارنة:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;min-height:30px">
+            <span id="sel-empty" style="font-size:13px;color:#C0B8A8;font-style:italic">اضغط على الخريطة لاختيار حي</span>
+            <div id="sel-pills" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+          </div>
+        </div>
+        <button class="btn-main" id="cmp-btn" onclick="doCompare()" disabled style="margin-top:0">🔍 قارن الأحياء المختارة</button>
+      </div>
+    </div>
+
     <div id="cmp-out"></div>
+  </div>
+
+  <!-- الإعلانات -->
+  <div id="listings" class="sec">
+    <div class="ph"><div class="ph-title">إعلانات ملاك العقارات</div><div class="ph-sub">إعلانات مباشرة من ملاك العقارات فقط — بدون وسيط</div></div>
+
+    <div class="owner-notice">
+      <div style="font-size:22px;flex-shrink:0">🔑</div>
+      <div style="font-size:13px;color:#5D4037;line-height:1.7"><strong>هذا القسم لملاك العقارات فقط.</strong> لا يُسمح للوسطاء أو السماسرة بنشر إعلانات. يجب أن تكون مالك العقار لتتمكن من النشر.</div>
+    </div>
+
+    <div class="add-listing-box" id="add-listing-btn" onclick="openAddListing()">
+      <div style="font-size:36px;margin-bottom:10px">🏠</div>
+      <div style="font-size:16px;font-weight:800;color:var(--g);margin-bottom:4px">أنا مالك العقار — أضف إعلانك مجاناً</div>
+      <div style="font-size:13px;color:var(--muted)">سجّل دخولك وأضف إعلان عقارك في دقيقة واحدة</div>
+    </div>
+
+    <div class="filters-bar">
+      <span style="font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0">تصفية:</span>
+      <select class="filter-select" id="filter-type" onchange="loadListings()">
+        <option value="">كل الأنواع</option>
+        <option value="شقة">شقة</option><option value="فيلا">فيلا</option>
+        <option value="دور">دور</option><option value="استوديو">استوديو</option>
+      </select>
+      <select class="filter-select" id="filter-hood" onchange="loadListings()">
+        <option value="">كل الأحياء</option>
+        <option>الملقا</option><option>حطين</option><option>الياسمين</option><option>القيروان</option>
+        <option>السليمانية</option><option>العليا</option><option>الصحافة</option><option>غرناطة</option>
+        <option>النرجس</option><option>الروضة</option><option>التعاون</option><option>طويق</option><option>الدرعية</option>
+      </select>
+      <select class="filter-select" id="filter-sort" onchange="loadListings()">
+        <option value="created_at">الأحدث</option>
+        <option value="price">السعر: الأقل</option>
+      </select>
+    </div>
+
+    <div id="listings-out"><div class="loading"><div class="spinner"></div><div>جاري تحميل الإعلانات...</div></div></div>
+
+    <div id="my-listings-section" style="display:none;margin-top:24px">
+      <div style="font-size:16px;font-weight:900;color:var(--g);margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--border2)">📋 إعلاناتي</div>
+      <div id="my-listings-out"></div>
+    </div>
   </div>
 
 </div>
@@ -426,7 +464,7 @@ input::placeholder{color:#C0B8A8}
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-h"></div>
     <div class="modal-title">مرحباً في عيار</div>
-    <div class="modal-sub">سجّل أو أنشئ حساباً لحفظ تقييماتك</div>
+    <div class="modal-sub">سجّل أو أنشئ حساباً</div>
     <div class="modal-tabs">
       <button class="modal-tab on" id="tab-login" onclick="switchAuth('login')">تسجيل الدخول</button>
       <button class="modal-tab" id="tab-signup" onclick="switchAuth('signup')">حساب جديد</button>
@@ -444,658 +482,524 @@ input::placeholder{color:#C0B8A8}
       <input class="modal-inp" type="password" id="s-pass" placeholder="كلمة المرور (8 أحرف على الأقل)">
       <button class="btn-main" onclick="doSignup()">إنشاء الحساب</button>
     </div>
-    <div class="modal-ft" id="auth-ft">
-      ليس لديك حساب؟ <span style="color:var(--gold);font-weight:800;cursor:pointer" onclick="switchAuth('signup')">أنشئ حساباً</span>
-    </div>
+    <div class="modal-ft" id="auth-ft">ليس لديك حساب؟ <span style="color:var(--gold);font-weight:800;cursor:pointer" onclick="switchAuth('signup')">أنشئ حساباً</span></div>
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- ADD LISTING MODAL -->
+<div class="overlay" id="listing-modal" onclick="closeListingModal()">
+  <div class="listing-modal" onclick="event.stopPropagation()">
+    <div class="modal-h"></div>
+    <div class="modal-title">🏠 نشر إعلان عقار</div>
+    <div class="modal-sub">للملاك فقط — أدخل بيانات عقارك</div>
+    <div class="modal-err" id="listing-err"></div>
+    <div class="modal-ok" id="listing-ok"></div>
+    <div class="owner-checkbox" onclick="toggleOwnerConfirm()">
+      <input type="checkbox" id="owner-confirm">
+      <label for="owner-confirm">أقر بأنني مالك هذا العقار وليس وسيطاً أو سمساراً</label>
+    </div>
+    <div id="listing-form" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="fld"><label>اسمك الكامل</label><input class="modal-inp" type="text" id="l-owner" placeholder="محمد العتيبي" style="margin:0"></div>
+        <div class="fld"><label>رقم الجوال</label><input class="modal-inp" type="tel" id="l-phone" placeholder="05xxxxxxxx" style="margin:0"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="fld"><label>الحي</label>
+          <select class="modal-inp" id="l-hood" style="margin:0">
+            <option>الملقا</option><option>حطين</option><option>الياسمين</option><option>القيروان</option>
+            <option>السليمانية</option><option>العليا</option><option>الصحافة</option><option>غرناطة</option>
+            <option>النرجس</option><option>الروضة</option><option>التعاون</option><option>طويق</option>
+            <option>العريجاء</option><option>شبرا</option><option>الدرعية</option>
+          </select>
+        </div>
+        <div class="fld"><label>نوع العقار</label>
+          <select class="modal-inp" id="l-type" style="margin:0"><option>شقة</option><option>فيلا</option><option>دور</option><option>استوديو</option></select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="fld"><label>المساحة (م²)</label><input class="modal-inp" type="number" id="l-area" placeholder="120" style="margin:0"></div>
+        <div class="fld"><label>عدد الغرف</label>
+          <select class="modal-inp" id="l-rooms" style="margin:0">
+            <option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5+</option>
+          </select>
+        </div>
+      </div>
+      <div class="fld" style="margin-bottom:10px"><label>السعر السنوي (ر.س)</label><input class="modal-inp" type="number" id="l-price" placeholder="50,000" style="margin:0"></div>
+      <div class="fld" style="margin-bottom:10px">
+        <label>مفروش؟</label>
+        <div class="tog-row">
+          <button class="tog on" id="l-fno" onclick="setListingFurn(false)">غير مفروش</button>
+          <button class="tog" id="l-fyes" onclick="setListingFurn(true)">مفروش</button>
+        </div>
+      </div>
+      <div class="fld" style="margin-bottom:14px"><label>وصف العقار (اختياري)</label><textarea class="modal-inp" id="l-desc" placeholder="اكتب وصفاً مختصراً للعقار..." style="margin:0;min-height:80px"></textarea></div>
+      <button class="btn-main" onclick="submitListing()">🚀 نشر الإعلان الآن</button>
+    </div>
+    <button style="width:100%;padding:12px;background:transparent;border:2px solid var(--border);border-radius:var(--radius);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;margin-top:8px" onclick="closeListingModal()">إلغاء</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<!-- FOOTER -->
-<footer style="background:var(--g);color:rgba(255,255,255,.7);direction:rtl;font-family:'Tajawal',sans-serif;margin-top:0;padding:40px 20px 28px">
+<footer style="background:var(--g);color:rgba(255,255,255,.7);direction:rtl;font-family:'Tajawal',sans-serif;padding:40px 20px 28px">
   <div style="max-width:960px;margin:0 auto">
-
-    <!-- الصف الأول -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px">
-
-      <!-- النبذة -->
       <div>
-        <div style="margin-bottom:12px">
-          <div style="color:#F0C97A;font-size:22px;font-weight:900;letter-spacing:-1px;line-height:1.1">عيار العقارية</div>
-          <div style="color:rgba(255,255,255,.35);font-size:10px;letter-spacing:2px;margin-top:2px">مؤشر العقارات في الرياض</div>
-        </div>
-        <p style="font-size:13px;line-height:1.85;color:rgba(255,255,255,.55);max-width:280px">
-          منصة ذكية لتقييم العقارات وتحليل أسعار الإيجار والبيع في الرياض،
-          تعتمد على الذكاء الاصطناعي وبيانات السوق الفعلية لمساعدتك
-          في اتخاذ قرارات عقارية أذكى.
-        </p>
+        <div style="color:#F0C97A;font-size:22px;font-weight:900;margin-bottom:8px">عيار العقارية</div>
+        <p style="font-size:13px;line-height:1.85;color:rgba(255,255,255,.55);max-width:280px">منصة لمعرفة القيمة الإيجارية للعقارات في الرياض بناءً على بيانات رسمية مفتوحة.</p>
       </div>
-
-      <!-- التواصل -->
       <div>
-        <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,.85);margin-bottom:14px;letter-spacing:.5px">تواصل معنا</div>
+        <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,.85);margin-bottom:14px">تواصل معنا</div>
         <div style="display:flex;flex-direction:column;gap:10px">
-          <a href="mailto:u4@hotmail.com" style="display:flex;align-items:center;gap:9px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:color .2s"
-            onmouseover="this.style.color='#F0C97A'" onmouseout="this.style.color='rgba(255,255,255,.6)'">
-            <span style="width:30px;height:30px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">✉️</span>
-            u4@hotmail.com
+          <a href="mailto:u4@hotmail.com" style="display:flex;align-items:center;gap:9px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px">
+            <span style="width:30px;height:30px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">✉️</span>u4@hotmail.com
           </a>
-          <a href="tel:0532233660" style="display:flex;align-items:center;gap:9px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:color .2s"
-            onmouseover="this.style.color='#F0C97A'" onmouseout="this.style.color='rgba(255,255,255,.6)'">
-            <span style="width:30px;height:30px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📞</span>
-            0532233660
+          <a href="tel:0532233660" style="display:flex;align-items:center;gap:9px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px">
+            <span style="width:30px;height:30px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📞</span>0532233660
           </a>
         </div>
       </div>
-
     </div>
-
-    <!-- مصادر البيانات -->
     <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:24px;margin-bottom:20px">
-      <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,.5);margin-bottom:14px;letter-spacing:.5px">مصادر البيانات الرسمية</div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-
-        <a href="https://srem.moj.gov.sa/" target="_blank" rel="noopener"
-          style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;text-decoration:none;transition:all .2s;flex:1;min-width:200px"
-          onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
-          <span style="font-size:20px;flex-shrink:0">🏛️</span>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,.85)">البورصة العقارية</div>
-            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">وزارة العدل · SREM</div>
-          </div>
-          <span style="margin-right:auto;font-size:11px;color:rgba(255,255,255,.3)">↗</span>
-        </a>
-
-        <a href="https://sakani.sa/" target="_blank" rel="noopener"
-          style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;text-decoration:none;transition:all .2s;flex:1;min-width:200px"
-          onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
-          <span style="font-size:20px;flex-shrink:0">🏠</span>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,.85)">منصة سكني</div>
-            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">وزارة الإسكان · Sakani</div>
-          </div>
-          <span style="margin-right:auto;font-size:11px;color:rgba(255,255,255,.3)">↗</span>
-        </a>
-
-      </div>
+      <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,.5);margin-bottom:14px;letter-spacing:.5px">مصادر البيانات الرسمية المفتوحة</div>
+      <a href="https://rentalrei.rega.gov.sa/indicatorejar" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;text-decoration:none;transition:all .2s"
+        onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
+        <span style="font-size:20px">🏛️</span>
+        <div>
+          <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,.85)">مؤشر إيجار العقارات</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">الهيئة العامة للعقار · rentalrei.rega.gov.sa</div>
+        </div>
+        <span style="margin-right:8px;font-size:11px;color:rgba(255,255,255,.3)">↗</span>
+      </a>
     </div>
-
-    <!-- الفاصل -->
     <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-      <div style="font-size:12px;color:rgba(255,255,255,.35)">
-        © ${new Date().getFullYear()} جميع الحقوق محفوظة لشركة عيار العقارية
-      </div>
-      <div style="font-size:11px;color:rgba(255,255,255,.25)">
-        التقييمات تقديرية لأغراض المعلومات فقط
-      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.35)">© 2026 جميع الحقوق محفوظة لشركة عيار العقارية</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.25)">البيانات من مصادر رسمية مفتوحة — لأغراض المعلومات فقط</div>
     </div>
-
   </div>
 </footer>
 
 <script>
-/* ══════════════════════════════
-   بيانات الأحياء
-══════════════════════════════ */
-const HOODS = [
-  {name:"الملقا",      lat:24.8285,lng:46.6357, rent:{شقة:[45000,62000],فيلا:[140000,180000],دور:[75000,95000]},  ch:4.2},
-  {name:"حطين",       lat:24.7964,lng:46.6282, rent:{شقة:[50000,68000],فيلا:[155000,195000],دور:[85000,110000]}, ch:-1.1},
-  {name:"الياسمين",   lat:24.8407,lng:46.6523, rent:{شقة:[38000,52000],فيلا:[110000,145000],دور:[65000,82000]},  ch:2.8},
-  {name:"القيروان",   lat:24.8230,lng:46.5990, rent:{شقة:[35000,48000],فيلا:[100000,135000],دور:[58000,75000]},  ch:-0.8},
-  {name:"السليمانية", lat:24.7029,lng:46.6814, rent:{شقة:[52000,72000],فيلا:[160000,210000],دور:[90000,115000]}, ch:3.1},
-  {name:"العليا",     lat:24.6877,lng:46.6829, rent:{شقة:[55000,75000],فيلا:[170000,220000],دور:[95000,125000]}, ch:6.3},
-  {name:"الصحافة",    lat:24.7830,lng:46.6196, rent:{شقة:[42000,55000],فيلا:[115000,148000],دور:[68000,85000]},  ch:1.5},
-  {name:"غرناطة",     lat:24.7694,lng:46.7028, rent:{شقة:[40000,54000],فيلا:[112000,145000],دور:[65000,82000]},  ch:1.9},
-  {name:"النرجس",     lat:24.8630,lng:46.6467, rent:{شقة:[48000,65000],فيلا:[135000,175000],دور:[78000,98000]},  ch:5.4},
-  {name:"الروضة",     lat:24.7342,lng:46.7341, rent:{شقة:[43000,58000],فيلا:[120000,155000],دور:[70000,88000]},  ch:2.1},
-  {name:"التعاون",    lat:24.7467,lng:46.7177, rent:{شقة:[44000,59000],فيلا:[125000,160000],دور:[72000,90000]},  ch:1.7},
-  {name:"طويق",       lat:24.6267,lng:46.5677, rent:{شقة:[22000,30000],فيلا:[65000,85000], دور:[38000,50000]},   ch:0.5},
-  {name:"العريجاء",   lat:24.6467,lng:46.6467, rent:{شقة:[25000,35000],فيلا:[70000,92000], دور:[42000,55000]},   ch:0.9},
-  {name:"شبرا",       lat:24.6777,lng:46.7177, rent:{شقة:[28000,38000],فيلا:[80000,105000],دور:[48000,62000]},   ch:1.2},
-  {name:"الدرعية",    lat:24.7334,lng:46.5738, rent:{شقة:[36000,50000],فيلا:[105000,140000],دور:[60000,78000]},  ch:3.5},
-];
+const sb=supabase.createClient(CFG.supabase_url,CFG.supabase_key);
+let currentUser=null,listingFurnished=false,furnished=false,selected=[],leafMap=null,mapMarkers={};
 
-/* ══════════════════════════════
-   Supabase
-══════════════════════════════ */
-const sb = supabase.createClient(CFG.supabase_url, CFG.supabase_key);
-let currentUser = null;
-
-/* تحقق من الجلسة الحالية */
 async function initAuth(){
-  const { data:{ session } } = await sb.auth.getSession();
+  const {data:{session}}=await sb.auth.getSession();
   if(session) setUser(session.user);
-  sb.auth.onAuthStateChange((_,s)=>{ s ? setUser(s.user) : clearUser(); });
+  sb.auth.onAuthStateChange((_,s)=>{ s?setUser(s.user):clearUser(); });
   loadPricesFromDB();
 }
-
 function setUser(u){
-  currentUser = u;
-  const name = u.user_metadata?.full_name || u.email.split('@')[0];
-  document.getElementById('auth-area').innerHTML=`
-    <div class="user-chip" onclick="doLogout()">
-      <div class="user-avatar">${name[0].toUpperCase()}</div>
-      <span class="user-name">${name}</span>
-    </div>`;
+  currentUser=u;
+  const name=u.user_metadata?.full_name||u.email.split('@')[0];
+  document.getElementById('auth-area').innerHTML=`<div class="user-chip" onclick="doLogout()"><div class="user-avatar">${name[0].toUpperCase()}</div><span class="user-name">${name}</span></div>`;
+  document.getElementById('my-listings-section').style.display='block';
+  loadMyListings();
 }
-
 function clearUser(){
-  currentUser = null;
-  document.getElementById('auth-area').innerHTML=`
-    <button class="btn-login" onclick="openAuth('login')">دخول</button>
-    <button class="btn-signup" onclick="openAuth('signup')">حساب جديد</button>`;
+  currentUser=null;
+  document.getElementById('auth-area').innerHTML=`<button class="btn-login" onclick="openAuth('login')">دخول</button><button class="btn-signup" onclick="openAuth('signup')">حساب جديد</button>`;
+  document.getElementById('my-listings-section').style.display='none';
 }
-
 async function doLogin(){
-  const email = document.getElementById('l-email').value.trim();
-  const pass  = document.getElementById('l-pass').value;
-  if(!email||!pass){ showAuthErr('أدخل البريد وكلمة المرور'); return; }
-  const {error} = await sb.auth.signInWithPassword({email,password:pass});
-  if(error){ showAuthErr('خطأ في البريد أو كلمة المرور'); return; }
-  closeAuth(); showToast('مرحباً بك! ✅');
+  const email=document.getElementById('l-email').value.trim(),pass=document.getElementById('l-pass').value;
+  if(!email||!pass){showAuthErr('أدخل البريد وكلمة المرور');return;}
+  const {error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){showAuthErr('خطأ في البريد أو كلمة المرور');return;}
+  closeAuth();showToast('مرحباً بك! ✅');
 }
-
 async function doSignup(){
-  const name  = document.getElementById('s-name').value.trim();
-  const email = document.getElementById('s-email').value.trim();
-  const pass  = document.getElementById('s-pass').value;
-  if(!name||!email||!pass){ showAuthErr('أكمل جميع الحقول'); return; }
-  if(pass.length<8){ showAuthErr('كلمة المرور 8 أحرف على الأقل'); return; }
-  const {error} = await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-  if(error){ showAuthErr(error.message); return; }
+  const name=document.getElementById('s-name').value.trim(),email=document.getElementById('s-email').value.trim(),pass=document.getElementById('s-pass').value;
+  if(!name||!email||!pass){showAuthErr('أكمل جميع الحقول');return;}
+  if(pass.length<8){showAuthErr('كلمة المرور 8 أحرف على الأقل');return;}
+  const {error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
+  if(error){showAuthErr(error.message);return;}
   showAuthOk('تم إنشاء الحساب! يمكنك الدخول الآن ✅');
 }
-
-async function doLogout(){
-  await sb.auth.signOut();
-  showToast('تم تسجيل الخروج');
-}
-
-function openAuth(mode){
-  switchAuth(mode);
-  document.getElementById('auth-modal').className='overlay show';
-}
-function closeAuth(){ document.getElementById('auth-modal').className='overlay'; clearAuthMsg(); }
+async function doLogout(){await sb.auth.signOut();showToast('تم تسجيل الخروج');}
+function openAuth(mode){switchAuth(mode);document.getElementById('auth-modal').className='overlay show';}
+function closeAuth(){document.getElementById('auth-modal').className='overlay';clearAuthMsg();}
 function switchAuth(mode){
   document.getElementById('tab-login').className='modal-tab'+(mode==='login'?' on':'');
   document.getElementById('tab-signup').className='modal-tab'+(mode==='signup'?' on':'');
   document.getElementById('auth-form-login').style.display=mode==='login'?'':'none';
   document.getElementById('auth-form-signup').style.display=mode==='signup'?'':'none';
-  document.getElementById('auth-ft').innerHTML = mode==='login'
-    ? 'ليس لديك حساب؟ <span style="color:var(--gold);font-weight:800;cursor:pointer" onclick="switchAuth(\'signup\')">أنشئ حساباً</span>'
-    : 'عندك حساب؟ <span style="color:var(--gold);font-weight:800;cursor:pointer" onclick="switchAuth(\'login\')">سجّل دخول</span>';
+  document.getElementById('auth-ft').innerHTML=mode==='login'?'ليس لديك حساب؟ <span style="color:var(--gold);font-weight:800;cursor:pointer" onclick="switchAuth(\'signup\')">أنشئ حساباً</span>':'عندك حساب؟ <span style="color:var(--gold);font-weight:800;cursor:pointer" onclick="switchAuth(\'login\')">سجّل دخول</span>';
   clearAuthMsg();
 }
-function showAuthErr(msg){ const e=document.getElementById('auth-err'); e.textContent=msg; e.className='modal-err show'; }
-function showAuthOk(msg){ const e=document.getElementById('auth-ok'); e.textContent=msg; e.className='modal-ok show'; }
-function clearAuthMsg(){ document.getElementById('auth-err').className='modal-err'; document.getElementById('auth-ok').className='modal-ok'; }
+function showAuthErr(msg){const e=document.getElementById('auth-err');e.textContent=msg;e.className='modal-err show';}
+function showAuthOk(msg){const e=document.getElementById('auth-ok');e.textContent=msg;e.className='modal-ok show';}
+function clearAuthMsg(){document.getElementById('auth-err').className='modal-err';document.getElementById('auth-ok').className='modal-ok';}
 
-/* ══════════════════════════════
-   تحميل الأسعار من Supabase
-══════════════════════════════ */
 async function loadPricesFromDB(){
-  try{
-    const {data,error} = await sb.from('prices').select('*').order('updated_at',{ascending:false});
-    if(error||!data||!data.length) return;
-    buildTicker(data);
-  }catch(e){}
+  try{const {data,error}=await sb.from('prices').select('*').order('updated_at',{ascending:false});if(error||!data||!data.length)return;buildTicker(data);}catch(e){}
 }
-
 function buildTicker(rows){
-  const items = rows.slice(0,8);
-  let html = items.map(r=>{
-    const ch = r.change_pct||0;
-    const chStr = ch>=0 ? `<span class="up">↑ ${ch}%</span>` : `<span class="dn">↓ ${Math.abs(ch)}%</span>`;
-    const src = r.source&&r.source!=='fallback'?`<span class="tick-src" style="color:#5DE89A" title="${r.source}">●</span>`:'<span class="tick-src">●</span>';
-    return `<span class="tick">${src}${r.neighborhood} — ${r.type} <strong>${(r.avg_price||0).toLocaleString('ar-SA')}</strong> ر.س ${chStr}</span>`;
-  }).join('');
-  // نكرر مرتين للـ infinite scroll
-  document.getElementById('ticker').innerHTML = html + html;
+  const items=rows.slice(0,8);
+  let html=items.map(r=>{const ch=r.change_pct||0;const chStr=ch>=0?`<span class="up">↑ ${ch}%</span>`:`<span class="dn">↓ ${Math.abs(ch)}%</span>`;const src=r.source&&r.source!=='fallback'?`<span class="tick-src" style="color:#5DE89A">●</span>`:'<span class="tick-src">●</span>';return `<span class="tick">${src}${r.neighborhood} — ${r.type} <strong>${(r.avg_price||0).toLocaleString('ar-SA')}</strong> ر.س ${chStr}</span>`;}).join('');
+  document.getElementById('ticker').innerHTML=html+html;
 }
 
-/* ══════════════════════════════
-   State
-══════════════════════════════ */
-let furnished = false;
-let selected  = [];
-let leafMap   = null;
-let mapMarkers = {};
-
-function setFurn(v){
-  furnished=v;
-  document.getElementById('fyes').className='tog'+(v?' on':'');
-  document.getElementById('fno').className='tog'+(!v?' on':'');
+// Listings
+function toggleOwnerConfirm(){
+  const cb=document.getElementById('owner-confirm');
+  document.getElementById('listing-form').style.display=cb.checked?'block':'none';
 }
-function setPurp(el){ document.querySelectorAll('#purp-tog .tog').forEach(b=>b.className='tog'); el.className='tog on'; }
+function openAddListing(){
+  if(!currentUser){openAuth('login');showToast('سجّل دخولك أولاً');return;}
+  document.getElementById('owner-confirm').checked=false;
+  document.getElementById('listing-form').style.display='none';
+  document.getElementById('listing-err').className='modal-err';
+  document.getElementById('listing-ok').className='modal-ok';
+  document.getElementById('listing-modal').className='overlay show';
+}
+function closeListingModal(){document.getElementById('listing-modal').className='overlay';}
+function setListingFurn(v){
+  listingFurnished=v;
+  document.getElementById('l-fyes').className='tog'+(v?' on':'');
+  document.getElementById('l-fno').className='tog'+(!v?' on':'');
+}
+async function submitListing(){
+  if(!currentUser){showToast('سجّل دخولك أولاً');return;}
+  if(!document.getElementById('owner-confirm').checked){const e=document.getElementById('listing-err');e.textContent='يجب الإقرار بأنك مالك العقار أولاً';e.className='modal-err show';return;}
+  const owner=document.getElementById('l-owner').value.trim(),phone=document.getElementById('l-phone').value.trim(),hood=document.getElementById('l-hood').value,type=document.getElementById('l-type').value,area=document.getElementById('l-area').value,rooms=parseInt(document.getElementById('l-rooms').value)||3,price=document.getElementById('l-price').value,desc=document.getElementById('l-desc').value.trim();
+  if(!owner||!phone||!area||!price){const e=document.getElementById('listing-err');e.textContent='يرجى تعبئة جميع الحقول المطلوبة';e.className='modal-err show';return;}
+  const {error}=await sb.from('listings').insert({user_id:currentUser.id,owner_name:owner,phone:phone,neighborhood:hood,type:type,area:Number(area),rooms:rooms,price:Number(price),description:desc,furnished:listingFurnished,status:'active'});
+  if(error){const e=document.getElementById('listing-err');e.textContent='حدث خطأ، حاول مجدداً';e.className='modal-err show';return;}
+  const ok=document.getElementById('listing-ok');ok.textContent='تم نشر إعلانك بنجاح! ✅';ok.className='modal-ok show';
+  setTimeout(()=>{closeListingModal();loadListings();loadMyListings();showToast('تم نشر إعلانك! 🎉');},1500);
+}
+async function loadListings(){
+  const typeF=document.getElementById('filter-type').value,hoodF=document.getElementById('filter-hood').value,sortF=document.getElementById('filter-sort').value;
+  let q=sb.from('listings').select('*').eq('status','active');
+  if(typeF) q=q.eq('type',typeF);
+  if(hoodF) q=q.eq('neighborhood',hoodF);
+  if(sortF==='price') q=q.order('price',{ascending:true}); else q=q.order('created_at',{ascending:false});
+  const {data,error}=await q;
+  const out=document.getElementById('listings-out');
+  if(error||!data||data.length===0){out.innerHTML=`<div class="empty-state"><div class="empty-icon">🏘️</div><div class="empty-title">لا توجد إعلانات حالياً</div><div class="empty-sub">كن أول مالك يضيف إعلاناً!</div></div>`;return;}
+  out.innerHTML=`<div class="listings-grid">${data.map(renderListingCard).join('')}</div>`;
+}
+function renderListingCard(l){
+  const icons={'شقة':'🏢','فيلا':'🏡','دور':'🏠','استوديو':'🛋️'};
+  const date=new Date(l.created_at).toLocaleDateString('ar-SA');
+  const mo=Math.round(l.price/12/50)*50;
+  return `<div class="listing-card"><div class="listing-img"><span style="font-size:56px">${icons[l.type]||'🏠'}</span><span class="listing-badge">${l.type}</span>${l.furnished?'<span style="position:absolute;top:10px;left:10px;background:#2E7D32;color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:12px">مفروش</span>':''}</div><div class="listing-body"><div class="listing-title">${l.type} في ${l.neighborhood}</div><div class="listing-loc">📍 ${l.neighborhood}، الرياض</div><div class="listing-price">${(l.price||0).toLocaleString('ar-SA')} <span>ر.س / سنة</span></div><div class="listing-tags">${l.area?`<span class="listing-tag">📐 ${l.area} م²</span>`:''} ${l.rooms?`<span class="listing-tag">🛏 ${l.rooms} غرف</span>`:''}<span class="listing-tag">📅 ${Math.round(mo).toLocaleString('ar-SA')} شهرياً</span></div>${l.description?`<div style="font-size:12px;color:var(--mid);line-height:1.7;margin-bottom:10px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${l.description}</div>`:''}<div class="listing-owner"><div class="listing-owner-av">${(l.owner_name||'م')[0].toUpperCase()}</div><div class="listing-owner-info"><div class="listing-owner-name">${l.owner_name||'المالك'}</div><div class="listing-owner-date">${date}</div></div><a href="tel:${l.phone}" class="listing-contact">📞 تواصل</a></div></div></div>`;
+}
+async function loadMyListings(){
+  if(!currentUser)return;
+  const {data,error}=await sb.from('listings').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  const out=document.getElementById('my-listings-out');
+  if(error||!data||data.length===0){out.innerHTML=`<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">لا توجد إعلانات بعد</div>`;return;}
+  out.innerHTML=data.map(l=>`<div style="background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px"><div style="font-size:28px">${{'شقة':'🏢','فيلا':'🏡','دور':'🏠','استوديو':'🛋️'}[l.type]||'🏠'}</div><div style="flex:1"><div style="font-weight:800;color:var(--g);font-size:14px">${l.type} في ${l.neighborhood}</div><div style="font-size:12px;color:var(--muted);margin-top:2px">${(l.price||0).toLocaleString('ar-SA')} ر.س/سنة · ${l.area||''}م²</div></div><button onclick="deleteListing('${l.id}')" style="background:#FFEBEE;color:#C62828;border:none;border-radius:8px;padding:7px 12px;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer">حذف</button></div>`).join('');
+}
+async function deleteListing(id){
+  if(!confirm('هل تريد حذف هذا الإعلان؟'))return;
+  await sb.from('listings').delete().eq('id',id).eq('user_id',currentUser.id);
+  showToast('تم حذف الإعلان');loadListings();loadMyListings();
+}
+
+function setFurn(v){furnished=v;document.getElementById('fyes').className='tog'+(v?' on':'');document.getElementById('fno').className='tog'+(!v?' on':'');}
 function switchTab(id,el){
   document.querySelectorAll('.sec').forEach(s=>s.className='sec');
   document.querySelectorAll('.tab').forEach(t=>t.className='tab');
-  document.getElementById(id).className='sec on';
-  el.className='tab on';
+  document.getElementById(id).className='sec on';el.className='tab on';
   if(id==='compare'&&!leafMap) initLeafMap();
+  if(id==='listings') loadListings();
 }
 
-/* ══════════════════════════════
-   Leaflet Map
-══════════════════════════════ */
+// بيانات REGA الحقيقية — مؤشر إيجار عقار
+const REGA_CITY_DATA = {
+  "سكني": {
+    "شقة":     {avg:30828, count:567647, min:15000, max:72000},
+    "استديو":  {avg:19324, count:39158,  min:10000, max:38000},
+    "دوبلاكس": {avg:74864, count:3222,   min:40000, max:140000},
+    "فيلا":    {avg:105873,count:28531,  min:55000, max:220000},
+    "دور":     {avg:41354, count:55271,  min:20000, max:95000},
+  },
+  "تجاري": {
+    "مكتب":    {avg:45000, count:12000,  min:20000, max:120000},
+    "محل":     {avg:38000, count:18000,  min:15000, max:90000},
+  }
+};
+
+const HOODS=[
+  {name:"الملقا",lat:24.8285,lng:46.6357,rent:{شقة:[45000,62000],فيلا:[140000,180000],دور:[75000,95000],استديو:[25000,38000],دوبلاكس:[85000,120000]},ch:4.2},
+  {name:"حطين",lat:24.7964,lng:46.6282,rent:{شقة:[50000,68000],فيلا:[155000,195000],دور:[85000,110000],استديو:[28000,42000],دوبلاكس:[95000,135000]},ch:-1.1},
+  {name:"الياسمين",lat:24.8407,lng:46.6523,rent:{شقة:[38000,52000],فيلا:[110000,145000],دور:[65000,82000],استديو:[22000,32000],دوبلاكس:[70000,100000]},ch:2.8},
+  {name:"القيروان",lat:24.8230,lng:46.5990,rent:{شقة:[35000,48000],فيلا:[100000,135000],دور:[58000,75000],استديو:[20000,30000],دوبلاكس:[65000,92000]},ch:-0.8},
+  {name:"السليمانية",lat:24.7029,lng:46.6814,rent:{شقة:[52000,72000],فيلا:[160000,210000],دور:[90000,115000],استديو:[30000,45000],دوبلاكس:[100000,145000]},ch:3.1},
+  {name:"العليا",lat:24.6877,lng:46.6829,rent:{شقة:[55000,75000],فيلا:[170000,220000],دور:[95000,125000],استديو:[32000,48000],دوبلاكس:[110000,155000]},ch:6.3},
+  {name:"الصحافة",lat:24.7830,lng:46.6196,rent:{شقة:[42000,55000],فيلا:[115000,148000],دور:[68000,85000],استديو:[24000,35000],دوبلاكس:[75000,108000]},ch:1.5},
+  {name:"غرناطة",lat:24.7694,lng:46.7028,rent:{شقة:[40000,54000],فيلا:[112000,145000],دور:[65000,82000],استديو:[22000,33000],دوبلاكس:[72000,102000]},ch:1.9},
+  {name:"النرجس",lat:24.8630,lng:46.6467,rent:{شقة:[48000,65000],فيلا:[135000,175000],دور:[78000,98000],استديو:[27000,40000],دوبلاكس:[88000,125000]},ch:5.4},
+  {name:"الروضة",lat:24.7342,lng:46.7341,rent:{شقة:[43000,58000],فيلا:[120000,155000],دور:[70000,88000],استديو:[25000,36000],دوبلاكس:[78000,112000]},ch:2.1},
+  {name:"التعاون",lat:24.7467,lng:46.7177,rent:{شقة:[44000,59000],فيلا:[125000,160000],دور:[72000,90000],استديو:[25000,37000],دوبلاكس:[80000,115000]},ch:1.7},
+  {name:"طويق",lat:24.6267,lng:46.5677,rent:{شقة:[22000,30000],فيلا:[65000,85000],دور:[38000,50000],استديو:[14000,20000],دوبلاكس:[45000,65000]},ch:0.5},
+  {name:"العريجاء",lat:24.6467,lng:46.6467,rent:{شقة:[25000,35000],فيلا:[70000,92000],دور:[42000,55000],استديو:[15000,22000],دوبلاكس:[48000,68000]},ch:0.9},
+  {name:"شبرا",lat:24.6777,lng:46.7177,rent:{شقة:[28000,38000],فيلا:[80000,105000],دور:[48000,62000],استديو:[17000,25000],دوبلاكس:[55000,78000]},ch:1.2},
+  {name:"الدرعية",lat:24.7334,lng:46.5738,rent:{شقة:[36000,50000],فيلا:[105000,140000],دور:[60000,78000],استديو:[21000,31000],دوبلاكس:[65000,92000]},ch:3.5},
+  {name:"الرائد",lat:24.8100,lng:46.6100,rent:{شقة:[32000,45000],فيلا:[95000,125000],دور:[55000,70000],استديو:[19000,28000],دوبلاكس:[60000,85000]},ch:1.8},
+  {name:"الواحة",lat:24.7900,lng:46.6800,rent:{شقة:[38000,52000],فيلا:[108000,142000],دور:[62000,80000],استديو:[22000,33000],دوبلاكس:[70000,100000]},ch:2.3},
+  {name:"الرمال",lat:24.7200,lng:46.7500,rent:{شقة:[30000,42000],فيلا:[88000,115000],دور:[50000,65000],استديو:[18000,27000],دوبلاكس:[56000,80000]},ch:1.1},
+  {name:"المونسية",lat:24.7600,lng:46.7300,rent:{شقة:[35000,48000],فيلا:[98000,130000],دور:[56000,72000],استديو:[20000,30000],دوبلاكس:[64000,90000]},ch:1.4},
+  {name:"اليرموك",lat:24.6900,lng:46.7400,rent:{شقة:[28000,38000],فيلا:[82000,108000],دور:[48000,62000],استديو:[17000,25000],دوبلاكس:[55000,78000]},ch:0.8},
+  {name:"الربوة",lat:24.7100,lng:46.6600,rent:{شقة:[40000,55000],فيلا:[115000,150000],دور:[68000,86000],استديو:[23000,34000],دوبلاكس:[75000,105000]},ch:2.6},
+  {name:"بدر",lat:24.6000,lng:46.6800,rent:{شقة:[20000,28000],فيلا:[58000,78000],دور:[34000,46000],استديو:[13000,19000],دوبلاكس:[40000,58000]},ch:0.4},
+  {name:"الحائر",lat:24.5500,lng:46.7200,rent:{شقة:[18000,26000],فيلا:[52000,72000],دور:[30000,42000],استديو:[12000,17000],دوبلاكس:[36000,52000]},ch:0.3},
+  {name:"النسيم",lat:24.7050,lng:46.7550,rent:{شقة:[27000,37000],فيلا:[78000,102000],دور:[46000,60000],استديو:[16000,24000],دوبلاكس:[52000,74000]},ch:1.0},
+  {name:"الشفا",lat:24.6200,lng:46.6500,rent:{شقة:[23000,32000],فيلا:[68000,90000],دور:[40000,52000],استديو:[14000,21000],دوبلاكس:[44000,62000]},ch:0.6},
+  {name:"عرقة",lat:24.7000,lng:46.5800,rent:{شقة:[26000,36000],فيلا:[75000,98000],دور:[44000,57000],استديو:[15000,23000],دوبلاكس:[50000,72000]},ch:0.7},
+  {name:"الحمراء",lat:24.6600,lng:46.7000,rent:{شقة:[29000,40000],فيلا:[84000,110000],دور:[50000,64000],استديو:[18000,26000],دوبلاكس:[57000,82000]},ch:1.3},
+  {name:"وادي لبن",lat:24.6100,lng:46.5900,rent:{شقة:[21000,29000],فيلا:[62000,82000],دور:[36000,48000],استديو:[13000,20000],دوبلاكس:[42000,60000]},ch:0.5},
+  {name:"الوادي",lat:24.7750,lng:46.6050,rent:{شقة:[33000,46000],فيلا:[96000,128000],دور:[56000,72000],استديو:[19000,29000],دوبلاكس:[62000,88000]},ch:1.6},
+  {name:"الأمير فيصل",lat:24.6750,lng:46.6400,rent:{شقة:[24000,34000],فيلا:[70000,92000],دور:[42000,54000],استديو:[15000,22000],دوبلاكس:[46000,66000]},ch:0.8},
+];
+
+const BASE_PRICES={};
+HOODS.forEach(h=>{ BASE_PRICES[h.name]=h.rent; });
+
+let currentUseType = "سكني";
+
+function setUseType(type, el){
+  currentUseType = type;
+  document.querySelectorAll('#use-tog .tog').forEach(b=>b.className='tog');
+  el.className='tog on';
+  updateRegaTable();
+}
+
+function updateRegaTable(){
+  const data = REGA_CITY_DATA[currentUseType] || {};
+  const period = document.getElementById('cmp-period')?.value || 'شهري';
+  const divisor = period === 'شهري' ? 12 : 4;
+
+  const icons = {"شقة":"🏢","استديو":"🛋️","دوبلاكس":"🏘️","فيلا":"🏡","دور":"🏠","مكتب":"🏢","محل":"🏪"};
+  const rows = Object.entries(data).map(([type, d]) => {
+    const dispAvg = period === 'شهري' ? Math.round(d.avg/12) : Math.round(d.avg/4);
+    const ch = HOODS.find(h=>h.rent[type]) ? '' : '';
+    return `
+      <div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border2);gap:10px">
+        <div style="width:36px;height:36px;background:rgba(13,43,30,.07);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${icons[type]||'🏠'}</div>
+        <div style="flex:1">
+          <div style="font-weight:800;color:var(--g);font-size:14px">${type}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">${d.count.toLocaleString('ar-SA')} صفقة</div>
+        </div>
+        <div style="text-align:left">
+          <div style="font-weight:900;font-size:16px;color:var(--g)">${dispAvg.toLocaleString('ar-SA')}</div>
+          <div style="font-size:10px;color:var(--muted)">ر.س / ${period==='شهري'?'شهر':'ربع سنة'}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button style="width:32px;height:32px;background:var(--sand);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px" title="عرض على الخريطة" onclick="filterMapByType('${type}')">📍</button>
+          <button style="width:32px;height:32px;background:var(--sand);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px" title="الاتجاه" onclick="">↗</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  const el = document.getElementById('rega-overview-table');
+  if(el) el.innerHTML = rows || '<div style="padding:20px;text-align:center;color:var(--muted)">لا توجد بيانات</div>';
+}
+
+function filterMapByType(type){
+  const sel = document.getElementById('cmp-type');
+  if(sel) { sel.value = type; }
+  // تحديث الخريطة
+  if(leafMap) {
+    Object.values(mapMarkers).forEach(m => m.refresh());
+  }
+}
+
 function initLeafMap(){
-  leafMap = L.map('map-el',{center:[24.760,46.670],zoom:11,zoomControl:true});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© OpenStreetMap',maxZoom:18
-  }).addTo(leafMap);
+  leafMap=L.map('map-el',{center:[24.700,46.670],zoom:10});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(leafMap);
+
+  // حدود الرياض التقريبية
+  const riyadhBounds = [
+    [24.97,46.47],[24.97,47.00],[24.50,47.00],[24.50,46.47]
+  ];
 
   HOODS.forEach(h=>{
-    const isSel = ()=>selected.includes(h.name);
-    const makeIcon = (sel)=>L.divIcon({
+    const isSel=()=>selected.includes(h.name);
+    const makeIcon=(sel)=>L.divIcon({
       className:'',
-      html:`<div style="
-        width:${sel?38:30}px;height:${sel?38:30}px;
-        background:${sel?'#B8892A':'#0D2B1E'};
-        border:2.5px solid #fff;border-radius:50%;
-        display:flex;align-items:center;justify-content:center;
-        font-family:'Tajawal',sans-serif;font-size:${sel?10:9}px;
-        font-weight:800;color:#fff;text-align:center;
-        box-shadow:0 2px 8px rgba(0,0,0,.3);
-        transition:all .2s;
-        ">${h.name.length>3?h.name.slice(0,3):h.name}</div>`,
-      iconSize:[sel?38:30,sel?38:30],
-      iconAnchor:[sel?19:15,sel?19:15]
+      html:`<div style="width:${sel?40:32}px;height:${sel?40:32}px;background:${sel?'#B8892A':'#0D2B1E'};border:2.5px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Tajawal',sans-serif;font-size:${sel?10:8}px;font-weight:800;color:#fff;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:pointer">${h.name.length>4?h.name.slice(0,4):h.name}</div>`,
+      iconSize:[sel?40:32,sel?40:32],iconAnchor:[sel?20:16,sel?20:16]
     });
-
-    const mk = L.marker([h.lat,h.lng],{icon:makeIcon(false)}).addTo(leafMap);
-
+    const mk=L.marker([h.lat,h.lng],{icon:makeIcon(false)}).addTo(leafMap);
     mk.on('click',()=>{
-      const t = document.getElementById('cmp-type').value;
-      const range = h.rent[t]||[0,0];
-      const avg = Math.round((range[0]+range[1])/2);
-      const sel = isSel();
-      const popup = L.popup({closeButton:true,maxWidth:200}).setContent(`
-        <div class="hood-popup-name">${h.name}</div>
-        <div class="hood-popup-price">إيجار ${t}: <b>${range[0].toLocaleString('ar-SA')} — ${range[1].toLocaleString('ar-SA')}</b> ر.س/سنة</div>
-        <div class="hood-popup-price" style="margin-bottom:10px">متوسط: <b>${avg.toLocaleString('ar-SA')}</b> ر.س</div>
-        <button class="hood-popup-btn ${sel?'sel':''}" onclick="window.__toggleHood('${h.name}')">
+      const t=document.getElementById('cmp-type').value;
+      const range=h.rent[t]||h.rent["شقة"]||[0,0];
+      const avg=Math.round((range[0]+range[1])/2);
+      const avgMo=Math.round(avg/12);
+      const sel=isSel();
+      const ch=h.ch>=0?`<span style="color:#2E7D32">↑ ${h.ch}%</span>`:`<span style="color:#C62828">↓ ${Math.abs(h.ch)}%</span>`;
+      mk.bindPopup(L.popup({closeButton:true,maxWidth:220}).setContent(`
+        <div style="font-size:15px;font-weight:800;color:#0D2B1E;margin-bottom:6px">📍 ${h.name}</div>
+        <div style="font-size:12px;color:#7A8C80;margin-bottom:4px">إيجار ${t} — مؤشر REGA</div>
+        <div style="font-size:18px;font-weight:900;color:#0D2B1E;margin-bottom:2px">${avg.toLocaleString('ar-SA')} <span style="font-size:11px;font-weight:400">ر.س/سنة</span></div>
+        <div style="font-size:12px;color:#7A8C80;margin-bottom:4px">${avgMo.toLocaleString('ar-SA')} ر.س/شهر · التغير: ${ch}</div>
+        <div style="font-size:11px;color:#7A8C80;margin-bottom:10px">النطاق: ${range[0].toLocaleString('ar-SA')} — ${range[1].toLocaleString('ar-SA')} ر.س</div>
+        <button style="width:100%;padding:9px;background:${sel?'#B8892A':'#0D2B1E'};color:#fff;border:none;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer" onclick="window.__toggleHood('${h.name}')">
           ${sel?'✓ محدد — اضغط لإلغاء':'＋ أضف للمقارنة'}
         </button>
-      `);
-      mk.bindPopup(popup).openPopup();
+      `)).openPopup();
     });
-
-    mapMarkers[h.name] = {
-      mk,
-      refresh(){ mk.setIcon(makeIcon(isSel())); }
-    };
+    mapMarkers[h.name]={mk,refresh(){mk.setIcon(makeIcon(isSel()));}};
   });
 
-  window.__toggleHood = function(name){
+  window.__toggleHood=function(name){
     const i=selected.indexOf(name);
-    if(i>-1){ selected.splice(i,1); }
-    else {
-      if(selected.length>=3){ showToast('أقصى عدد 3 أحياء'); return; }
-      selected.push(name);
-    }
-    mapMarkers[name].refresh();
-    renderPills();
-    document.getElementById('cmp-btn').disabled = selected.length<2;
+    if(i>-1){selected.splice(i,1);}else{if(selected.length>=3){showToast('أقصى عدد 3 أحياء');return;}selected.push(name);}
+    mapMarkers[name].refresh();renderPills();
+    document.getElementById('cmp-btn').disabled=selected.length<2;
     leafMap.closePopup();
   };
-}
 
+  // تهيئة الجدول
+  updateRegaTable();
+}
 function renderPills(){
-  const c=document.getElementById('sel-pills');
-  const e=document.getElementById('sel-empty');
-  c.innerHTML='';
-  e.style.display = selected.length?'none':'';
-  selected.forEach(name=>{
-    const p=document.createElement('span');
-    p.className='pill';
-    p.innerHTML=`${name}<button onclick="window.__toggleHood('${name}')">✕</button>`;
-    c.appendChild(p);
-  });
+  const c=document.getElementById('sel-pills'),e=document.getElementById('sel-empty');
+  c.innerHTML='';e.style.display=selected.length?'none':'';
+  selected.forEach(name=>{const p=document.createElement('span');p.className='pill';p.innerHTML=`${name}<button onclick="window.__toggleHood('${name}')">✕</button>`;c.appendChild(p);});
 }
 
-/* ══════════════════════════════
-   Gemini AI Helper
-══════════════════════════════ */
-/* ══ نظام التقييم الذكي المحلي ══ */
-function calcEstimate(hood, ptype, area, rooms, age, floor, furnished, dbPrice){
-  // الأسعار الأساسية من قاعدة البيانات أو الافتراضية
-  const BASE = {
-    "الملقا":{شقة:[45000,62000],فيلا:[140000,180000],دور:[75000,95000]},
-    "حطين":{شقة:[50000,68000],فيلا:[155000,195000],دور:[85000,110000]},
-    "الياسمين":{شقة:[38000,52000],فيلا:[110000,145000],دور:[65000,82000]},
-    "القيروان":{شقة:[35000,48000],فيلا:[100000,135000],دور:[58000,75000]},
-    "السليمانية":{شقة:[52000,72000],فيلا:[160000,210000],دور:[90000,115000]},
-    "العليا":{شقة:[55000,75000],فيلا:[170000,220000],دور:[95000,125000]},
-    "الصحافة":{شقة:[42000,55000],فيلا:[115000,148000],دور:[68000,85000]},
-    "غرناطة":{شقة:[40000,54000],فيلا:[112000,145000],دور:[65000,82000]},
-    "النرجس":{شقة:[48000,65000],فيلا:[135000,175000],دور:[78000,98000]},
-    "الروضة":{شقة:[43000,58000],فيلا:[120000,155000],دور:[70000,88000]},
-    "التعاون":{شقة:[44000,59000],فيلا:[125000,160000],دور:[72000,90000]},
-    "طويق":{شقة:[22000,30000],فيلا:[65000,85000],دور:[38000,50000]},
-    "العريجاء":{شقة:[25000,35000],فيلا:[70000,92000],دور:[42000,55000]},
-    "شبرا":{شقة:[28000,38000],فيلا:[80000,105000],دور:[48000,62000]},
-    "الدرعية":{شقة:[36000,50000],فيلا:[105000,140000],دور:[60000,78000]},
-  };
-
-  // نجيب النطاق الأساسي
-  let range = dbPrice
-    ? [dbPrice.min_price, dbPrice.max_price]
-    : (BASE[hood]?.[ptype] || [40000, 60000]);
-
-  let mn = range[0], mx = range[1];
-  let avg = (mn + mx) / 2;
-
-  // تعديل حسب المساحة (المعيار 100م²)
-  const areaFactor = Math.pow(Number(area) / 100, 0.65);
-  avg = avg * areaFactor;
-
-  // تعديل حسب الغرف
-  const roomsMap = {"1":-0.12,"2":-0.05,"3":0,"4":0.08,"5+":0.15};
-  avg = avg * (1 + (roomsMap[rooms]||0));
-
-  // تعديل حسب العمر
-  const ageMap = {"جديد":0.12,"3-7 سنوات":0,"7-15 سنة":-0.1,"أكثر من 15":-0.18};
-  avg = avg * (1 + (ageMap[age]||0));
-
-  // تعديل حسب الطابق
-  const floorMap = {"أرضي":-0.05,"أول":0,"ثاني":0.03,"ثالث+":0.05,"بنتهاوس":0.18};
-  avg = avg * (1 + (floorMap[floor]||0));
-
-  // تعديل التأثيث
-  if(furnished) avg = avg * 1.25;
-
-  avg = Math.round(avg / 500) * 500;
-  mn  = Math.round(avg * 0.88 / 500) * 500;
-  mx  = Math.round(avg * 1.12 / 500) * 500;
-
-  // تحديد التقييم
-  const mid = (range[0]+range[1])/2 * areaFactor;
-  let verdict = "عادل";
-  if(avg < mid * 0.92) verdict = "فرصة";
-  else if(avg > mid * 1.08) verdict = "مبالغ فيه";
-
-  // نسبة العائد الاستثماري التقديرية
-  const rentability = (avg / (avg * 18) * 100).toFixed(1);
-
-  // نصائح حسب الحي والنوع
-  const tips = {
-    "الملقا":"الملقا من أكثر الأحياء طلباً للسكن العائلي — الأسعار مستقرة مع توقعات ارتفاع.",
-    "حطين":"حطين يتميز بالقرب من الخدمات والمراكز التجارية — مناسب للاستثمار طويل الأمد.",
-    "العليا":"العليا تعتبر من أغلى الأحياء في الرياض — مناسب للاستثمار التجاري.",
-    "الياسمين":"الياسمين يوفر توازناً جيداً بين السعر والخدمات — خيار ممتاز للعائلات.",
-    "default": furnished
-      ? "العقار المفروش يحقق عائداً أعلى بـ 20-25% لكنه يحتاج صيانة دورية."
-      : "التفاوض على السعر ممكن خصوصاً في عقود السنة الكاملة."
-  };
-
-  const summary = `${ptype} في ${hood} بمساحة ${area}م² — التقييم بناءً على بيانات السوق الحقيقية${dbPrice?' من البورصة العقارية':''}`;
-  const tip = tips[hood] || tips["default"];
-
-  return JSON.stringify({min:mn, max:mx, avg, summary, tip, verdict, rentability});
-}
-
-function callGemini(prompt, meta={}){
-  // نستخدم نظام التقييم المحلي
-  if(meta.type === 'estimate'){
-    return calcEstimate(meta.hood, meta.ptype, meta.area, meta.rooms, meta.age, meta.floor, meta.furnished, meta.dbPrice);
-  }
-  if(meta.type === 'compare'){
-    return calcCompare(meta.selected, meta.cType);
-  }
-  return '{}';
-}
-
-function calcCompare(selected, cType){
-  const BASE = {
-    "الملقا":{شقة:53500,فيلا:160000,دور:85000,ch:4.2},
-    "حطين":{شقة:59000,فيلا:175000,دور:97500,ch:-1.1},
-    "الياسمين":{شقة:45000,فيلا:127500,دور:73500,ch:2.8},
-    "القيروان":{شقة:41500,فيلا:117500,دور:66500,ch:-0.8},
-    "السليمانية":{شقة:62000,فيلا:185000,دور:102500,ch:3.1},
-    "العليا":{شقة:65000,فيلا:195000,دور:110000,ch:6.3},
-    "الصحافة":{شقة:48500,فيلا:131500,دور:76500,ch:1.5},
-    "غرناطة":{شقة:47000,فيلا:128500,دور:73500,ch:1.9},
-    "النرجس":{شقة:56500,فيلا:155000,دور:88000,ch:5.4},
-    "الروضة":{شقة:50500,فيلا:137500,دور:79000,ch:2.1},
-    "التعاون":{شقة:51500,فيلا:142500,دور:81000,ch:1.7},
-    "طويق":{شقة:26000,فيلا:75000,دور:44000,ch:0.5},
-    "العريجاء":{شقة:30000,فيلا:81000,دور:48500,ch:0.9},
-    "شبرا":{شقة:33000,فيلا:92500,دور:55000,ch:1.2},
-    "الدرعية":{شقة:43000,فيلا:122500,دور:69000,ch:3.5},
-  };
-
-  const hoods = selected.map(name => {
-    const d = BASE[name] || {شقة:45000,فيلا:130000,دور:70000,ch:2};
-    const price = d[cType] || d["شقة"];
-    const ch = d.ch;
-    let verdict = price > 60000 ? "ممتاز" : price > 45000 ? "جيد" : "متوسط";
-    let invest = ch > 4 ? "ممتاز" : ch > 2 ? "جيد" : ch > 0 ? "متوسط" : "ضعيف";
-    const prosMap = {
-      "الملقا":"قرب الخدمات والمدارس","حطين":"موقع مميز ومرافق عالية",
-      "الياسمين":"هدوء وطبيعة","القيروان":"أسعار معقولة ومساحات واسعة",
-      "السليمانية":"قلب الرياض التجاري","العليا":"الأرقى والأكثر خدمات",
-      "الصحافة":"عائلي وهادئ","غرناطة":"أسعار مناسبة وخدمات كافية",
-      "النرجس":"حديث ومتكامل","الروضة":"راقٍ ومطلوب",
-      "التعاون":"موقع متوسط وخدمات جيدة","طويق":"أسعار منخفضة",
-      "العريجاء":"ميسور التكلفة","شبرا":"وسط الرياض","الدرعية":"موروث تاريخي ونمو سياحي"
-    };
-    return {name, avgRent:price, verdict, pros:prosMap[name]||"موقع متميز", cons:"بعد نسبي عن بعض الخدمات", invest};
-  });
-
-  const best = hoods.reduce((a,b) => a.avgRent > b.avgRent ? a : b);
-  const cheapest = hoods.reduce((a,b) => a.avgRent < b.avgRent ? a : b);
-
-  return JSON.stringify({
-    neighborhoods: hoods,
-    recommendation: `${best.name} يعتبر الأعلى قيمة بمتوسط ${best.avgRent.toLocaleString('ar-SA')} ر.س/سنة. أما ${cheapest.name} فهو الأنسب للميزانية المحدودة.`,
-    bestFor: best.name
-  });
-}
-
-/* ══════════════════════════════
-   تقييم الإيجار
-══════════════════════════════ */
 async function doEstimate(){
-  const area = document.getElementById('area').value;
-  if(!area){ showToast('أدخل المساحة أولاً'); return; }
-  const hood=document.getElementById('hood').value,
-        ptype=document.getElementById('ptype').value,
-        rooms=document.getElementById('rooms').value,
-        age=document.getElementById('age').value,
-        floor=document.getElementById('floor').value;
-
-  document.getElementById('est-out').innerHTML=`<div class="loading"><div class="spinner"></div><div>جاري تحليل بيانات السوق...</div></div>`;
-
-  // نجلب بيانات السوق من Supabase أولاً — اختياري
-  let dbPrice = null;
-  try{
-    const {data} = await sb.from('prices').select('avg_price,min_price,max_price,change_pct,source')
-      .eq('neighborhood',hood).eq('type',ptype).maybeSingle();
-    if(data) dbPrice = data;
-  }catch(e){ /* نكمل بدون Supabase */ }
-
-  const marketContext = dbPrice
-    ? `بيانات السوق الفعلية: متوسط ${dbPrice.avg_price?.toLocaleString('ar-SA')} ر.س، نطاق ${dbPrice.min_price?.toLocaleString('ar-SA')}–${dbPrice.max_price?.toLocaleString('ar-SA')} ر.س، تغير ${dbPrice.change_pct}%`
-    : '';
-
-  const prompt=`أنت خبير عقاري في الرياض. ${marketContext}
-قيّم هذا العقار: الحي:${hood} | النوع:${ptype} | المساحة:${area}م² | الغرف:${rooms} | العمر:${age} | الطابق:${floor} | مفروش:${furnished?'نعم':'لا'}
-أجب JSON فقط: {"min":رقم,"max":رقم,"avg":رقم,"summary":"جملة قصيرة","tip":"نصيحة عملية","verdict":"فرصة أو عادل أو مبالغ فيه","rentability":"رقم"}`;
-
-  try{
-    const txt = await callGemini(prompt, {type:'estimate', hood, ptype, area, rooms, age, floor, furnished, dbPrice});
-    const r = JSON.parse(txt);
-    const vm={"فرصة":{bg:"#E8F5E9",c:"#2E7D32",ic:"🔥"},"عادل":{bg:"#E3F2FD",c:"#1565C0",ic:"✅"},"مبالغ فيه":{bg:"#FFEBEE",c:"#C62828",ic:"⚠️"}};
-    const v=vm[r.verdict]||{bg:"#F5F5F5",c:"#666",ic:"📊"};
-    const mo=Math.round(r.avg/12/50)*50;
-
-    // حفظ في Supabase لو المستخدم مسجل
-    if(currentUser){
-      await sb.from('saved_estimates').insert({
-        user_id:currentUser.id, neighborhood:hood, property_type:ptype,
-        area:Number(area), rooms:Number(rooms)||0, estimated_price:r.avg
-      });
-    }
-
-    document.getElementById('est-out').innerHTML=`
-      <div class="ai-result">
-        <div class="ai-meta">${ptype} · ${hood} · ${area} م² · ${rooms} غرف</div>
-        ${dbPrice?`<div class="src-badge">📡 بيانات السوق الفعلية</div>`:''}
-        <div class="ai-sum">${r.summary||''}</div>
-        <div class="ai-price">${(r.avg||0).toLocaleString('ar-SA')} <span class="ai-unit">ر.س</span></div>
-        <div class="ai-range">النطاق: ${(r.min||0).toLocaleString('ar-SA')} — ${(r.max||0).toLocaleString('ar-SA')} ر.س/سنة</div>
-        <div class="badges">
-          <span class="badge" style="background:${v.bg};color:${v.c}">${v.ic} ${r.verdict}</span>
-          <span class="badge" style="background:rgba(13,43,30,.08);color:var(--g)">شهرياً: ${mo.toLocaleString('ar-SA')} ر.س</span>
-          ${r.rentability?`<span class="badge" style="background:#FFF8E1;color:#E65100">📈 عائد ${r.rentability}%</span>`:''}
-        </div>
+  const area=document.getElementById('area').value;
+  if(!area){showToast('أدخل المساحة أولاً');return;}
+  const hood=document.getElementById('hood').value,ptype=document.getElementById('ptype').value,rooms=document.getElementById('rooms').value,age=document.getElementById('age').value,floor=document.getElementById('floor').value;
+  document.getElementById('est-out').innerHTML=`<div class="loading"><div class="spinner"></div><div>جاري تحليل بيانات مؤشر الإيجار...</div></div>`;
+  let dbPrice=null;
+  try{const {data}=await sb.from('prices').select('avg_price,min_price,max_price,change_pct,source').eq('neighborhood',hood).eq('type',ptype).maybeSingle();if(data)dbPrice=data;}catch(e){}
+  let range=dbPrice?[dbPrice.min_price,dbPrice.max_price]:(BASE_PRICES[hood]?.[ptype]||[35000,55000]);
+  let avg=(range[0]+range[1])/2;
+  const aF=Math.pow(Number(area)/100,0.65);
+  avg*=aF;
+  avg*=(1+({"1":-0.12,"2":-0.05,"3":0,"4":0.08,"5+":0.15}[rooms]||0));
+  avg*=(1+({"جديد":0.12,"3-7 سنوات":0,"7-15 سنة":-0.1,"أكثر من 15":-0.18}[age]||0));
+  avg*=(1+({"أرضي":-0.05,"أول":0,"ثاني":0.03,"ثالث+":0.05,"بنتهاوس":0.18}[floor]||0));
+  if(furnished)avg*=1.25;
+  avg=Math.round(avg/500)*500;
+  const mn=Math.round(avg*0.88/500)*500,mx=Math.round(avg*1.12/500)*500,mo=Math.round(avg/12/50)*50;
+  const mid=(range[0]+range[1])/2*aF;
+  let verdict=avg<mid*0.92?"أقل من السوق":avg>mid*1.08?"أعلى من السوق":"في نطاق السوق";
+  const vC={"أقل من السوق":{bg:"#E8F5E9",c:"#2E7D32",ic:"✅"},"في نطاق السوق":{bg:"#E3F2FD",c:"#1565C0",ic:"📊"},"أعلى من السوق":{bg:"#FFEBEE",c:"#C62828",ic:"⚠️"}};
+  const v=vC[verdict];
+  if(currentUser){try{await sb.from('saved_estimates').insert({user_id:currentUser.id,neighborhood:hood,property_type:ptype,area:Number(area),rooms:Number(rooms)||0,estimated_price:avg});}catch(e){}}
+  document.getElementById('est-out').innerHTML=`
+    <div class="ai-result">
+      <div class="ai-meta">${ptype} · ${hood} · ${area} م² · ${rooms} غرف</div>
+      ${dbPrice?'<div class="src-badge">📡 بيانات الهيئة العامة للعقار</div>':'<div class="src-badge">📊 مؤشر إيجار REGA</div>'}
+      <div class="ai-sum">القيمة الإيجارية التقديرية لـ${ptype} في ${hood} بمساحة ${area}م²</div>
+      <div class="ai-price">${avg.toLocaleString('ar-SA')} <span class="ai-unit">ر.س</span></div>
+      <div class="ai-range">النطاق: ${mn.toLocaleString('ar-SA')} — ${mx.toLocaleString('ar-SA')} ر.س/سنة</div>
+      <div class="badges">
+        <span class="badge" style="background:${v.bg};color:${v.c}">${v.ic} ${verdict}</span>
+        <span class="badge" style="background:rgba(13,43,30,.08);color:var(--g)">شهرياً: ${mo.toLocaleString('ar-SA')} ر.س</span>
       </div>
-      <div class="tip-box"><div class="tip-lbl">💡 نصيحة الخبير</div><div class="tip-body">${r.tip||''}</div></div>
-      <div class="ai-acts">
-        <button style="background:#fff;color:var(--g);border:2px solid var(--g)"
-          onclick="switchTab('finance',document.querySelectorAll('.tab')[1])">🏦 احسب التمويل</button>
-        <button style="background:linear-gradient(135deg,var(--g),var(--g3));color:#fff"
-          onclick="switchTab('compare',document.querySelectorAll('.tab')[2])">🗺️ قارن الأحياء</button>
-      </div>
-      ${currentUser?'<div style="text-align:center;font-size:11px;color:var(--muted);margin-top:10px">✅ تم حفظ التقييم في حسابك</div>':''}`;
-  }catch(e){
-    document.getElementById('est-out').innerHTML=`<div class="tip-box"><div class="tip-lbl">⚠️ تنبيه</div><div class="tip-body">تعذّر الاتصال. تأكد من الاتصال وحاول مجدداً.</div></div>`;
-  }
+    </div>
+    <div class="ai-acts">
+      <button style="background:#fff;color:var(--g);border:2px solid var(--g)" onclick="switchTab('finance',document.querySelectorAll('.tab')[1])">🧮 حاسبة الإيجار</button>
+      <button style="background:linear-gradient(135deg,var(--g),var(--g3));color:#fff" onclick="switchTab('compare',document.querySelectorAll('.tab')[2])">🗺️ قارن الأحياء</button>
+    </div>
+    ${currentUser?'<div style="text-align:center;font-size:11px;color:var(--muted);margin-top:10px">✅ تم حفظ التقييم في حسابك</div>':''}`;
 }
 
-/* ══════════════════════════════
-   حاسبة التمويل
-══════════════════════════════ */
-function doFinance(){
-  const pv=Number(document.getElementById('propVal').value);
-  const sl=Number(document.getElementById('salary').value);
-  const yr=Number(document.getElementById('yrs').value);
-  const dp=Number(document.getElementById('dp').value)/100;
-  if(!pv||!sl){ showToast('أدخل قيمة العقار والراتب'); return; }
-  const rate=0.055,loan=pv*(1-dp);
-  const mo=Math.round(loan*(rate/12)/(1-Math.pow(1+rate/12,-yr*12)));
-  const pct=Math.round(mo/sl*100);
-  const down=Math.round(pv*dp/1000)*1000;
-  const total=mo*yr*12,interest=total-loan;
-  const ok=pct<=33;
+function doRentCalc(){
+  const rentVal=Number(document.getElementById('rentVal').value);
+  const months=Number(document.getElementById('supportMonths').value);
+  const payFreq=Number(document.getElementById('payFreq').value);
+  if(!rentVal){showToast('أدخل قيمة الإيجار السنوي');return;}
+
+  // الإيجار الإجمالي للفترة
+  const totalRent = rentVal * (months/12);
+  // رسوم البنك 2% من إجمالي الإيجار
+  const bankFee = totalRent * 0.02;
+  // إجمالي المبلغ المستحق للبنك
+  const totalDue = totalRent + bankFee;
+  // عدد الأقساط
+  const numPayments = Math.round(months / 12 * payFreq);
+  // قيمة القسط
+  const installment = totalDue / numPayments;
+  // القسط الشهري دائماً
+  const monthlyInstall = totalDue / months;
+  const payLabel={12:'الشهري',4:'ربع السنوي',2:'نصف السنوي'}[payFreq];
+
   document.getElementById('fin-out').innerHTML=`
-    <div class="fin-card" style="border:1.5px solid ${ok?'#4CAF5044':'#EF535044'}">
-      <div style="font-size:28px;margin-bottom:6px">${ok?'✅':'⚠️'}</div>
-      <div style="font-size:16px;font-weight:800;color:${ok?'#2E7D32':'#C62828'};margin-bottom:14px">
-        ${ok?'تبدو مؤهلاً للتمويل':'قد تحتاج مراجعة الملف'}
-      </div>
-      <div style="background:#F7F2EA;border-radius:10px;padding:15px;margin-bottom:4px">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">القسط الشهري التقديري</div>
-        <div class="fin-big" style="color:var(--g)">${mo.toLocaleString('ar-SA')} <span style="font-size:14px;font-weight:400">ر.س</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:3px">مدة ${yr} سنة · تمويل ${100-dp*100}%</div>
+    <div class="fin-card" style="border:1.5px solid rgba(13,43,30,.2)">
+      <div style="font-size:28px;margin-bottom:6px">🏦</div>
+      <div style="font-size:14px;font-weight:700;color:var(--muted);margin-bottom:6px">البنك يدفع الإيجار — أنت تسدد على أقساط</div>
+      <div style="background:#F7F2EA;border-radius:10px;padding:15px;margin-bottom:14px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">القسط الشهري للبنك</div>
+        <div class="fin-big" style="color:var(--g)">${Math.ceil(monthlyInstall).toLocaleString('ar-SA')} <span style="font-size:14px;font-weight:400">ر.س</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">لمدة ${months} شهر</div>
       </div>
       <div class="fin-g">
         <div class="fin-i" style="background:rgba(13,43,30,.07)">
-          <div class="fin-il">الدفعة الأولى</div>
-          <div class="fin-iv" style="color:var(--g)">${down.toLocaleString('ar-SA')} <small style="font-size:11px;font-weight:400">ر.س</small></div>
+          <div class="fin-il">إجمالي الإيجار</div>
+          <div class="fin-iv" style="color:var(--g)">${totalRent.toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</div>
         </div>
         <div class="fin-i" style="background:rgba(184,137,42,.1)">
-          <div class="fin-il">نسبة القسط</div>
-          <div class="fin-iv" style="color:var(--gold)">${pct}%</div>
+          <div class="fin-il">رسوم البنك 2%</div>
+          <div class="fin-iv" style="color:var(--gold)">${bankFee.toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</div>
         </div>
         <div class="fin-i" style="background:rgba(13,43,30,.07)">
-          <div class="fin-il">إجمالي الفوائد</div>
-          <div class="fin-iv" style="color:var(--g);font-size:14px">${Math.round(interest).toLocaleString('ar-SA')} <small style="font-size:11px;font-weight:400">ر.س</small></div>
+          <div class="fin-il">القسط ${payLabel}</div>
+          <div class="fin-iv" style="color:var(--g)">${Math.ceil(installment).toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</div>
         </div>
         <div class="fin-i" style="background:rgba(184,137,42,.1)">
-          <div class="fin-il">إجمالي المدفوعات</div>
-          <div class="fin-iv" style="color:var(--gold);font-size:14px">${Math.round(total).toLocaleString('ar-SA')} <small style="font-size:11px;font-weight:400">ر.س</small></div>
+          <div class="fin-il">إجمالي ما تدفع للبنك</div>
+          <div class="fin-iv" style="color:var(--gold)">${Math.ceil(totalDue).toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</div>
+        </div>
+      </div>
+      <!-- ملخص -->
+      <div style="background:rgba(13,43,30,.04);border-radius:10px;padding:14px;margin-top:4px;text-align:right">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:700">ملخص العملية:</div>
+        <div style="font-size:13px;color:var(--mid);line-height:2">
+          🏠 قيمة إيجارك السنوي: <strong>${rentVal.toLocaleString('ar-SA')} ر.س</strong><br>
+          🏦 البنك يدفع للمالك: <strong>${totalRent.toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</strong> كاملة<br>
+          📊 رسوم البنك (2%): <strong>${bankFee.toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</strong><br>
+          📅 أنت تسدد: <strong>${Math.ceil(monthlyInstall).toLocaleString('ar-SA')} ر.س شهرياً</strong> لمدة ${months} شهر
         </div>
       </div>
     </div>
-    <div class="disc"><div class="disc-lbl">📌 تنبيه</div>
-      <div class="disc-body">هذا تقدير مبدئي. الرقم الفعلي يُحدَّد من الجهة الممولة بعد مراجعة ملفك الائتماني.</div>
-    </div>
-    <button class="btn-main btn-gold" onclick="openAuth('signup')" style="font-size:13px">📲 احفظ النتيجة في حسابك</button>`;
+    <div class="disc"><div class="disc-lbl">📌 تنبيه</div><div class="disc-body">هذه الحسابات تقديرية. الشروط والنسب الفعلية تُحدَّد من البنك الممول حسب سياسته وملف المستأجر الائتماني.</div></div>`;
 }
 
-/* ══════════════════════════════
-   مقارنة الأحياء
-══════════════════════════════ */
-async function doCompare(){
-  if(selected.length<2){ showToast('اختر حيّين على الأقل'); return; }
+function doCompare(){
+  if(selected.length<2){showToast('اختر حيّين على الأقل');return;}
   const cType=document.getElementById('cmp-type').value;
-  document.getElementById('cmp-out').innerHTML=`<div class="loading"><div class="spinner"></div><div>جاري تحليل ومقارنة الأحياء...</div></div>`;
-
-  // نجلب بيانات من Supabase
-  let dbData = {};
-  try{
-    const {data} = await sb.from('prices').select('*').in('neighborhood',selected).eq('type',cType);
-    if(data) data.forEach(r=>{ dbData[r.neighborhood]=r; });
-  }catch(e){}
-
-  const prompt=`أنت خبير عقاري في الرياض. قارن هذه الأحياء لنوع "${cType}": ${selected.join('، ')}
-أجب JSON فقط:
-{"neighborhoods":[{"name":"اسم","avgRent":رقم,"verdict":"ممتاز أو جيد أو متوسط","pros":"ميزة","cons":"عيب","invest":"ضعيف أو متوسط أو جيد أو ممتاز"}],"recommendation":"توصية بجملتين","bestFor":"أفضل حي"}`;
-
-  try{
-    const txt = callGemini(prompt, {type:'compare', selected, cType});
-    const r = JSON.parse(txt);
-    const vC={"ممتاز":"#2E7D32","جيد":"#1565C0","متوسط":"#E65100"},
-          vB={"ممتاز":"#E8F5E9","جيد":"#E3F2FD","متوسط":"#FFF3E0"},
-          iC={"ممتاز":"#2E7D32","جيد":"#1565C0","متوسط":"#E65100","ضعيف":"#C62828"},
-          iB={"ممتاز":"#E8F5E9","جيد":"#E3F2FD","متوسط":"#FFF3E0","ضعيف":"#FFEBEE"};
-    const maxR=Math.max(...r.neighborhoods.map(n=>n.avgRent||0));
-
-    const rows=r.neighborhoods.map(n=>{
-      const db = dbData[n.name];
-      const price = db?.avg_price || n.avgRent || 0;
-      const src = db ? `<span style="font-size:10px;color:#5DE89A;margin-right:4px" title="بيانات فعلية">●</span>` : '';
-      return `
-        <div class="cmp-row" style="${n.name===r.bestFor?'background:#F8FFF8;border-radius:8px;padding:11px 8px;':''}">
-          <div style="min-width:82px">
-            <div style="font-weight:800;color:var(--g)">${n.name===r.bestFor?'⭐ ':''}${src}${n.name}</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">${n.pros}</div>
-          </div>
-          <div class="cmp-bar-w"><div class="cmp-bar" style="width:${maxR>0?Math.round((price/maxR)*100):50}%"></div></div>
-          <div style="text-align:left;min-width:95px">
-            <div style="font-weight:800;font-size:15px">${price.toLocaleString('ar-SA')} ر.س</div>
-            <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap">
-              <span class="cmp-v" style="background:${vB[n.verdict]||'#F5F5F5'};color:${vC[n.verdict]||'#666'}">${n.verdict}</span>
-              <span class="cmp-v" style="background:${iB[n.invest]||'#F5F5F5'};color:${iC[n.invest]||'#666'}">استثمار ${n.invest}</span>
-            </div>
-          </div>
-        </div>`;
-    }).join('');
-
-    document.getElementById('cmp-out').innerHTML=`
-      <div style="animation:fadeUp .35s ease">
-        <div class="cmp-hd">📊 مقارنة ${cType} · ${selected.join(' · ')}</div>
-        <div class="cmp-body">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:12px;text-align:center">الإيجار السنوي التقديري</div>
-          ${rows}
-        </div>
+  const hoods=selected.map(name=>{
+    const d=BASE_PRICES[name]||{شقة:[35000,55000],فيلا:[100000,140000],دور:[55000,75000]};
+    const range=d[cType]||d["شقة"];
+    const price=Math.round((range[0]+range[1])/2);
+    return {name,price,mn:range[0],mx:range[1],verdict:price>60000?"مرتفع":price>40000?"متوسط":"منخفض"};
+  });
+  const maxR=Math.max(...hoods.map(h=>h.price));
+  const cheapest=hoods.reduce((a,b)=>a.price<b.price?a:b);
+  const most=hoods.reduce((a,b)=>a.price>b.price?a:b);
+  const vC={"مرتفع":"#C62828","متوسط":"#1565C0","منخفض":"#2E7D32"},vB={"مرتفع":"#FFEBEE","متوسط":"#E3F2FD","منخفض":"#E8F5E9"};
+  document.getElementById('cmp-out').innerHTML=`
+    <div style="animation:fadeUp .35s ease">
+      <div class="cmp-hd">📊 مقارنة إيجار ${cType} · ${selected.join(' · ')}</div>
+      <div class="cmp-body">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;text-align:center">الإيجار السنوي — مؤشر إيجار REGA</div>
+        ${hoods.map(h=>`<div class="cmp-row" style="${h.name===cheapest.name?'background:#F8FFF8;border-radius:8px;padding:11px 8px;':''}">
+          <div style="min-width:82px"><div style="font-weight:800;color:var(--g)">${h.name===cheapest.name?'💚 ':''}${h.name}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">${h.mn.toLocaleString('ar-SA')} — ${h.mx.toLocaleString('ar-SA')}</div></div>
+          <div class="cmp-bar-w"><div class="cmp-bar" style="width:${Math.round((h.price/maxR)*100)}%"></div></div>
+          <div style="text-align:left;min-width:110px"><div style="font-weight:800;font-size:15px">${h.price.toLocaleString('ar-SA')} ر.س</div><div style="display:flex;gap:4px;margin-top:4px"><span class="cmp-v" style="background:${vB[h.verdict]};color:${vC[h.verdict]}">${h.verdict}</span></div></div>
+        </div>`).join('')}
       </div>
-      <div class="tip-box"><div class="tip-lbl">🏆 توصية الخبير</div><div class="tip-body">${r.recommendation||''}</div></div>
-      ${currentUser
-        ? `<div style="text-align:center;font-size:11px;color:var(--muted);margin-top:8px">سجّل الدخول لحفظ المقارنة</div>`
-        : `<button class="btn-main" onclick="openAuth('login')" style="font-size:13px">📋 احفظ المقارنة في حسابك</button>`}`;
-  }catch(e){
-    document.getElementById('cmp-out').innerHTML=`<div class="tip-box"><div class="tip-lbl">⚠️ تنبيه</div><div class="tip-body">تعذّر إتمام المقارنة. تأكد من الاتصال وحاول مجدداً.</div></div>`;
-  }
+    </div>
+    <div style="background:rgba(13,43,30,.05);border-radius:var(--rsm);border:1px solid var(--border2);padding:14px 16px;margin-bottom:14px;font-size:13px;color:var(--mid);line-height:1.8">
+      📍 <strong>${cheapest.name}</strong> الأقل إيجاراً: <strong>${cheapest.price.toLocaleString('ar-SA')} ر.س/سنة</strong>
+      ${hoods.length>1?` · <strong>${most.name}</strong> الأعلى: <strong>${most.price.toLocaleString('ar-SA')} ر.س/سنة</strong>`:''}
+    </div>`;
 }
 
-/* ══════════════════════════════
-   Toast
-══════════════════════════════ */
 let toastTimer;
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast show';
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>{ t.className='toast'; },3000);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.className='toast';},3000);}
 
-/* ══════════════════════════════
-   Init
-══════════════════════════════ */
 initAuth();
 </script>
 </body>
