@@ -1,0 +1,40 @@
+const BASE = "https://rentalrei.rega.gov.sa/RegaIndicatorsAPIs/api/IndicatorEjar";
+
+exports.handler = async function(event) {
+  var h = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Content-Type": "application/json"
+  };
+
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers: h, body: "" };
+  }
+
+  try {
+    var tokenRes = await fetch(BASE + "/GetToken", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}"
+    });
+    var token = (await tokenRes.text()).replace(/"/g, "").trim();
+
+    var seg = event.path.split("/rega-api/")[1] || "";
+    var qs = event.rawQuery ? "?" + event.rawQuery : "";
+    var url = BASE + "/" + seg + qs;
+
+    var res = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    var data = await res.json();
+    return { statusCode: 200, headers: h, body: JSON.stringify(data) };
+
+  } catch (e) {
+    return { statusCode: 500, headers: h, body: JSON.stringify({ error: e.message }) };
+  }
+};
