@@ -1,2 +1,15 @@
 [build]
   functions = "netlify/functions"
+  publish = "."
+
+[[redirects]]
+  from = "/api/rega/*"
+  to = "/.netlify/functions/rega-api/:splat"
+  status = 200
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
