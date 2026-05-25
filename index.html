@@ -1,1357 +1,875 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>عيار العقارية — اعرف القيمة الإيجارية للعقار بالرياض</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<title>تحقق إحداثيات الأحياء</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const CFG={supabase_url:"https://ojgrxarzmalfdxiqddrb.supabase.co",supabase_key:"sb_publishable_yY2q3CSVJwLHcTmmTpkdtQ_XDwIQRiW"};
-</script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--g:#0D2B1E;--g2:#1A3D2B;--g3:#255C40;--g4:#0A2018;--gold:#B8892A;--goldL:#D4A84B;--goldXL:#F0C97A;--sand:#F7F2EA;--white:#FFFFFF;--dark:#111810;--mid:#3A4A3E;--muted:#7A8C80;--border:#DDD5BE;--border2:#E8DFCC;--radius:16px;--rsm:10px;--rxl:22px;--sh:0 2px 20px rgba(0,0,0,.07);--shm:0 8px 40px rgba(0,0,0,.14)}
-html{scroll-behavior:smooth}
-body{font-family:'Tajawal',system-ui,sans-serif;background:var(--sand);color:var(--dark);direction:rtl;min-height:100vh}
-.hdr{background:linear-gradient(160deg,var(--g4) 0%,var(--g) 40%,var(--g2) 75%,var(--g3) 100%);position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.06)}
-.hdr-in{max-width:960px;margin:0 auto;padding:13px 20px 0;display:flex;flex-direction:column}
-.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
-.hdr-right{display:flex;align-items:center;gap:8px}
-.user-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:40px;padding:5px 14px 5px 6px;cursor:pointer;transition:all .2s}
-.user-chip:hover{background:rgba(255,255,255,.16)}
-.user-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--goldL));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--g)}
-.user-name{font-size:12px;color:rgba(255,255,255,.85);font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.btn-login{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);border-radius:var(--rsm);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s}
-.btn-login:hover{background:rgba(255,255,255,.18)}
-.btn-signup{background:linear-gradient(135deg,var(--gold),var(--goldL));border:none;color:var(--g);border-radius:var(--rsm);padding:7px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s}
-.btn-signup:hover{filter:brightness(1.08)}
-.ticker-wrap{background:rgba(0,0,0,.22);border-top:1px solid rgba(255,255,255,.06);overflow:hidden;padding:6px 0;margin:0 -20px}
-.ticker-track{display:inline-flex;gap:28px;animation:ticker 35s linear infinite;padding-right:28px;white-space:nowrap}
-.ticker-track:hover{animation-play-state:paused}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.tick{font-size:11px;color:rgba(255,255,255,.55);display:inline-flex;align-items:center;gap:4px;flex-shrink:0}
-.tick strong{color:rgba(255,255,255,.88);font-weight:700}
-.tick .up{color:#5DE89A}.tick .dn{color:#FF8080}
-.tick-src{font-size:9px;color:rgba(255,255,255,.3);margin-right:3px}
-.tabs{display:flex;gap:2px;margin:0 -20px;background:rgba(0,0,0,.18);padding:6px 20px 0;overflow-x:auto}
-.tab{flex:1;min-width:80px;padding:10px 4px;border:none;border-radius:var(--rsm) var(--rsm) 0 0;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,.45);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
-.tab:hover:not(.on){background:rgba(255,255,255,.07);color:rgba(255,255,255,.7)}
-.tab.on{background:var(--sand);color:var(--g)}
-.wrap{max-width:960px;margin:0 auto;padding:22px 16px 60px}
-.sec{display:none}.sec.on{display:block;animation:fadeUp .3s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.ph{margin-bottom:20px}
-.ph-title{font-size:21px;font-weight:900;color:var(--g);margin-bottom:3px}
-.ph-sub{font-size:13px;color:var(--muted)}
-.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border2);padding:20px;margin-bottom:16px;box-shadow:var(--sh)}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-@media(min-width:700px){.g2{grid-template-columns:repeat(4,1fr)}}
-.fld{display:flex;flex-direction:column;gap:5px}
-label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.4px}
-input,select,textarea{width:100%;background:var(--sand);border:1.5px solid var(--border);border-radius:var(--rsm);padding:11px 13px;font-family:'Tajawal',sans-serif;font-size:14px;color:var(--dark);outline:none;-webkit-appearance:none;transition:border-color .2s,background .2s}
-input:focus,select:focus,textarea:focus{border-color:var(--gold);background:#fff}
-input::placeholder,textarea::placeholder{color:#C0B8A8}
-textarea{resize:vertical;min-height:90px}
-.tog-row{display:flex;gap:6px}
-.tog{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--rsm);background:var(--sand);color:var(--mid);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s}
-.tog:hover:not(.on){border-color:var(--gold);color:var(--gold)}
-.tog.on{background:var(--g);color:#fff;border-color:var(--g)}
-.btn-main{width:100%;padding:14px;background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;border:none;border-radius:var(--radius);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:6px}
-.btn-main:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px);box-shadow:var(--shm)}
-.btn-main:disabled{background:#CCC;cursor:default;filter:none;transform:none}
-.loading{text-align:center;padding:36px 20px;color:var(--muted);font-size:14px}
-.spinner{display:inline-block;width:28px;height:28px;border:2.5px solid var(--border2);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ai-result{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--border2);padding:24px 20px;text-align:center;margin-bottom:14px;box-shadow:var(--sh)}
-.ai-meta{font-size:11px;color:var(--muted);margin-bottom:8px}
-.ai-sum{font-size:13px;color:var(--mid);margin-bottom:16px;line-height:1.75}
-.ai-price{font-size:40px;font-weight:900;color:var(--g);line-height:1;margin-bottom:3px}
-.ai-unit{font-size:14px;font-weight:500;color:var(--muted)}
-.ai-range{font-size:12px;color:var(--muted);margin-bottom:14px}
-.badges{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
-.badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:800}
-.ai-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.ai-acts button{padding:11px;border-radius:var(--rsm);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
-.src-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(13,43,30,.08);color:var(--g);padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-bottom:10px}
-.fin-card{background:var(--white);border-radius:var(--radius);padding:22px 20px;text-align:center;margin-bottom:14px;box-shadow:var(--sh)}
-.fin-big{font-size:38px;font-weight:900;margin:4px 0}
-.fin-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
-.fin-i{border-radius:var(--rsm);padding:13px 12px;text-align:center}
-.fin-il{font-size:11px;color:var(--muted);margin-bottom:4px}
-.fin-iv{font-size:16px;font-weight:800}
-.disc{background:#FFF8F0;border-radius:var(--rsm);border:1px solid #FFCC8055;padding:13px 15px;margin-bottom:14px}
-.disc-lbl{font-size:11px;color:#D4600A;font-weight:800;margin-bottom:4px}
-.disc-body{font-size:12px;color:#5A3A1A;line-height:1.85}
-#map-el{border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border2);height:480px;box-shadow:var(--sh)}
-@media(max-width:650px){
-  #map-el{height:300px}
-  #compare .sec > div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
-}
-.sel-bar{background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:48px;box-shadow:var(--sh)}
-.sel-lbl{font-size:12px;color:var(--muted);font-weight:700;flex-shrink:0}
-.sel-empty{font-size:13px;color:#C0B8A8;font-style:italic}
-.pill{display:inline-flex;align-items:center;gap:5px;background:var(--g);color:#fff;border-radius:16px;padding:4px 10px 4px 7px;font-size:12px;font-weight:700}
-.pill button{background:rgba(255,255,255,.22);border:none;color:#fff;width:16px;height:16px;border-radius:50%;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0}
-.map-legend{display:flex;gap:14px;margin-bottom:10px;font-size:12px;color:var(--muted);align-items:center}
-.leg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
-.cmp-hd{background:var(--g);color:#fff;border-radius:var(--radius) var(--radius) 0 0;padding:14px 18px;font-size:15px;font-weight:800}
-.cmp-body{background:var(--white);border:1.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:18px;margin-bottom:14px}
-.cmp-row{display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--border2);gap:10px;font-size:14px}
-.cmp-row:last-child{border-bottom:none}
-.cmp-bar-w{flex:1;background:var(--border2);border-radius:4px;height:7px;overflow:hidden}
-.cmp-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--goldL));border-radius:4px;transition:width .7s ease}
-.cmp-v{font-size:11px;font-weight:800;padding:3px 8px;border-radius:10px;flex-shrink:0}
-.listings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
-@media(max-width:600px){.listings-grid{grid-template-columns:1fr}}
-.listing-card{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--border2);overflow:hidden;box-shadow:var(--sh);transition:all .2s}
-.listing-card:hover{transform:translateY(-2px);box-shadow:var(--shm)}
-.listing-img{height:150px;background:linear-gradient(135deg,var(--g2),var(--g3));display:flex;align-items:center;justify-content:center;position:relative}
-.listing-badge{position:absolute;top:10px;right:10px;background:var(--gold);color:var(--g);font-size:10px;font-weight:800;padding:3px 10px;border-radius:12px}
-.listing-body{padding:14px}
-.listing-title{font-size:15px;font-weight:800;color:var(--g);margin-bottom:4px}
-.listing-loc{font-size:12px;color:var(--muted);margin-bottom:8px}
-.listing-price{font-size:22px;font-weight:900;color:var(--g);margin-bottom:8px}
-.listing-price span{font-size:12px;font-weight:400;color:var(--muted)}
-.listing-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.listing-tag{background:var(--sand);border:1px solid var(--border);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--mid)}
-.listing-owner{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border2)}
-.listing-owner-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--goldL));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--g);flex-shrink:0}
-.listing-owner-info{flex:1}
-.listing-owner-name{font-size:12px;font-weight:700;color:var(--dark)}
-.listing-owner-date{font-size:10px;color:var(--muted)}
-.listing-contact{background:var(--g);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;flex-shrink:0;text-decoration:none;display:inline-block}
-.add-listing-box{background:linear-gradient(135deg,rgba(13,43,30,.06),rgba(37,92,64,.08));border:2px dashed var(--g3);border-radius:var(--radius);padding:28px 20px;text-align:center;margin-bottom:20px;cursor:pointer;transition:all .2s}
-.add-listing-box:hover{border-color:var(--gold)}
-.filters-bar{background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:12px 16px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;box-shadow:var(--sh)}
-.filter-select{background:var(--sand);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Tajawal',sans-serif;font-size:13px;color:var(--dark);outline:none;cursor:pointer;min-width:110px}
-.owner-notice{background:#FFF8E1;border:1.5px solid #FFD54F;border-radius:var(--rsm);padding:14px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px}
-.owner-checkbox{display:flex;align-items:center;gap:10px;background:var(--sand);border:1.5px solid var(--border);border-radius:var(--rsm);padding:12px 14px;margin-bottom:12px;cursor:pointer}
-.owner-checkbox input[type=checkbox]{width:18px;height:18px;accent-color:var(--g);cursor:pointer;flex-shrink:0}
-.owner-checkbox label{font-size:13px;font-weight:700;color:var(--g);cursor:pointer}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
-.overlay.show{display:flex}
-.modal{background:var(--white);border-radius:var(--rxl) var(--rxl) 0 0;padding:24px 20px 44px;width:100%;max-width:480px;animation:slideUp .3s ease}
-@keyframes slideUp{from{transform:translateY(50px);opacity:.5}to{transform:translateY(0);opacity:1}}
-.modal-h{width:36px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px}
-.modal-title{font-size:20px;font-weight:900;color:var(--dark);text-align:center;margin-bottom:4px}
-.modal-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:22px}
-.modal-tabs{display:flex;gap:0;background:var(--sand);border-radius:var(--rsm);padding:3px;margin-bottom:20px}
-.modal-tab{flex:1;padding:9px;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-radius:8px;transition:all .2s}
-.modal-tab.on{background:var(--white);color:var(--g);box-shadow:0 1px 6px rgba(0,0,0,.1)}
-.modal-inp{width:100%;background:var(--sand);border:1.5px solid var(--border);border-radius:var(--rsm);padding:13px 14px;font-family:'Tajawal',sans-serif;font-size:14px;color:var(--dark);outline:none;margin-bottom:10px;transition:border-color .2s}
-.modal-inp:focus{border-color:var(--gold);background:#fff}
-.modal-err{background:#FFEBEE;border-radius:var(--rsm);padding:10px 14px;font-size:13px;color:#C62828;margin-bottom:10px;display:none}
-.modal-err.show{display:block}
-.modal-ok{background:#E8F5E9;border-radius:var(--rsm);padding:10px 14px;font-size:13px;color:#2E7D32;margin-bottom:10px;display:none}
-.modal-ok.show{display:block}
-.modal-ft{text-align:center;font-size:12px;color:var(--muted);margin-top:12px}
-.listing-modal{background:var(--white);border-radius:var(--rxl) var(--rxl) 0 0;padding:24px 20px 44px;width:100%;max-width:520px;animation:slideUp .3s ease;max-height:90vh;overflow-y:auto}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--g);color:#fff;padding:12px 22px;border-radius:40px;font-size:13px;font-weight:700;z-index:600;transition:transform .3s ease;box-shadow:var(--shm);pointer-events:none}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
-.empty-icon{font-size:48px;margin-bottom:14px}
-.empty-title{font-size:16px;font-weight:800;color:var(--g);margin-bottom:6px}
-.empty-sub{font-size:13px;line-height:1.7}
-@media(max-width:520px){.hdr-in{padding:11px 14px 0}.wrap{padding:16px 12px 50px}.ai-price{font-size:34px}.tab{font-size:10px;min-width:60px}}
-.leaflet-popup-content-wrapper{border-radius:12px !important;font-family:'Tajawal',sans-serif !important;direction:rtl}
-.leaflet-popup-content{margin:14px 16px !important;font-size:13px}
-.hood-popup-name{font-size:15px;font-weight:800;color:var(--g);margin-bottom:5px}
-.hood-popup-price{color:var(--muted);margin-bottom:8px;font-size:12px}
-.hood-popup-price b{color:var(--dark)}
-.hood-popup-btn{display:block;width:100%;padding:9px;background:var(--g);color:#fff;border:none;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center}
-.hood-popup-btn.sel{background:var(--gold);color:var(--g)}
+body{margin:0;font-family:'Tajawal',sans-serif}
+#map{height:100vh;width:100%}
+.hood-label{background:rgba(13,43,30,0.85);color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;white-space:nowrap}
+.hood-label::before{border-top-color:rgba(13,43,30,0.85) !important}
+#info{position:fixed;top:10px;right:10px;background:#fff;padding:12px;border-radius:8px;z-index:1000;box-shadow:0 2px 10px rgba(0,0,0,.2);font-size:13px;max-width:250px}
 </style>
 </head>
 <body>
-
-<div class="hdr">
-  <div class="hdr-in">
-    <div class="hdr-top">
-      <div>
-        <div style="color:#F0C97A;font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1.1">عيار العقارية</div>
-        <div style="color:rgba(255,255,255,.45);font-size:10px;letter-spacing:2px;font-weight:400">اعرف القيمة الإيجارية للعقار بالرياض</div>
-      </div>
-      <div class="hdr-right" id="auth-area">
-        <button class="btn-login" onclick="openAuth('login')">دخول</button>
-        <button class="btn-signup" onclick="openAuth('signup')">حساب جديد</button>
-      </div>
-    </div>
-    <div class="ticker-wrap">
-      <div class="ticker-track" id="ticker">
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>العليا — شقق <strong>50,000</strong> ر.س/سنة <span class="up">↑ 6.3%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>حطين — شقق <strong>62,000</strong> ر.س/سنة <span class="dn">↓ 1.1%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الملقا — شقق <strong>54,000</strong> ر.س/سنة <span class="up">↑ 4.2%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>السليمانية — شقق <strong>40,500</strong> ر.س/سنة <span class="up">↑ 3.1%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>النرجس — شقق <strong>49,500</strong> ر.س/سنة <span class="up">↑ 5.4%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الياسمين — شقق <strong>50,000</strong> ر.س/سنة <span class="up">↑ 2.8%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الصحافة — شقق <strong>44,000</strong> ر.س/سنة <span class="up">↑ 1.5%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>غرناطة — شقق <strong>35,500</strong> ر.س/سنة <span class="up">↑ 1.9%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>التعاون — شقق <strong>43,500</strong> ر.س/سنة <span class="up">↑ 1.7%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الروضة — شقق <strong>31,500</strong> ر.س/سنة <span class="up">↑ 2.1%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>القيروان — شقق <strong>54,500</strong> ر.س/سنة <span class="dn">↓ 0.8%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الربوة — شقق <strong>37,000</strong> ر.س/سنة <span class="up">↑ 2.6%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الإزدهار — شقق <strong>41,500</strong> ر.س/سنة <span class="up">↑ 3.2%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>المروج — شقق <strong>38,500</strong> ر.س/سنة <span class="up">↑ 2.0%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الندى — شقق <strong>58,000</strong> ر.س/سنة <span class="up">↑ 3.8%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>قرطبة — شقق <strong>49,000</strong> ر.س/سنة <span class="up">↑ 2.5%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>العقيق — شقق <strong>42,000</strong> ر.س/سنة <span class="up">↑ 3.8%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الجنادرية — شقق <strong>25,000</strong> ر.س/سنة <span class="up">↑ 1.5%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>طويق — شقق <strong>23,500</strong> ر.س/سنة <span class="up">↑ 0.5%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>بدر — شقق <strong>20,000</strong> ر.س/سنة <span class="up">↑ 0.4%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الشفاء — شقق <strong>19,500</strong> ر.س/سنة <span class="up">↑ 0.6%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>العريجاء — شقق <strong>16,500</strong> ر.س/سنة <span class="up">↑ 0.9%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>شبرا — شقق <strong>20,000</strong> ر.س/سنة <span class="up">↑ 1.2%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>العليا — شقق <strong>50,000</strong> ر.س/سنة <span class="up">↑ 6.3%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>حطين — شقق <strong>62,000</strong> ر.س/سنة <span class="dn">↓ 1.1%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الملقا — شقق <strong>54,000</strong> ر.س/سنة <span class="up">↑ 4.2%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>السليمانية — شقق <strong>40,500</strong> ر.س/سنة <span class="up">↑ 3.1%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>النرجس — شقق <strong>49,500</strong> ر.س/سنة <span class="up">↑ 5.4%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الياسمين — شقق <strong>50,000</strong> ر.س/سنة <span class="up">↑ 2.8%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الصحافة — شقق <strong>44,000</strong> ر.س/سنة <span class="up">↑ 1.5%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>غرناطة — شقق <strong>35,500</strong> ر.س/سنة <span class="up">↑ 1.9%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>التعاون — شقق <strong>43,500</strong> ر.س/سنة <span class="up">↑ 1.7%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الروضة — شقق <strong>31,500</strong> ر.س/سنة <span class="up">↑ 2.1%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>القيروان — شقق <strong>54,500</strong> ر.س/سنة <span class="dn">↓ 0.8%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الربوة — شقق <strong>37,000</strong> ر.س/سنة <span class="up">↑ 2.6%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الإزدهار — شقق <strong>41,500</strong> ر.س/سنة <span class="up">↑ 3.2%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>المروج — شقق <strong>38,500</strong> ر.س/سنة <span class="up">↑ 2.0%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الندى — شقق <strong>58,000</strong> ر.س/سنة <span class="up">↑ 3.8%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>قرطبة — شقق <strong>49,000</strong> ر.س/سنة <span class="up">↑ 2.5%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>العقيق — شقق <strong>42,000</strong> ر.س/سنة <span class="up">↑ 3.8%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الجنادرية — شقق <strong>25,000</strong> ر.س/سنة <span class="up">↑ 1.5%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>طويق — شقق <strong>23,500</strong> ر.س/سنة <span class="up">↑ 0.5%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>بدر — شقق <strong>20,000</strong> ر.س/سنة <span class="up">↑ 0.4%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>الشفاء — شقق <strong>19,500</strong> ر.س/سنة <span class="up">↑ 0.6%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>العريجاء — شقق <strong>16,500</strong> ر.س/سنة <span class="up">↑ 0.9%</span></span>
-        <span class="tick"><span class="tick-src" style="color:#5DE89A">●</span>شبرا — شقق <strong>20,000</strong> ر.س/سنة <span class="up">↑ 1.2%</span></span>
-      </div>
-    </div>
-    <div class="tabs">
-      <button class="tab on" onclick="switchTab('estimate',this)">📊 مؤشر التقييم</button>
-      <button class="tab" onclick="switchTab('finance',this)">🧮 حاسبة الإيجار</button>
-      <button class="tab" onclick="switchTab('compare',this)">🗺️ مقارنة الأحياء</button>
-      <button class="tab" onclick="switchTab('listings',this)">🏠 الإعلانات</button>
-    </div>
-  </div>
+<div id="info">
+  <strong>تحقق إحداثيات 168 حي</strong><br>
+  اضغط على أي حي لتحرير موقعه<br>
+  <small style="color:#666">الأحياء الخاطئة ستظهر خارج نطاقها</small>
 </div>
-
-<div style="background:linear-gradient(160deg,var(--g4) 0%,var(--g) 45%,var(--g2) 100%);padding:48px 20px 56px;position:relative;overflow:hidden">
-  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(184,137,42,.12) 0%,transparent 60%);pointer-events:none"></div>
-  <div style="max-width:960px;margin:0 auto;position:relative;text-align:center">
-    <div style="display:inline-block;background:rgba(184,137,42,.15);border:1px solid rgba(184,137,42,.3);border-radius:20px;padding:5px 16px;font-size:11px;font-weight:700;color:#F0C97A;letter-spacing:1px;margin-bottom:16px">🏙️ مؤشر إيجار العقارات في الرياض</div>
-    <h1 style="font-family:'Tajawal',sans-serif;font-size:clamp(26px,5vw,42px);font-weight:900;color:#fff;line-height:1.25;margin-bottom:12px;letter-spacing:-.5px">اعرف القيمة الإيجارية<br><span style="color:#F0C97A">للعقار بالرياض</span></h1>
-    <p style="font-size:15px;color:rgba(255,255,255,.55);max-width:480px;margin:0 auto;line-height:1.7">بيانات رسمية مفتوحة من الهيئة العامة للعقار — مؤشر إيجار عقار</p>
-  </div>
-</div>
-
-<div style="background:var(--white);border-bottom:1px solid var(--border2);padding:32px 20px">
-  <div style="max-width:960px;margin:0 auto">
-    <div style="text-align:center;margin-bottom:24px">
-      <div style="font-size:18px;font-weight:900;color:var(--g);font-family:'Tajawal',sans-serif">كيف يعمل عيار؟</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:4px">3 خطوات بسيطة لمعرفة القيمة الإيجارية</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-      <div style="text-align:center;padding:20px 16px">
-        <div style="width:52px;height:52px;background:rgba(13,43,30,.08);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">📋</div>
-        <div style="font-size:14px;font-weight:800;color:var(--g);font-family:'Tajawal',sans-serif;margin-bottom:6px">أدخل بيانات العقار</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.7">الحي، النوع، المساحة، وعدد الغرف</div>
-      </div>
-      <div style="text-align:center;padding:20px 16px">
-        <div style="width:52px;height:52px;background:rgba(13,43,30,.08);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">📡</div>
-        <div style="font-size:14px;font-weight:800;color:var(--g);font-family:'Tajawal',sans-serif;margin-bottom:6px">بيانات رسمية مفتوحة</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.7">من الهيئة العامة للعقار</div>
-      </div>
-      <div style="text-align:center;padding:20px 16px">
-        <div style="width:52px;height:52px;background:rgba(13,43,30,.08);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">📊</div>
-        <div style="font-size:14px;font-weight:800;color:var(--g);font-family:'Tajawal',sans-serif;margin-bottom:6px">احصل على القيمة</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.7">السعر المناسب والنطاق والقسط الشهري</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="wrap">
-
-  <!-- مؤشر التقييم -->
-  <div id="estimate" class="sec on">
-    <div class="ph"><div class="ph-title">مؤشر تقييم الإيجار</div><div class="ph-sub">اعرف القيمة الإيجارية بناءً على بيانات الهيئة العامة للعقار</div></div>
-    <div class="card">
-      <div class="g2">
-        <div class="fld"><label>الحي</label>
-          <select id="hood">
-            <optgroup label="🟢 شمال الرياض (41 حي)"><option>إشبيلية</option><option>الإزدهار</option><option>البرية</option><option>البيان</option><option>الجرادية</option><option>الجنادرية</option><option>الخير</option><option>الرائد</option><option>الربيع</option><option>السفارات</option><option>الشهداء</option><option>الصحافة</option><option>العارض</option><option>الغدير</option><option>الغنامية</option><option>الفلاح</option><option>القري</option><option>القيروان</option><option>المروة</option><option>المشرق</option><option>الملقا</option><option>الملك فهد</option><option>المهدية</option><option>المونسية</option><option>النخيل</option><option>الندى</option><option>النرجس</option><option>النفل</option><option>الوادي</option><option>الورود</option><option>الوسام</option><option>الياسمين</option><option>بنبان</option><option>ثليم</option><option>حطين</option><option>خشم العان</option><option>سلطانة</option><option>عريض</option><option>غرناطة</option><option>قرطبة</option><option>معكال</option></optgroup>
-            <optgroup label="🔵 وسط الرياض (69 حي)"><option>أم سليم</option><option>الأندلس</option><option>البديعة</option><option>البساتين</option><option>البطحاء</option><option>التعاون</option><option>الحزم</option><option>الخالدية</option><option>الخليج</option><option>الدحو</option><option>الدفاع</option><option>الديرة</option><option>الربوة</option><option>الرحمانية</option><option>الرفيعة</option><option>الرمال</option><option>الروضة</option><option>السحاب</option><option>السعادة</option><option>السليمانية</option><option>الشرفية</option><option>الصالحية</option><option>الضباط</option><option>العقيق</option><option>العلا</option><option>العليا</option><option>العماجية</option><option>الفاخرية</option><option>الفرسان</option><option>القادسية</option><option>القدس</option><option>المؤتمرات</option><option>المحمدية</option><option>المدينة الصناعية الجديدة</option><option>المربع</option><option>المرسلات</option><option>المرقب</option><option>المروج</option><option>المشاعل</option><option>المعذر</option><option>المعذر الشمالي</option><option>المعيزيلة</option><option>الملز</option><option>الملك عبدالله</option><option>الملك فيصل</option><option>المناخ</option><option>المنار</option><option>المنصورة</option><option>الناصرية</option><option>النخبة</option><option>الندوة</option><option>النزهة</option><option>النسيم الشرقي</option><option>النسيم الغربي</option><option>النظيم</option><option>النموذجية</option><option>النور</option><option>الهدا</option><option>الوسيطاء</option><option>الوشام</option><option>اليرموك</option><option>جبرة</option><option>سكيرينة</option><option>طيبة</option><option>عتيقة</option><option>عرقة</option><option>عليشة</option><option>غبيرا</option><option>مغرزات</option></optgroup>
-            <optgroup label="🟡 شرق الرياض (14 حي)"><option>البشائر</option><option>الجزيرة</option><option>الحائر</option><option>الروابي</option><option>الريان</option><option>الزاهر</option><option>السلام</option><option>السلي</option><option>الشميسي</option><option>الفوطة</option><option>الفيحاء</option><option>الملك سلمان</option><option>النهضة</option><option>عكاظ</option></optgroup>
-            <optgroup label="🟠 غرب الرياض (8 حي)"><option>أم الحمام الغربي</option><option>أم الشعال</option><option>العوالي</option><option>ديراب</option><option>ضاحية نمار</option><option>طويق</option><option>ظهرة لبن</option><option>لبن</option></optgroup>
-            <optgroup label="🔴 جنوب الرياض (14 حي)"><option>الدار البيضاء</option><option>الدريهمية</option><option>الرابية</option><option>الرماية</option><option>السويدي</option><option>السويدي الغربي</option><option>الشفاء</option><option>الصفاء</option><option>المرجان</option><option>المصفاة</option><option>المصيف</option><option>بدر</option><option>جرير</option><option>منفوحة</option></optgroup>
-          </select>
-        </div>
-        <div class="fld"><label>نوع العقار</label>
-          <select id="ptype"><option>شقة</option><option>فيلا</option><option>دور</option><option>استوديو</option></select>
-        </div>
-        <div class="fld"><label>المساحة (م²)</label>
-          <input type="number" id="area" placeholder="120" min="20" max="2000">
-        </div>
-        <div class="fld"><label>عدد الغرف</label>
-          <select id="rooms"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5+</option></select>
-        </div>
-        <div class="fld"><label>عمر العقار</label>
-          <select id="age"><option>جديد</option><option selected>3-7 سنوات</option><option>7-15 سنة</option><option>أكثر من 15</option></select>
-        </div>
-        <div class="fld"><label>الطابق</label>
-          <select id="floor"><option>أرضي</option><option>أول</option><option>ثاني</option><option>ثالث+</option><option>بنتهاوس</option></select>
-        </div>
-      </div>
-      <div class="fld" style="margin-bottom:14px">
-        <label>مفروش؟</label>
-        <div class="tog-row">
-          <button class="tog on" id="fno" onclick="setFurn(false)">غير مفروش</button>
-          <button class="tog" id="fyes" onclick="setFurn(true)">مفروش بالكامل</button>
-        </div>
-      </div>
-      <button class="btn-main" onclick="doEstimate()">📊 احسب القيمة الإيجارية</button>
-    </div>
-    <div id="est-out"></div>
-  </div>
-
-  <!-- حاسبة الإيجار -->
-  <div id="finance" class="sec">
-    <div class="ph"><div class="ph-title">حاسبة تمويل الإيجار</div><div class="ph-sub">البنك يدفع الإيجار للمالك، وأنت تسدد للبنك على أقساط + رسوم 2%</div></div>
-
-    <!-- شرح آلية العمل -->
-    <div style="background:linear-gradient(135deg,rgba(13,43,30,.05),rgba(184,137,42,.05));border:1px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">
-      <div>
-        <div style="font-size:22px;margin-bottom:6px">🏠</div>
-        <div style="font-size:12px;font-weight:800;color:var(--g);margin-bottom:3px">المستأجر</div>
-        <div style="font-size:11px;color:var(--muted)">يطلب تمويل الإيجار من البنك</div>
-      </div>
-      <div>
-        <div style="font-size:22px;margin-bottom:6px">🏦</div>
-        <div style="font-size:12px;font-weight:800;color:var(--g);margin-bottom:3px">البنك</div>
-        <div style="font-size:11px;color:var(--muted)">يدفع الإيجار للمالك كاملاً + يأخذ 2% رسوم</div>
-      </div>
-      <div>
-        <div style="font-size:22px;margin-bottom:6px">📅</div>
-        <div style="font-size:12px;font-weight:800;color:var(--g);margin-bottom:3px">السداد</div>
-        <div style="font-size:11px;color:var(--muted)">المستأجر يسدد للبنك على أقساط شهرية</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="g2">
-        <div class="fld"><label>قيمة الإيجار السنوي (ر.س)</label>
-          <input type="number" id="rentVal" placeholder="50,000">
-        </div>
-        <div class="fld"><label>مدة التمويل</label>
-          <select id="supportMonths">
-            <option value="6">6 أشهر</option>
-            <option value="12" selected>12 شهر (سنة)</option>
-            <option value="18">18 شهر</option>
-            <option value="24">24 شهر (سنتان)</option>
-          </select>
-        </div>
-        <div class="fld"><label>نوع العقار</label>
-          <select id="rentType"><option>شقة</option><option>فيلا</option><option>دور</option><option>استوديو</option></select>
-        </div>
-        <div class="fld"><label>طريقة السداد للبنك</label>
-          <select id="payFreq">
-            <option value="12" selected>شهري</option>
-            <option value="4">ربع سنوي</option>
-            <option value="2">نصف سنوي</option>
-          </select>
-        </div>
-      </div>
-      <button class="btn-main" onclick="doRentCalc()">🧮 احسب تمويل الإيجار</button>
-    </div>
-    <div id="fin-out"></div>
-  </div>
-
-  <!-- مقارنة الأحياء -->
-  <div id="compare" class="sec">
-    <div class="ph"><div class="ph-title">مؤشر إيجار الرياض</div><div class="ph-sub">بيانات رسمية مفتوحة من الهيئة العامة للعقار · <a href="https://rentalrei.rega.gov.sa/indicatorejar" target="_blank" style="color:var(--gold);text-decoration:none">rentalrei.rega.gov.sa ↗</a></div></div>
-
-    <!-- فلاتر مثل REGA -->
-    <div style="background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:12px 16px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;box-shadow:var(--sh)">
-      <div class="tog-row" id="use-tog" style="flex:none;gap:6px">
-        <button class="tog on" id="use-res" onclick="setUseType('سكني',this)">سكني</button>
-        <button class="tog" id="use-com" onclick="setUseType('تجاري',this)">تجاري</button>
-      </div>
-      <div class="fld" style="flex:1;min-width:140px;margin-bottom:0">
-        <select id="cmp-type" onchange="updateRegaTable()" style="margin-bottom:0">
-          <option value="شقة">شقة</option>
-          <option value="فيلا">فيلا</option>
-          <option value="دور">دور</option>
-          <option value="استديو">استديو</option>
-          <option value="دوبلاكس">دوبلاكس</option>
-        </select>
-      </div>
-      <div class="fld" style="flex:1;min-width:140px;margin-bottom:0">
-        <select id="cmp-period" onchange="updateRegaTable()" style="margin-bottom:0">
-          <option value="شهري">شهري</option>
-          <option value="ربع سنوي">ربع سنوي</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- مصدر البيانات -->
-    <div style="background:rgba(13,43,30,.04);border:1px solid rgba(13,43,30,.1);border-radius:var(--rsm);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid)">
-      <span style="font-size:16px">📡</span>
-      <span>البيانات من <strong>مؤشر إيجار عقار</strong> — الهيئة العامة للعقار · آخر تحديث: إبريل 2026</span>
-    </div>
-
-    <!-- خريطة + جدول بجانب بعض -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-
-      <!-- الخريطة -->
-      <div>
-        <div class="map-legend" style="margin-bottom:8px">
-          <div style="display:flex;align-items:center;gap:5px"><div class="leg-dot" style="background:#0D2B1E"></div><span>متاح</span></div>
-          <div style="display:flex;align-items:center;gap:5px"><div class="leg-dot" style="background:#B8892A"></div><span>محدد</span></div>
-          <span style="font-size:10px;color:#aaa">· حتى 3 أحياء</span>
-        </div>
-        <div id="map-el" style="height:480px"></div>
-      </div>
-
-      <!-- جدول البيانات مثل REGA -->
-      <div>
-        <!-- ملخص المدينة -->
-        <div style="background:var(--g);color:#fff;border-radius:var(--rsm) var(--rsm) 0 0;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:14px;font-weight:800">متوسطات الرياض الكاملة</span>
-          <span style="font-size:10px;opacity:.6">ر.س / سنة</span>
-        </div>
-        <div id="rega-overview-table" style="background:var(--white);border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--rsm) var(--rsm);margin-bottom:14px">
-          <!-- يتعبأ بـ JS -->
-        </div>
-
-        <!-- الأحياء المختارة -->
-        <div style="background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:12px 14px;margin-bottom:10px;box-shadow:var(--sh)">
-          <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">الأحياء المختارة للمقارنة:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;min-height:30px">
-            <span id="sel-empty" style="font-size:13px;color:#C0B8A8;font-style:italic">اضغط على الخريطة لاختيار حي</span>
-            <div id="sel-pills" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-          </div>
-        </div>
-        <button class="btn-main" id="cmp-btn" onclick="doCompare()" disabled style="margin-top:0">🔍 قارن الأحياء المختارة</button>
-      </div>
-    </div>
-
-    <div id="cmp-out"></div>
-  </div>
-
-  <!-- الإعلانات -->
-  <div id="listings" class="sec">
-    <div class="ph"><div class="ph-title">إعلانات ملاك العقارات</div><div class="ph-sub">إعلانات مباشرة من ملاك العقارات فقط — بدون وسيط</div></div>
-
-    <div class="owner-notice">
-      <div style="font-size:22px;flex-shrink:0">🔑</div>
-      <div style="font-size:13px;color:#5D4037;line-height:1.7"><strong>هذا القسم لملاك العقارات فقط.</strong> لا يُسمح للوسطاء أو السماسرة بنشر إعلانات. يجب أن تكون مالك العقار لتتمكن من النشر.</div>
-    </div>
-
-    <div class="add-listing-box" id="add-listing-btn" onclick="openAddListing()">
-      <div style="font-size:36px;margin-bottom:10px">🏠</div>
-      <div style="font-size:16px;font-weight:800;color:var(--g);margin-bottom:4px">أنا مالك العقار — أضف إعلانك مجاناً</div>
-      <div style="font-size:13px;color:var(--muted)">سجّل دخولك وأضف إعلان عقارك في دقيقة واحدة</div>
-    </div>
-
-    <div class="filters-bar">
-      <span style="font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0">تصفية:</span>
-      <select class="filter-select" id="filter-type" onchange="loadListings()">
-        <option value="">كل الأنواع</option>
-        <option value="شقة">شقة</option><option value="فيلا">فيلا</option>
-        <option value="دور">دور</option><option value="استوديو">استوديو</option>
-      </select>
-      <select class="filter-select" id="filter-hood" onchange="loadListings()"><option value="">كل الأحياء</option><option value="أحد">أحد</option><option value="أم الحمام الشرقي">أم الحمام الشرقي</option><option value="أم الحمام الغربي">أم الحمام الغربي</option><option value="أم الشعال">أم الشعال</option><option value="أم سليم">أم سليم</option><option value="إشبيلية">إشبيلية</option><option value="الأندلس">الأندلس</option><option value="الإزدهار">الإزدهار</option><option value="البديعة">البديعة</option><option value="البرية">البرية</option><option value="البساتين">البساتين</option><option value="البشائر">البشائر</option><option value="البطحاء">البطحاء</option><option value="البيان">البيان</option><option value="التضامن">التضامن</option><option value="التعاون">التعاون</option><option value="الجرادية">الجرادية</option><option value="الجزيرة">الجزيرة</option><option value="الجنادرية">الجنادرية</option><option value="الحائر">الحائر</option><option value="الحزم">الحزم</option><option value="الحمراء">الحمراء</option><option value="الخالدية">الخالدية</option><option value="الخليج">الخليج</option><option value="الخير">الخير</option><option value="الدار البيضاء">الدار البيضاء</option><option value="الدحو">الدحو</option><option value="الدريهمية">الدريهمية</option><option value="الدفاع">الدفاع</option><option value="الدوبية">الدوبية</option><option value="الديرة">الديرة</option><option value="الرائد">الرائد</option><option value="الرابية">الرابية</option><option value="الربوة">الربوة</option><option value="الربيع">الربيع</option><option value="الرحمانية">الرحمانية</option><option value="الرفيعة">الرفيعة</option><option value="الرمال">الرمال</option><option value="الرماية">الرماية</option><option value="الروابي">الروابي</option><option value="الروضة">الروضة</option><option value="الريان">الريان</option><option value="الزاهر">الزاهر</option><option value="الزهراء">الزهراء</option><option value="الزهرة">الزهرة</option><option value="السحاب">السحاب</option><option value="السدرة">السدرة</option><option value="السعادة">السعادة</option><option value="السفارات">السفارات</option><option value="السلام">السلام</option><option value="السلي">السلي</option><option value="السليمانية">السليمانية</option><option value="السويدي">السويدي</option><option value="السويدي الغربي">السويدي الغربي</option><option value="الشرفية">الشرفية</option><option value="الشفاء">الشفاء</option><option value="الشميسي">الشميسي</option><option value="الشهداء">الشهداء</option><option value="الصالحية">الصالحية</option><option value="الصحافة">الصحافة</option><option value="الصفاء">الصفاء</option><option value="الضباط">الضباط</option><option value="العارض">العارض</option><option value="العريجاء">العريجاء</option><option value="العريجاء الأوسط">العريجاء الأوسط</option><option value="العريجاء الغربي">العريجاء الغربي</option><option value="العزيزية">العزيزية</option><option value="العقيق">العقيق</option><option value="العلا">العلا</option><option value="العليا">العليا</option><option value="العماجية">العماجية</option><option value="العمل">العمل</option><option value="العوالي">العوالي</option><option value="الغدير">الغدير</option><option value="الغنامية">الغنامية</option><option value="الفاخرية">الفاخرية</option><option value="الفاروق">الفاروق</option><option value="الفرسان">الفرسان</option><option value="الفلاح">الفلاح</option><option value="الفوطة">الفوطة</option><option value="الفيحاء">الفيحاء</option><option value="الفيصلية">الفيصلية</option><option value="القادسية">القادسية</option><option value="القدس">القدس</option><option value="القري">القري</option><option value="القيروان">القيروان</option><option value="المؤتمرات">المؤتمرات</option><option value="المحمدية">المحمدية</option><option value="المدينة الصناعية الجديدة">المدينة الصناعية الجديدة</option><option value="المربع">المربع</option><option value="المرجان">المرجان</option><option value="المرسلات">المرسلات</option><option value="المرقب">المرقب</option><option value="المروة">المروة</option><option value="المروج">المروج</option><option value="المشاعل">المشاعل</option><option value="المشرق">المشرق</option><option value="المصفاة">المصفاة</option><option value="المصيف">المصيف</option><option value="المعذر">المعذر</option><option value="المعذر الشمالي">المعذر الشمالي</option><option value="المعيزيلة">المعيزيلة</option><option value="الملز">الملز</option><option value="الملقا">الملقا</option><option value="الملك سلمان">الملك سلمان</option><option value="الملك عبدالله">الملك عبدالله</option><option value="الملك فهد">الملك فهد</option><option value="الملك فيصل">الملك فيصل</option><option value="المناخ">المناخ</option><option value="المنار">المنار</option><option value="المنصورة">المنصورة</option><option value="المنصورية">المنصورية</option><option value="المهدية">المهدية</option><option value="المونسية">المونسية</option><option value="الناصرية">الناصرية</option><option value="النخبة">النخبة</option><option value="النخيل">النخيل</option><option value="الندوة">الندوة</option><option value="الندى">الندى</option><option value="النرجس">النرجس</option><option value="النزهة">النزهة</option><option value="النسيم الشرقي">النسيم الشرقي</option><option value="النسيم الغربي">النسيم الغربي</option><option value="النظيم">النظيم</option><option value="النفل">النفل</option><option value="النموذجية">النموذجية</option><option value="النهضة">النهضة</option><option value="النور">النور</option><option value="الهدا">الهدا</option><option value="الوادي">الوادي</option><option value="الورود">الورود</option><option value="الوزارات">الوزارات</option><option value="الوسام">الوسام</option><option value="الوسيطاء">الوسيطاء</option><option value="الوشام">الوشام</option><option value="الياسمين">الياسمين</option><option value="اليرموك">اليرموك</option><option value="بدر">بدر</option><option value="بنبان">بنبان</option><option value="ثليم">ثليم</option><option value="جبرة">جبرة</option><option value="جرير">جرير</option><option value="حطين">حطين</option><option value="خشم العان">خشم العان</option><option value="ديراب">ديراب</option><option value="سدرة">سدرة</option><option value="سكيرينة">سكيرينة</option><option value="سلام">سلام</option><option value="سلطانة">سلطانة</option><option value="شبرا">شبرا</option><option value="صياح">صياح</option><option value="ضاحية نمار">ضاحية نمار</option><option value="طويق">طويق</option><option value="طيبة">طيبة</option><option value="ظهرة البديعة">ظهرة البديعة</option><option value="ظهرة لبن">ظهرة لبن</option><option value="عتيقة">عتيقة</option><option value="عرقة">عرقة</option><option value="عريض">عريض</option><option value="عكاظ">عكاظ</option><option value="عليشة">عليشة</option><option value="غبيرا">غبيرا</option><option value="غرناطة">غرناطة</option><option value="قرطبة">قرطبة</option><option value="لبن">لبن</option><option value="معكال">معكال</option><option value="مغرزات">مغرزات</option><option value="منفوحة">منفوحة</option></select>
-      <select class="filter-select" id="filter-sort" onchange="loadListings()">
-        <option value="created_at">الأحدث</option>
-        <option value="price">السعر: الأقل</option>
-      </select>
-    </div>
-
-    <div id="listings-out"><div class="loading"><div class="spinner"></div><div>جاري تحميل الإعلانات...</div></div></div>
-
-    <div id="my-listings-section" style="display:none;margin-top:24px">
-      <div style="font-size:16px;font-weight:900;color:var(--g);margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--border2)">📋 إعلاناتي</div>
-      <div id="my-listings-out"></div>
-    </div>
-  </div>
-
-</div>
-
-<!-- AUTH MODAL -->
-<div class="overlay" id="auth-modal" onclick="closeAuth()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-h"></div>
-    <div class="modal-title">مرحباً في عيار</div>
-    <div class="modal-sub">سجّل أو أنشئ حساباً</div>
-    <div class="modal-tabs">
-      <button class="modal-tab on" id="tab-login" onclick="switchAuth('login')">تسجيل الدخول</button>
-      <button class="modal-tab" id="tab-signup" onclick="switchAuth('signup')">حساب جديد</button>
-    </div>
-    <div class="modal-err" id="auth-err"></div>
-    <div class="modal-ok" id="auth-ok"></div>
-    <div id="auth-form-login">
-      <input class="modal-inp" type="email" id="l-email" placeholder="البريد الإلكتروني">
-      <input class="modal-inp" type="password" id="l-pass" placeholder="كلمة المرور">
-      <button class="btn-main" onclick="doLogin()">دخول</button>
-    </div>
-    <div id="auth-form-signup" style="display:none">
-      <input class="modal-inp" type="text" id="s-name" placeholder="الاسم الكامل">
-      <input class="modal-inp" type="email" id="s-email" placeholder="البريد الإلكتروني">
-      <input class="modal-inp" type="password" id="s-pass" placeholder="كلمة المرور (8 أحرف على الأقل)">
-      <button class="btn-main" onclick="doSignup()">إنشاء الحساب</button>
-    </div>
-    <div class="modal-ft" id="auth-ft">ليس لديك حساب؟ <span style="color:var(--gold);font-weight:800;cursor:pointer" onclick="switchAuth('signup')">أنشئ حساباً</span></div>
-  </div>
-</div>
-
-<!-- ADD LISTING MODAL -->
-<div class="overlay" id="listing-modal" onclick="closeListingModal()">
-  <div class="listing-modal" onclick="event.stopPropagation()">
-    <div class="modal-h"></div>
-    <div class="modal-title">🏠 نشر إعلان عقار</div>
-    <div class="modal-sub">للملاك فقط — أدخل بيانات عقارك</div>
-    <div class="modal-err" id="listing-err"></div>
-    <div class="modal-ok" id="listing-ok"></div>
-    <div class="owner-checkbox" onclick="toggleOwnerConfirm()">
-      <input type="checkbox" id="owner-confirm">
-      <label for="owner-confirm">أقر بأنني مالك هذا العقار وليس وسيطاً أو سمساراً</label>
-    </div>
-    <div id="listing-form" style="display:none">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div class="fld"><label>اسمك الكامل</label><input class="modal-inp" type="text" id="l-owner" placeholder="محمد العتيبي" style="margin:0"></div>
-        <div class="fld"><label>رقم الجوال</label><input class="modal-inp" type="tel" id="l-phone" placeholder="05xxxxxxxx" style="margin:0"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div class="fld"><label>الحي</label>
-          <select class="modal-inp" id="l-hood" style="margin:0"><option>أحد</option><option>أم الحمام الشرقي</option><option>أم الحمام الغربي</option><option>أم الشعال</option><option>أم سليم</option><option>إشبيلية</option><option>الأندلس</option><option>الإزدهار</option><option>البديعة</option><option>البرية</option><option>البساتين</option><option>البشائر</option><option>البطحاء</option><option>البيان</option><option>التضامن</option><option>التعاون</option><option>الجرادية</option><option>الجزيرة</option><option>الجنادرية</option><option>الحائر</option><option>الحزم</option><option>الحمراء</option><option>الخالدية</option><option>الخليج</option><option>الخير</option><option>الدار البيضاء</option><option>الدحو</option><option>الدريهمية</option><option>الدفاع</option><option>الدوبية</option><option>الديرة</option><option>الرائد</option><option>الرابية</option><option>الربوة</option><option>الربيع</option><option>الرحمانية</option><option>الرفيعة</option><option>الرمال</option><option>الرماية</option><option>الروابي</option><option>الروضة</option><option>الريان</option><option>الزاهر</option><option>الزهراء</option><option>الزهرة</option><option>السحاب</option><option>السدرة</option><option>السعادة</option><option>السفارات</option><option>السلام</option><option>السلي</option><option>السليمانية</option><option>السويدي</option><option>السويدي الغربي</option><option>الشرفية</option><option>الشفاء</option><option>الشميسي</option><option>الشهداء</option><option>الصالحية</option><option>الصحافة</option><option>الصفاء</option><option>الضباط</option><option>العارض</option><option>العريجاء</option><option>العريجاء الأوسط</option><option>العريجاء الغربي</option><option>العزيزية</option><option>العقيق</option><option>العلا</option><option>العليا</option><option>العماجية</option><option>العمل</option><option>العوالي</option><option>الغدير</option><option>الغنامية</option><option>الفاخرية</option><option>الفاروق</option><option>الفرسان</option><option>الفلاح</option><option>الفوطة</option><option>الفيحاء</option><option>الفيصلية</option><option>القادسية</option><option>القدس</option><option>القري</option><option>القيروان</option><option>المؤتمرات</option><option>المحمدية</option><option>المدينة الصناعية الجديدة</option><option>المربع</option><option>المرجان</option><option>المرسلات</option><option>المرقب</option><option>المروة</option><option>المروج</option><option>المشاعل</option><option>المشرق</option><option>المصفاة</option><option>المصيف</option><option>المعذر</option><option>المعذر الشمالي</option><option>المعيزيلة</option><option>الملز</option><option>الملقا</option><option>الملك سلمان</option><option>الملك عبدالله</option><option>الملك فهد</option><option>الملك فيصل</option><option>المناخ</option><option>المنار</option><option>المنصورة</option><option>المنصورية</option><option>المهدية</option><option>المونسية</option><option>الناصرية</option><option>النخبة</option><option>النخيل</option><option>الندوة</option><option>الندى</option><option>النرجس</option><option>النزهة</option><option>النسيم الشرقي</option><option>النسيم الغربي</option><option>النظيم</option><option>النفل</option><option>النموذجية</option><option>النهضة</option><option>النور</option><option>الهدا</option><option>الوادي</option><option>الورود</option><option>الوزارات</option><option>الوسام</option><option>الوسيطاء</option><option>الوشام</option><option>الياسمين</option><option>اليرموك</option><option>بدر</option><option>بنبان</option><option>ثليم</option><option>جبرة</option><option>جرير</option><option>حطين</option><option>خشم العان</option><option>ديراب</option><option>سدرة</option><option>سكيرينة</option><option>سلام</option><option>سلطانة</option><option>شبرا</option><option>صياح</option><option>ضاحية نمار</option><option>طويق</option><option>طيبة</option><option>ظهرة البديعة</option><option>ظهرة لبن</option><option>عتيقة</option><option>عرقة</option><option>عريض</option><option>عكاظ</option><option>عليشة</option><option>غبيرا</option><option>غرناطة</option><option>قرطبة</option><option>لبن</option><option>معكال</option><option>مغرزات</option><option>منفوحة</option></select>
-        </div>
-        <div class="fld"><label>نوع العقار</label>
-          <select class="modal-inp" id="l-type" style="margin:0"><option>شقة</option><option>فيلا</option><option>دور</option><option>استوديو</option></select>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div class="fld"><label>المساحة (م²)</label><input class="modal-inp" type="number" id="l-area" placeholder="120" style="margin:0"></div>
-        <div class="fld"><label>عدد الغرف</label>
-          <select class="modal-inp" id="l-rooms" style="margin:0">
-            <option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5+</option>
-          </select>
-        </div>
-      </div>
-      <div class="fld" style="margin-bottom:10px"><label>السعر السنوي (ر.س)</label><input class="modal-inp" type="number" id="l-price" placeholder="50,000" style="margin:0"></div>
-      <div class="fld" style="margin-bottom:10px">
-        <label>مفروش؟</label>
-        <div class="tog-row">
-          <button class="tog on" id="l-fno" onclick="setListingFurn(false)">غير مفروش</button>
-          <button class="tog" id="l-fyes" onclick="setListingFurn(true)">مفروش</button>
-        </div>
-      </div>
-      <div class="fld" style="margin-bottom:14px"><label>وصف العقار (اختياري)</label><textarea class="modal-inp" id="l-desc" placeholder="اكتب وصفاً مختصراً للعقار..." style="margin:0;min-height:80px"></textarea></div>
-      <button class="btn-main" onclick="submitListing()">🚀 نشر الإعلان الآن</button>
-    </div>
-    <button style="width:100%;padding:12px;background:transparent;border:2px solid var(--border);border-radius:var(--radius);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;margin-top:8px" onclick="closeListingModal()">إلغاء</button>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<footer style="background:var(--g);color:rgba(255,255,255,.7);direction:rtl;font-family:'Tajawal',sans-serif;padding:40px 20px 28px">
-  <div style="max-width:960px;margin:0 auto">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px">
-      <div>
-        <div style="color:#F0C97A;font-size:22px;font-weight:900;margin-bottom:8px">عيار العقارية</div>
-        <p style="font-size:13px;line-height:1.85;color:rgba(255,255,255,.55);max-width:280px">منصة لمعرفة القيمة الإيجارية للعقارات في الرياض بناءً على بيانات رسمية مفتوحة.</p>
-      </div>
-      <div>
-        <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,.85);margin-bottom:14px">تواصل معنا</div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <a href="mailto:u4@hotmail.com" style="display:flex;align-items:center;gap:9px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px">
-            <span style="width:30px;height:30px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">✉️</span>u4@hotmail.com
-          </a>
-          <a href="tel:0532233660" style="display:flex;align-items:center;gap:9px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px">
-            <span style="width:30px;height:30px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📞</span>0532233660
-          </a>
-        </div>
-      </div>
-    </div>
-    <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:24px;margin-bottom:20px">
-      <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,.5);margin-bottom:14px;letter-spacing:.5px">مصادر البيانات الرسمية المفتوحة</div>
-      <a href="https://rentalrei.rega.gov.sa/indicatorejar" target="_blank" rel="noopener"
-        style="display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;text-decoration:none;transition:all .2s"
-        onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
-        <span style="font-size:20px">🏛️</span>
-        <div>
-          <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,.85)">مؤشر إيجار العقارات</div>
-          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">الهيئة العامة للعقار · rentalrei.rega.gov.sa</div>
-        </div>
-        <span style="margin-right:8px;font-size:11px;color:rgba(255,255,255,.3)">↗</span>
-      </a>
-    </div>
-    <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-      <div style="font-size:12px;color:rgba(255,255,255,.35)">© 2026 جميع الحقوق محفوظة لشركة عيار العقارية</div>
-      <div style="font-size:11px;color:rgba(255,255,255,.25)">البيانات من مصادر رسمية مفتوحة — لأغراض المعلومات فقط</div>
-    </div>
-  </div>
-</footer>
-
+<div id="map"></div>
 <script>
-const sb=supabase.createClient(CFG.supabase_url,CFG.supabase_key);
-let currentUser=null,listingFurnished=false,furnished=false,selected=[],leafMap=null,mapMarkers={};
+const map = L.map('map').setView([24.720, 46.670], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'© OpenStreetMap', maxZoom:18
+}).addTo(map);
 
-async function loadTickerFromJSON(){
-  try{
-    const res = await fetch('/data/prices.json');
-    const data = await res.json();
-    if(data.ticker && data.ticker.length > 0){
-      let html = data.ticker.slice(0,16).map(r=>{
-        const ch = r.change||0;
-        const chStr = ch>=0?`<span class="up">↑ ${ch}%</span>`:`<span class="dn">↓ ${Math.abs(ch)}%</span>`;
-        const src = r.source&&r.source!=='fallback'?'<span class="tick-src" style="color:#5DE89A">●</span>':'<span class="tick-src">●</span>';
-        return `<span class="tick">${src}${r.name} — ${r.type} <strong>${(r.avg||0).toLocaleString('ar-SA')}</strong> ر.س ${chStr}</span>`;
-      }).join('');
-      document.getElementById('ticker').innerHTML = html + html;
-    }
-  }catch(e){}
-}
+// حدود الرياض للمرجع
+L.rectangle([[24.45,46.40],[24.98,47.10]], {color:'#B8892A', weight:2, fill:false, dashArray:'5,5'}).addTo(map);
 
-async function initAuth(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(session) setUser(session.user);
-  sb.auth.onAuthStateChange((_,s)=>{ s?setUser(s.user):clearUser(); });
-  loadPricesFromDB();
-}
-function setUser(u){
-  currentUser=u;
-  const name=u.user_metadata?.full_name||u.email.split('@')[0];
-  document.getElementById('auth-area').innerHTML=`<div class="user-chip" onclick="doLogout()"><div class="user-avatar">${name[0].toUpperCase()}</div><span class="user-name">${name}</span></div>`;
-  document.getElementById('my-listings-section').style.display='block';
-  loadMyListings();
-}
-function clearUser(){
-  currentUser=null;
-  document.getElementById('auth-area').innerHTML=`<button class="btn-login" onclick="openAuth('login')">دخول</button><button class="btn-signup" onclick="openAuth('signup')">حساب جديد</button>`;
-  document.getElementById('my-listings-section').style.display='none';
-}
-async function doLogin(){
-  const email=document.getElementById('l-email').value.trim(),pass=document.getElementById('l-pass').value;
-  if(!email||!pass){showAuthErr('أدخل البريد وكلمة المرور');return;}
-  const {error}=await sb.auth.signInWithPassword({email,password:pass});
-  if(error){showAuthErr('خطأ في البريد أو كلمة المرور');return;}
-  closeAuth();showToast('مرحباً بك! ✅');
-}
-async function doSignup(){
-  const name=document.getElementById('s-name').value.trim(),email=document.getElementById('s-email').value.trim(),pass=document.getElementById('s-pass').value;
-  if(!name||!email||!pass){showAuthErr('أكمل جميع الحقول');return;}
-  if(pass.length<8){showAuthErr('كلمة المرور 8 أحرف على الأقل');return;}
-  const {error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-  if(error){showAuthErr(error.message);return;}
-  showAuthOk('تم إنشاء الحساب! يمكنك الدخول الآن ✅');
-}
-async function doLogout(){await sb.auth.signOut();showToast('تم تسجيل الخروج');}
-function openAuth(mode){switchAuth(mode);document.getElementById('auth-modal').className='overlay show';}
-function closeAuth(){document.getElementById('auth-modal').className='overlay';clearAuthMsg();}
-function switchAuth(mode){
-  document.getElementById('tab-login').className='modal-tab'+(mode==='login'?' on':'');
-  document.getElementById('tab-signup').className='modal-tab'+(mode==='signup'?' on':'');
-  document.getElementById('auth-form-login').style.display=mode==='login'?'':'none';
-  document.getElementById('auth-form-signup').style.display=mode==='signup'?'':'none';
-  document.getElementById('auth-ft').innerHTML=mode==='login'?'ليس لديك حساب؟ <span style="color:var(--gold);font-weight:800;cursor:pointer" onclick="switchAuth(\'signup\')">أنشئ حساباً</span>':'عندك حساب؟ <span style="color:var(--gold);font-weight:800;cursor:pointer" onclick="switchAuth(\'login\')">سجّل دخول</span>';
-  clearAuthMsg();
-}
-function showAuthErr(msg){const e=document.getElementById('auth-err');e.textContent=msg;e.className='modal-err show';}
-function showAuthOk(msg){const e=document.getElementById('auth-ok');e.textContent=msg;e.className='modal-ok show';}
-function clearAuthMsg(){document.getElementById('auth-err').className='modal-err';document.getElementById('auth-ok').className='modal-ok';}
 
-async function loadPricesFromDB(){
-  try{const {data,error}=await sb.from('prices').select('*').order('updated_at',{ascending:false});if(error||!data||!data.length)return;buildTicker(data);}catch(e){}
-}
-function buildTicker(rows){
-  const items=rows.slice(0,8);
-  let html=items.map(r=>{const ch=r.change_pct||0;const chStr=ch>=0?`<span class="up">↑ ${ch}%</span>`:`<span class="dn">↓ ${Math.abs(ch)}%</span>`;const src=r.source&&r.source!=='fallback'?`<span class="tick-src" style="color:#5DE89A">●</span>`:'<span class="tick-src">●</span>';return `<span class="tick">${src}${r.neighborhood} — ${r.type} <strong>${(r.avg_price||0).toLocaleString('ar-SA')}</strong> ر.س ${chStr}</span>`;}).join('');
-  document.getElementById('ticker').innerHTML=html+html;
-}
-
-// Listings
-function toggleOwnerConfirm(){
-  const cb=document.getElementById('owner-confirm');
-  document.getElementById('listing-form').style.display=cb.checked?'block':'none';
-}
-function openAddListing(){
-  if(!currentUser){openAuth('login');showToast('سجّل دخولك أولاً');return;}
-  document.getElementById('owner-confirm').checked=false;
-  document.getElementById('listing-form').style.display='none';
-  document.getElementById('listing-err').className='modal-err';
-  document.getElementById('listing-ok').className='modal-ok';
-  document.getElementById('listing-modal').className='overlay show';
-}
-function closeListingModal(){document.getElementById('listing-modal').className='overlay';}
-function setListingFurn(v){
-  listingFurnished=v;
-  document.getElementById('l-fyes').className='tog'+(v?' on':'');
-  document.getElementById('l-fno').className='tog'+(!v?' on':'');
-}
-async function submitListing(){
-  if(!currentUser){showToast('سجّل دخولك أولاً');return;}
-  if(!document.getElementById('owner-confirm').checked){const e=document.getElementById('listing-err');e.textContent='يجب الإقرار بأنك مالك العقار أولاً';e.className='modal-err show';return;}
-  const owner=document.getElementById('l-owner').value.trim(),phone=document.getElementById('l-phone').value.trim(),hood=document.getElementById('l-hood').value,type=document.getElementById('l-type').value,area=document.getElementById('l-area').value,rooms=parseInt(document.getElementById('l-rooms').value)||3,price=document.getElementById('l-price').value,desc=document.getElementById('l-desc').value.trim();
-  if(!owner||!phone||!area||!price){const e=document.getElementById('listing-err');e.textContent='يرجى تعبئة جميع الحقول المطلوبة';e.className='modal-err show';return;}
-  const {error}=await sb.from('listings').insert({user_id:currentUser.id,owner_name:owner,phone:phone,neighborhood:hood,type:type,area:Number(area),rooms:rooms,price:Number(price),description:desc,furnished:listingFurnished,status:'active'});
-  if(error){const e=document.getElementById('listing-err');e.textContent='حدث خطأ، حاول مجدداً';e.className='modal-err show';return;}
-  const ok=document.getElementById('listing-ok');ok.textContent='تم نشر إعلانك بنجاح! ✅';ok.className='modal-ok show';
-  setTimeout(()=>{closeListingModal();loadListings();loadMyListings();showToast('تم نشر إعلانك! 🎉');},1500);
-}
-async function loadListings(){
-  const typeF=document.getElementById('filter-type').value,hoodF=document.getElementById('filter-hood').value,sortF=document.getElementById('filter-sort').value;
-  let q=sb.from('listings').select('*').eq('status','active');
-  if(typeF) q=q.eq('type',typeF);
-  if(hoodF) q=q.eq('neighborhood',hoodF);
-  if(sortF==='price') q=q.order('price',{ascending:true}); else q=q.order('created_at',{ascending:false});
-  const {data,error}=await q;
-  const out=document.getElementById('listings-out');
-  if(error||!data||data.length===0){out.innerHTML=`<div class="empty-state"><div class="empty-icon">🏘️</div><div class="empty-title">لا توجد إعلانات حالياً</div><div class="empty-sub">كن أول مالك يضيف إعلاناً!</div></div>`;return;}
-  out.innerHTML=`<div class="listings-grid">${data.map(renderListingCard).join('')}</div>`;
-}
-function renderListingCard(l){
-  const icons={'شقة':'🏢','فيلا':'🏡','دور':'🏠','استوديو':'🛋️'};
-  const date=new Date(l.created_at).toLocaleDateString('ar-SA');
-  const mo=Math.round(l.price/12/50)*50;
-  return `<div class="listing-card"><div class="listing-img"><span style="font-size:56px">${icons[l.type]||'🏠'}</span><span class="listing-badge">${l.type}</span>${l.furnished?'<span style="position:absolute;top:10px;left:10px;background:#2E7D32;color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:12px">مفروش</span>':''}</div><div class="listing-body"><div class="listing-title">${l.type} في ${l.neighborhood}</div><div class="listing-loc">📍 ${l.neighborhood}، الرياض</div><div class="listing-price">${(l.price||0).toLocaleString('ar-SA')} <span>ر.س / سنة</span></div><div class="listing-tags">${l.area?`<span class="listing-tag">📐 ${l.area} م²</span>`:''} ${l.rooms?`<span class="listing-tag">🛏 ${l.rooms} غرف</span>`:''}<span class="listing-tag">📅 ${Math.round(mo).toLocaleString('ar-SA')} شهرياً</span></div>${l.description?`<div style="font-size:12px;color:var(--mid);line-height:1.7;margin-bottom:10px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${l.description}</div>`:''}<div class="listing-owner"><div class="listing-owner-av">${(l.owner_name||'م')[0].toUpperCase()}</div><div class="listing-owner-info"><div class="listing-owner-name">${l.owner_name||'المالك'}</div><div class="listing-owner-date">${date}</div></div><a href="tel:${l.phone}" class="listing-contact">📞 تواصل</a></div></div></div>`;
-}
-async function loadMyListings(){
-  if(!currentUser)return;
-  const {data,error}=await sb.from('listings').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
-  const out=document.getElementById('my-listings-out');
-  if(error||!data||data.length===0){out.innerHTML=`<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">لا توجد إعلانات بعد</div>`;return;}
-  out.innerHTML=data.map(l=>`<div style="background:var(--white);border-radius:var(--rsm);border:1px solid var(--border2);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px"><div style="font-size:28px">${{'شقة':'🏢','فيلا':'🏡','دور':'🏠','استوديو':'🛋️'}[l.type]||'🏠'}</div><div style="flex:1"><div style="font-weight:800;color:var(--g);font-size:14px">${l.type} في ${l.neighborhood}</div><div style="font-size:12px;color:var(--muted);margin-top:2px">${(l.price||0).toLocaleString('ar-SA')} ر.س/سنة · ${l.area||''}م²</div></div><button onclick="deleteListing('${l.id}')" style="background:#FFEBEE;color:#C62828;border:none;border-radius:8px;padding:7px 12px;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer">حذف</button></div>`).join('');
-}
-async function deleteListing(id){
-  if(!confirm('هل تريد حذف هذا الإعلان؟'))return;
-  await sb.from('listings').delete().eq('id',id).eq('user_id',currentUser.id);
-  showToast('تم حذف الإعلان');loadListings();loadMyListings();
-}
-
-function setFurn(v){furnished=v;document.getElementById('fyes').className='tog'+(v?' on':'');document.getElementById('fno').className='tog'+(!v?' on':'');}
-function switchTab(id,el){
-  document.querySelectorAll('.sec').forEach(s=>s.className='sec');
-  document.querySelectorAll('.tab').forEach(t=>t.className='tab');
-  document.getElementById(id).className='sec on';el.className='tab on';
-  if(id==='compare'&&!leafMap) initLeafMap();
-  if(id==='listings') loadListings();
-}
-
-// بيانات REGA الحقيقية — مؤشر إيجار عقار
-const REGA_CITY_DATA = {
-  "سكني": {
-    "شقة":     {avg:30828, count:567647, min:15000, max:72000},
-    "استديو":  {avg:19324, count:39158,  min:10000, max:38000},
-    "دوبلاكس": {avg:74864, count:3222,   min:40000, max:140000},
-    "فيلا":    {avg:105873,count:28531,  min:55000, max:220000},
-    "دور":     {avg:41354, count:55271,  min:20000, max:95000},
-  },
-  "تجاري": {
-    "مكتب":    {avg:45000, count:12000,  min:20000, max:120000},
-    "محل":     {avg:38000, count:18000,  min:15000, max:90000},
-  }
-};
-
-const HOODS=[
-  {name:"الصحافة",lat:24.783,lng:46.6196,rent:{"شقة":[22000, 30000],"فيلا":[47500, 70000],"دور":[45000, 55000],"دوبلاكس":[42000, 46500],"استديو":[12000, 18500]},ch:1.5},
-  {name:"الملك فيصل",lat:24.701,lng:46.743,rent:{"شقة":[18000, 23000],"فيلا":[17000, 23000],"دور":[25500, 33000],"دوبلاكس":[125000, 131500],"استديو":[11000, 11500]},ch:1.0},
-  {name:"أحد",lat:24.658,lng:46.643,rent:{"شقة":[12000, 18000],"فيلا":[14500, 14500],"دور":[15000, 23000],"دوبلاكس":[38000, 64000],"استديو":[6000, 6000]},ch:1.0},
-  {name:"سدرة",lat:24.65,lng:46.68,rent:{"شقة":[11000, 11500],"فيلا":[80000, 86000],"دور":[19000, 19000],"دوبلاكس":[90000, 90000],"استديو":[43500, 43500]},ch:1.0},
-  {name:"الغنامية",lat:24.845,lng:46.648,rent:{"شقة":[12000, 12000],"فيلا":[42500, 70500],"دور":[12000, 12000],"دوبلاكس":[30000, 50000],"استديو":[8000, 13000]},ch:1.0},
-  {name:"الروابي",lat:24.682,lng:46.768,rent:{"شقة":[17000, 23000],"فيلا":[15500, 25000],"دور":[17000, 33500],"دوبلاكس":[30500, 31500],"استديو":[8000, 8000]},ch:1.0},
-  {name:"الإزدهار",lat:24.772,lng:46.653,rent:{"شقة":[20000, 28000],"فيلا":[50000, 50000],"دور":[31500, 35500],"دوبلاكس":[28000, 38500],"استديو":[12000, 12000]},ch:1.0},
-  {name:"السويدي الغربي",lat:24.643,lng:46.628,rent:{"شقة":[13000, 16500],"فيلا":[13000, 20000],"دور":[16000, 24500],"دوبلاكس":[21500, 22000],"استديو":[11000, 11500]},ch:1.0},
-  {name:"سلطانة",lat:24.812,lng:46.698,rent:{"شقة":[8500, 11500],"فيلا":[14000, 19500],"دور":[11500, 16000],"دوبلاكس":[25000, 25000],"استديو":[6000, 6500]},ch:1.0},
-  {name:"البشائر",lat:24.588,lng:46.788,rent:{"شقة":[19000, 19000],"فيلا":[60000, 60000],"دور":[28000, 28000],"دوبلاكس":[52000, 86000],"استديو":[13500, 22500]},ch:1.0},
-  {name:"الوسيطاء",lat:24.71,lng:46.81,rent:{"شقة":[9000, 9500],"فيلا":[40000, 40000],"دور":[11000, 13000],"دوبلاكس":[28000, 47000],"استديو":[7000, 7000]},ch:1.0},
-  {name:"النور",lat:24.715,lng:46.652,rent:{"شقة":[11000, 15000],"فيلا":[12000, 12000],"دور":[9500, 14000],"دوبلاكس":[43000, 71000],"استديو":[8000, 8000]},ch:1.0},
-  {name:"المشرق",lat:24.82,lng:46.69,rent:{"شقة":[12000, 12000],"فيلا":[50000, 50000],"دور":[19000, 31000],"دوبلاكس":[34000, 56000],"استديو":[8500, 14500]},ch:1.0},
-  {name:"الدفاع",lat:24.705,lng:46.728,rent:{"شقة":[10500, 11500],"فيلا":[42000, 42000],"دور":[30000, 30000],"دوبلاكس":[45500, 75500],"استديو":[18500, 18500]},ch:1.0},
-  {name:"مغرزات",lat:24.75,lng:46.653,rent:{"شقة":[24500, 31000],"فيلا":[31000, 38000],"دور":[20500, 33000],"دوبلاكس":[8000, 8000],"استديو":[8500, 8500]},ch:1.0},
-  {name:"الفوطة",lat:24.681,lng:46.743,rent:{"شقة":[11000, 15000],"فيلا":[14000, 15500],"دور":[14000, 14500],"دوبلاكس":[20000, 20000],"استديو":[7500, 8000]},ch:1.0},
-  {name:"المرقب",lat:24.696,lng:46.713,rent:{"شقة":[8000, 10500],"فيلا":[18000, 18000],"دور":[9000, 9000],"دوبلاكس":[12000, 12000],"استديو":[5000, 7000]},ch:1.0},
-  {name:"التضامن",lat:24.668,lng:46.682,rent:{"شقة":[23000, 38500],"فيلا":[79500, 132500],"دور":[21500, 21500],"دوبلاكس":[56000, 94000],"استديو":[14500, 24500]},ch:1.0},
-  {name:"المنصورة",lat:24.697,lng:46.701,rent:{"شقة":[13000, 18000],"فيلا":[10500, 14000],"دور":[14000, 27000],"دوبلاكس":[42000, 42000],"استديو":[7000, 7000]},ch:1.0},
-  {name:"النسيم الشرقي",lat:24.71,lng:46.765,rent:{"شقة":[14000, 18000],"فيلا":[18000, 18000],"دور":[20000, 24500],"دوبلاكس":[17000, 17000],"استديو":[8000, 11500]},ch:1.0},
-  {name:"البطحاء",lat:24.692,lng:46.731,rent:{"شقة":[6000, 10000],"فيلا":[47500, 79500],"دور":[19000, 20500],"دوبلاكس":[34000, 56000],"استديو":[8000, 8000]},ch:1.0},
-  {name:"جرير",lat:24.638,lng:46.708,rent:{"شقة":[12500, 19000],"فيلا":[31000, 32500],"دور":[20500, 30500],"دوبلاكس":[30000, 30000],"استديو":[11000, 12500]},ch:1.0},
-  {name:"عتيقة",lat:24.68,lng:46.74,rent:{"شقة":[9000, 12000],"فيلا":[9500, 13000],"دور":[9500, 10000],"دوبلاكس":[27500, 45500],"استديو":[5000, 6000]},ch:1.0},
-  {name:"السفارات",lat:24.805,lng:46.628,rent:{"شقة":[60000, 70000],"فيلا":[98500, 120000],"دور":[80000, 80000],"دوبلاكس":[63500, 66000],"استديو":[37500, 37500]},ch:1.0},
-  {name:"العريجاء الأوسط",lat:24.66,lng:46.65,rent:{"شقة":[10000, 14500],"فيلا":[15000, 18000],"دور":[17000, 20500],"دوبلاكس":[17000, 21500],"استديو":[5500, 6000]},ch:1.0},
-  {name:"البيان",lat:24.812,lng:46.718,rent:{"شقة":[17500, 24000],"فيلا":[31000, 37500],"دور":[21000, 24500],"دوبلاكس":[20000, 20000],"استديو":[12000, 18000]},ch:1.0},
-  {name:"إشبيلية",lat:24.7895,lng:46.708,rent:{"شقة":[17000, 24000],"فيلا":[50000, 54000],"دور":[25000, 37000],"دوبلاكس":[28500, 35500],"استديو":[13000, 16500]},ch:1.0},
-  {name:"الرفيعة",lat:24.71,lng:46.678,rent:{"شقة":[12000, 17000],"فيلا":[47000, 75000],"دور":[15000, 19500],"دوبلاكس":[55000, 55000],"استديو":[12000, 12000]},ch:1.0},
-  {name:"السدرة",lat:24.678,lng:46.698,rent:{"شقة":[23000, 38500],"فيلا":[125000, 125000],"دور":[17500, 17500],"دوبلاكس":[56000, 94000],"استديو":[14500, 24500]},ch:1.0},
-  {name:"النفل",lat:24.802,lng:46.675,rent:{"شقة":[20500, 30000],"فيلا":[53000, 81000],"دور":[37500, 45000],"دوبلاكس":[60000, 60000],"استديو":[6000, 6000]},ch:1.0},
-  {name:"أم الحمام الغربي",lat:24.652,lng:46.618,rent:{"شقة":[14000, 19000],"فيلا":[15000, 29500],"دور":[20000, 28500],"دوبلاكس":[28500, 28500],"استديو":[6500, 10000]},ch:1.0},
-  {name:"الفيصلية",lat:24.658,lng:46.668,rent:{"شقة":[10000, 12000],"فيلا":[44000, 52000],"دور":[13500, 18500],"دوبلاكس":[32000, 53000],"استديو":[8500, 8500]},ch:1.0},
-  {name:"الجزيرة",lat:24.648,lng:46.728,rent:{"شقة":[14500, 20000],"فيلا":[26000, 38000],"دور":[27000, 36000],"دوبلاكس":[35000, 35000],"استديو":[10000, 10000]},ch:1.0},
-  {name:"الوادي",lat:24.782,lng:46.605,rent:{"شقة":[20000, 28000],"فيلا":[26500, 39000],"دور":[35000, 50000],"دوبلاكس":[43000, 45000],"استديو":[6500, 10500]},ch:1.0},
-  {name:"منفوحة",lat:24.628,lng:46.688,rent:{"شقة":[7500, 10500],"فيلا":[8500, 11000],"دور":[9000, 10000],"دوبلاكس":[25500, 25500],"استديو":[5000, 5000]},ch:1.0},
-  {name:"قرطبة",lat:24.7945,lng:46.7015,rent:{"شقة":[22000, 31000],"فيلا":[63500, 66000],"دور":[35000, 45000],"دوبلاكس":[42500, 44000],"استديو":[7500, 15000]},ch:1.0},
-  {name:"الديرة",lat:24.6912,lng:46.7253,rent:{"شقة":[9500, 14500],"فيلا":[10000, 11500],"دور":[8000, 10500],"دوبلاكس":[34000, 56000],"استديو":[7000, 8500]},ch:1.0},
-  {name:"الرمال",lat:24.728,lng:46.758,rent:{"شقة":[18000, 24000],"فيلا":[30000, 50000],"دور":[28000, 33500],"دوبلاكس":[13000, 19000],"استديو":[15000, 18000]},ch:1.0},
-  {name:"الشفاء",lat:24.628,lng:46.658,rent:{"شقة":[11000, 16000],"فيلا":[20500, 24500],"دور":[17000, 22000],"دوبلاكس":[13000, 14500],"استديو":[6000, 7000]},ch:0.6},
-  {name:"النظيم",lat:24.752,lng:46.772,rent:{"شقة":[10500, 16000],"فيلا":[12000, 12500],"دور":[15000, 20000],"دوبلاكس":[11000, 11000],"استديو":[5500, 6000]},ch:1.0},
-  {name:"المروج",lat:24.735,lng:46.687,rent:{"شقة":[20500, 27500],"فيلا":[50000, 63000],"دور":[36000, 44000],"دوبلاكس":[31500, 42000],"استديو":[20000, 22000]},ch:1.0},
-  {name:"المصفاة",lat:24.568,lng:46.658,rent:{"شقة":[12000, 18000],"فيلا":[220000, 220000],"دور":[25500, 36000],"دوبلاكس":[55000, 91000],"استديو":[14000, 24000]},ch:1.0},
-  {name:"المناخ",lat:24.701,lng:46.722,rent:{"شقة":[7500, 9500],"فيلا":[25000, 30000],"دور":[10000, 10000],"دوبلاكس":[40000, 67000],"استديو":[11000, 13000]},ch:1.0},
-  {name:"الملك سلمان",lat:24.678,lng:46.788,rent:{"شقة":[23500, 27000],"فيلا":[44500, 70000],"دور":[22500, 45500],"دوبلاكس":[45000, 45000],"استديو":[10500, 12500]},ch:1.0},
-  {name:"الفاخرية",lat:24.715,lng:46.662,rent:{"شقة":[7500, 13500],"فيلا":[14500, 20000],"دور":[14500, 21500],"دوبلاكس":[14000, 14000],"استديو":[6000, 6500]},ch:1.0},
-  {name:"الدوبية",lat:24.682,lng:46.687,rent:{"شقة":[6000, 7000],"فيلا":[11000, 11000],"دور":[9000, 12500],"دوبلاكس":[26000, 44000],"استديو":[6500, 6500]},ch:1.0},
-  {name:"الضباط",lat:24.728,lng:46.743,rent:{"شقة":[18500, 25000],"فيلا":[24000, 24000],"دور":[23500, 25000],"دوبلاكس":[14000, 14000],"استديو":[11500, 14500]},ch:1.0},
-  {name:"النموذجية",lat:24.715,lng:46.708,rent:{"شقة":[17000, 20000],"فيلا":[32000, 35000],"دور":[46500, 48000],"دوبلاكس":[90000, 90000],"استديو":[12000, 12000]},ch:1.0},
-  {name:"العقيق",lat:24.754,lng:46.623,rent:{"شقة":[20000, 28000],"فيلا":[30500, 51500],"دور":[30500, 38500],"دوبلاكس":[45000, 65000],"استديو":[14500, 20000]},ch:1.0},
-  {name:"الشميسي",lat:24.671,lng:46.728,rent:{"شقة":[8000, 10000],"فيلا":[7500, 8000],"دور":[8000, 10500],"دوبلاكس":[28000, 47000],"استديو":[5000, 7000]},ch:1.0},
-  {name:"المنار",lat:24.688,lng:46.778,rent:{"شقة":[15000, 24000],"فيلا":[20000, 47500],"دور":[28500, 30000],"دوبلاكس":[28000, 28000],"استديو":[7500, 9000]},ch:1.0},
-  {name:"المنصورية",lat:24.655,lng:46.655,rent:{"شقة":[12000, 12000],"فيلا":[50000, 50000],"دور":[20000, 20000],"دوبلاكس":[38000, 64000],"استديو":[10000, 16000]},ch:1.0},
-  {name:"الرابية",lat:24.638,lng:46.668,rent:{"شقة":[32000, 32000],"فيلا":[82500, 137500],"دور":[32000, 54000],"دوبلاكس":[58000, 97000],"استديو":[15000, 25000]},ch:1.0},
-  {name:"الفرسان",lat:24.721,lng:46.618,rent:{"شقة":[23000, 38500],"فيلا":[45000, 45000],"دور":[31000, 52000],"دوبلاكس":[36000, 36000],"استديو":[14500, 24500]},ch:1.0},
-  {name:"المشاعل",lat:24.698,lng:46.603,rent:{"شقة":[14000, 16500],"فيلا":[40000, 40000],"دور":[13500, 17000],"دوبلاكس":[51000, 85000],"استديو":[10000, 10000]},ch:1.0},
-  {name:"المرجان",lat:24.623,lng:46.718,rent:{"شقة":[21000, 25000],"فيلا":[85000, 85000],"دور":[30000, 30000],"دوبلاكس":[56500, 56500],"استديو":[19000, 19000]},ch:1.0},
-  {name:"الزاهر",lat:24.598,lng:46.768,rent:{"شقة":[15500, 16000],"فيلا":[15000, 15000],"دور":[22000, 26000],"دوبلاكس":[38000, 64000],"استديو":[15000, 15000]},ch:1.0},
-  {name:"النسيم الغربي",lat:24.71,lng:46.743,rent:{"شقة":[12500, 18000],"فيلا":[18000, 25000],"دور":[17000, 22000],"دوبلاكس":[23500, 29000],"استديو":[8000, 11000]},ch:1.0},
-  {name:"طويق",lat:24.6267,lng:46.5677,rent:{"شقة":[13500, 18000],"فيلا":[24500, 38500],"دور":[18000, 25500],"دوبلاكس":[12000, 29500],"استديو":[6000, 12000]},ch:0.5},
-  {name:"ديراب",lat:24.638,lng:46.588,rent:{"شقة":[12000, 16000],"فيلا":[20000, 28500],"دور":[12000, 17500],"دوبلاكس":[22000, 22000],"استديو":[5000, 5000]},ch:1.0},
-  {name:"العريجاء",lat:24.653,lng:46.653,rent:{"شقة":[8500, 12000],"فيلا":[7500, 7500],"دور":[9000, 12000],"دوبلاكس":[30000, 50000],"استديو":[6000, 7000]},ch:1.0},
-  {name:"النزهة",lat:24.757,lng:46.637,rent:{"شقة":[19000, 28000],"فيلا":[48000, 68500],"دور":[25000, 37000],"دوبلاكس":[61000, 62500],"استديو":[9500, 12000]},ch:1.0},
-  {name:"بدر",lat:24.605,lng:46.688,rent:{"شقة":[12000, 17000],"فيلا":[20000, 35000],"دور":[18000, 25000],"دوبلاكس":[16500, 22500],"استديو":[8000, 9500]},ch:0.4},
-  {name:"الدريهمية",lat:24.618,lng:46.628,rent:{"شقة":[12000, 16000],"فيلا":[17000, 25000],"دور":[14500, 23500],"دوبلاكس":[30000, 30000],"استديو":[7500, 10000]},ch:1.0},
-  {name:"الندى",lat:24.848,lng:46.636,rent:{"شقة":[27500, 36500],"فيلا":[52500, 59000],"دور":[43000, 50000],"دوبلاكس":[42000, 43000],"استديو":[8000, 8000]},ch:1.0},
-  {name:"الصالحية",lat:24.702,lng:46.698,rent:{"شقة":[7500, 10000],"فيلا":[8000, 8000],"دور":[6000, 6500],"دوبلاكس":[26000, 44000],"استديو":[7500, 8000]},ch:1.0},
-  {name:"القري",lat:24.805,lng:46.705,rent:{"شقة":[12000, 16000],"فيلا":[60500, 100500],"دور":[23500, 39500],"دوبلاكس":[43000, 71000],"استديو":[11000, 18000]},ch:1.0},
-  {name:"القادسية",lat:24.727,lng:46.722,rent:{"شقة":[18000, 24000],"فيلا":[30500, 41500],"دور":[25000, 33000],"دوبلاكس":[33000, 33000],"استديو":[8000, 12000]},ch:1.0},
-  {name:"شبرا",lat:24.683,lng:46.723,rent:{"شقة":[10000, 15000],"فيلا":[21500, 24500],"دور":[16000, 20000],"دوبلاكس":[18000, 18000],"استديو":[6000, 7000]},ch:1.0},
-  {name:"الأندلس",lat:24.705,lng:46.71,rent:{"شقة":[16500, 22500],"فيلا":[30000, 43000],"دور":[26500, 30500],"دوبلاكس":[37000, 41000],"استديو":[6000, 6000]},ch:1.0},
-  {name:"الياسمين",lat:24.8407,lng:46.6523,rent:{"شقة":[22000, 34000],"فيلا":[20000, 53000],"دور":[38500, 45500],"دوبلاكس":[43500, 52000],"استديو":[8000, 11000]},ch:2.8},
-  {name:"الربيع",lat:24.835,lng:46.688,rent:{"شقة":[21000, 31500],"فيلا":[24500, 54500],"دور":[35500, 45500],"دوبلاكس":[48000, 49000],"استديو":[11000, 11000]},ch:1.0},
-  {name:"الحمراء",lat:24.668,lng:46.708,rent:{"شقة":[18000, 26000],"فيلا":[18000, 59000],"دور":[27500, 36500],"دوبلاكس":[38000, 38000],"استديو":[10000, 15000]},ch:1.0},
-  {name:"الرحمانية",lat:24.725,lng:46.678,rent:{"شقة":[12000, 23500],"فيلا":[75000, 95000],"دور":[12000, 16000],"دوبلاكس":[75000, 75000],"استديو":[7000, 7000]},ch:1.0},
-  {name:"الندوة",lat:24.692,lng:46.668,rent:{"شقة":[15000, 20000],"فيلا":[12000, 12000],"دور":[17500, 30000],"دوبلاكس":[24000, 24000],"استديو":[15500, 16000]},ch:1.0},
-  {name:"سلام",lat:24.682,lng:46.718,rent:{"شقة":[10000, 11500],"فيلا":[35500, 37000],"دور":[12000, 16000],"دوبلاكس":[28000, 47000],"استديو":[6000, 6000]},ch:1.0},
-  {name:"المروة",lat:24.823,lng:46.668,rent:{"شقة":[13000, 18000],"فيلا":[17500, 21000],"دور":[14000, 19000],"دوبلاكس":[23000, 23000],"استديو":[11000, 11000]},ch:1.0},
-  {name:"النهضة",lat:24.682,lng:46.758,rent:{"شقة":[16000, 20000],"فيلا":[23000, 24500],"دور":[24000, 30000],"دوبلاكس":[36500, 38000],"استديو":[6000, 10000]},ch:1.0},
-  {name:"السويدي",lat:24.643,lng:46.648,rent:{"شقة":[11000, 14000],"فيلا":[14000, 14500],"دور":[15500, 20000],"دوبلاكس":[15000, 15000],"استديو":[5000, 10000]},ch:1.0},
-  {name:"التعاون",lat:24.753,lng:46.723,rent:{"شقة":[22000, 30000],"فيلا":[40000, 70000],"دور":[23000, 50000],"دوبلاكس":[45000, 45000],"استديو":[8500, 15000]},ch:1.7},
-  {name:"الخالدية",lat:24.721,lng:46.788,rent:{"شقة":[11500, 16000],"فيلا":[17000, 20000],"دور":[15000, 24500],"دوبلاكس":[20500, 25000],"استديو":[9000, 10500]},ch:1.0},
-  {name:"السلام",lat:24.668,lng:46.743,rent:{"شقة":[16000, 20000],"فيلا":[33000, 37500],"دور":[25000, 30000],"دوبلاكس":[29500, 30000],"استديو":[5000, 6500]},ch:1.0},
-  {name:"العزيزية",lat:24.662,lng:46.713,rent:{"شقة":[14000, 18000],"فيلا":[20000, 25500],"دور":[18000, 25000],"دوبلاكس":[16000, 16000],"استديو":[5500, 8000]},ch:1.0},
-  {name:"الوزارات",lat:24.681,lng:46.713,rent:{"شقة":[12500, 16000],"فيلا":[26500, 26500],"دور":[13000, 15000],"دوبلاكس":[25000, 25000],"استديو":[7000, 9000]},ch:1.0},
-  {name:"الملقا",lat:24.8285,lng:46.6357,rent:{"شقة":[26000, 37000],"فيلا":[42000, 58000],"دور":[27000, 44000],"دوبلاكس":[46000, 59000],"استديو":[12000, 19000]},ch:4.2},
-  {name:"المؤتمرات",lat:24.705,lng:46.668,rent:{"شقة":[21000, 27000],"فيلا":[112000, 124500],"دور":[15000, 15000],"دوبلاكس":[87000, 91000],"استديو":[20000, 20000]},ch:1.0},
-  {name:"العمل",lat:24.672,lng:46.678,rent:{"شقة":[11000, 14000],"فيلا":[21000, 23000],"دور":[18000, 20000],"دوبلاكس":[34500, 57500],"استديو":[6000, 7000]},ch:1.0},
-  {name:"ظهرة البديعة",lat:24.678,lng:46.638,rent:{"شقة":[11000, 16500],"فيلا":[21500, 28500],"دور":[15000, 22500],"دوبلاكس":[28000, 28000],"استديو":[4500, 5000]},ch:1.0},
-  {name:"المرسلات",lat:24.745,lng:46.62,rent:{"شقة":[18000, 28000],"فيلا":[43000, 57500],"دور":[28000, 35000],"دوبلاكس":[46000, 46000],"استديو":[8000, 8000]},ch:1.0},
-  {name:"الشهداء",lat:24.767,lng:46.672,rent:{"شقة":[21500, 27000],"فيلا":[58500, 70000],"دور":[29000, 40500],"دوبلاكس":[54000, 54000],"استديو":[15500, 16000]},ch:1.0},
-  {name:"أم الحمام الشرقي",lat:24.652,lng:46.638,rent:{"شقة":[12500, 17000],"فيلا":[25000, 35500],"دور":[16500, 20000],"دوبلاكس":[50000, 50000],"استديو":[8500, 10000]},ch:1.0},
-  {name:"سكيرينة",lat:24.738,lng:46.818,rent:{"شقة":[9000, 12000],"فيلا":[14000, 14000],"دور":[10000, 15500],"دوبلاكس":[25500, 42500],"استديو":[7000, 7500]},ch:1.0},
-  {name:"عريض",lat:24.86,lng:46.56,rent:{"شقة":[11500, 13000],"فيلا":[10000, 10000],"دور":[10500, 17500],"دوبلاكس":[38000, 38000],"استديو":[9000, 12000]},ch:1.0},
-  {name:"ثليم",lat:24.768,lng:46.838,rent:{"شقة":[10000, 12000],"فيلا":[8000, 8000],"دور":[5000, 5000],"دوبلاكس":[12000, 12000],"استديو":[7000, 8500]},ch:1.0},
-  {name:"بنبان",lat:24.91,lng:46.59,rent:{"شقة":[10500, 11000],"فيلا":[30000, 30000],"دور":[10000, 10000],"دوبلاكس":[22000, 22000],"استديو":[7000, 10500]},ch:1.0},
-  {name:"أم الشعال",lat:24.648,lng:46.588,rent:{"شقة":[19000, 21500],"فيلا":[62000, 103000],"دور":[18500, 18500],"دوبلاكس":[44000, 73000],"استديو":[11000, 19000]},ch:1.0},
-  {name:"البرية",lat:24.825,lng:46.705,rent:{"شقة":[14000, 17000],"فيلا":[17500, 22000],"دور":[18000, 18000],"دوبلاكس":[44500, 74500],"استديو":[11500, 19500]},ch:1.0},
-  {name:"الوشام",lat:24.71,lng:46.692,rent:{"شقة":[15000, 18000],"فيلا":[18000, 27500],"دور":[11500, 14000],"دوبلاكس":[57000, 57000],"استديو":[6500, 9000]},ch:1.0},
-  {name:"المعذر الشمالي",lat:24.69,lng:46.728,rent:{"شقة":[14500, 20000],"فيلا":[71500, 80500],"دور":[34500, 34500],"دوبلاكس":[59500, 68500],"استديو":[8000, 8000]},ch:1.0},
-  {name:"لبن",lat:24.608,lng:46.578,rent:{"شقة":[18000, 25000],"فيلا":[14000, 14000],"دور":[20000, 23500],"دوبلاكس":[24000, 25000],"استديو":[7500, 7500]},ch:1.0},
-  {name:"الشرفية",lat:24.701,lng:46.732,rent:{"شقة":[10500, 14500],"فيلا":[31500, 38000],"دور":[13000, 15500],"دوبلاكس":[8000, 8000],"استديو":[6500, 9500]},ch:1.0},
-  {name:"العماجية",lat:24.718,lng:46.728,rent:{"شقة":[5000, 5500],"فيلا":[38500, 64500],"دور":[60000, 60000],"دوبلاكس":[27500, 45500],"استديو":[7000, 12000]},ch:1.0},
-  {name:"الجرادية",lat:24.787,lng:46.57,rent:{"شقة":[10000, 13000],"فيلا":[12000, 13000],"دور":[7000, 9000],"دوبلاكس":[29000, 49000],"استديو":[7500, 8000]},ch:1.0},
-  {name:"غبيرا",lat:24.728,lng:46.648,rent:{"شقة":[9500, 12500],"فيلا":[9500, 11000],"دور":[7500, 8000],"دوبلاكس":[30000, 50000],"استديو":[6000, 9500]},ch:1.0},
-  {name:"صياح",lat:24.668,lng:46.688,rent:{"شقة":[6000, 9000],"فيلا":[14500, 16500],"دور":[12000, 12000],"دوبلاكس":[27500, 45500],"استديو":[7000, 12000]},ch:1.0},
-  {name:"الروضة",lat:24.741,lng:46.741,rent:{"شقة":[17000, 22000],"فيلا":[28000, 36500],"دور":[23500, 33000],"دوبلاكس":[23000, 35500],"استديو":[5500, 6000]},ch:2.1},
-  {name:"المهدية",lat:24.798,lng:46.582,rent:{"شقة":[19500, 27000],"فيلا":[42500, 60000],"دور":[18500, 26000],"دوبلاكس":[24000, 24000],"استديو":[12000, 14000]},ch:1.0},
-  {name:"النخيل",lat:24.808,lng:46.592,rent:{"شقة":[26000, 40000],"فيلا":[43000, 62500],"دور":[15000, 17500],"دوبلاكس":[55000, 55000],"استديو":[13000, 15500]},ch:1.0},
-  {name:"المحمدية",lat:24.738,lng:46.698,rent:{"شقة":[16000, 26000],"فيلا":[35000, 75000],"دور":[35000, 45000],"دوبلاكس":[50500, 61500],"استديو":[18000, 18000]},ch:1.0},
-  {name:"الفاروق",lat:24.672,lng:46.718,rent:{"شقة":[8500, 13000],"فيلا":[20000, 20000],"دور":[20000, 20000],"دوبلاكس":[40000, 40000],"استديو":[18000, 18000]},ch:1.0},
-  {name:"الدار البيضاء",lat:24.578,lng:46.708,rent:{"شقة":[13000, 18000],"فيلا":[15500, 20000],"دور":[15500, 22000],"دوبلاكس":[18000, 18000],"استديو":[6000, 10000]},ch:1.0},
-  {name:"الربوة",lat:24.715,lng:46.672,rent:{"شقة":[17000, 25000],"فيلا":[45000, 57500],"دور":[20000, 35000],"دوبلاكس":[29500, 38500],"استديو":[6500, 10000]},ch:2.6},
-  {name:"خشم العان",lat:24.838,lng:46.818,rent:{"شقة":[11000, 12000],"فيلا":[25000, 25000],"دور":[17000, 17000],"دوبلاكس":[30000, 30000],"استديو":[14500, 14500]},ch:1.0},
-  {name:"الحائر",lat:24.558,lng:46.728,rent:{"شقة":[10000, 12500],"فيلا":[12000, 12500],"دور":[10000, 11500],"دوبلاكس":[16500, 16500],"استديو":[6000, 6000]},ch:0.3},
-  {name:"الرماية",lat:24.613,lng:46.678,rent:{"شقة":[12000, 17000],"فيلا":[36000, 36000],"دور":[40000, 40000],"دوبلاكس":[43000, 71000],"استديو":[13500, 14000]},ch:1.0},
-  {name:"الفلاح",lat:24.781,lng:46.625,rent:{"شقة":[19000, 25500],"فيلا":[43000, 54000],"دور":[26500, 38500],"دوبلاكس":[50000, 50000],"استديو":[11000, 13000]},ch:1.0},
-  {name:"حطين",lat:24.7964,lng:46.6282,rent:{"شقة":[25000, 35500],"فيلا":[79500, 108000],"دور":[29000, 49000],"دوبلاكس":[48500, 52000],"استديو":[10000, 10000]},ch:-1.1},
-  {name:"الناصرية",lat:24.71,lng:46.768,rent:{"شقة":[8500, 13500],"فيلا":[45000, 45000],"دور":[8000, 8000],"دوبلاكس":[36500, 60500],"استديو":[13000, 13000]},ch:1.0},
-  {name:"العارض",lat:24.878,lng:46.612,rent:{"شقة":[22500, 31000],"فيلا":[61000, 85000],"دور":[30000, 45000],"دوبلاكس":[47000, 53000],"استديو":[14500, 21000]},ch:1.0},
-  {name:"الملز",lat:24.689,lng:46.721,rent:{"شقة":[17000, 24000],"فيلا":[20000, 24000],"دور":[23000, 30000],"دوبلاكس":[22500, 24000],"استديو":[8500, 10000]},ch:1.0},
-  {name:"الفيحاء",lat:24.662,lng:46.748,rent:{"شقة":[17000, 22000],"فيلا":[18500, 24000],"دور":[25000, 33000],"دوبلاكس":[30000, 30000],"استديو":[12000, 14000]},ch:1.0},
-  {name:"جبرة",lat:24.728,lng:46.778,rent:{"شقة":[8000, 11000],"فيلا":[25000, 25000],"دور":[15000, 15500],"دوبلاكس":[28000, 47000],"استديو":[6000, 6000]},ch:1.0},
-  {name:"المربع",lat:24.688,lng:46.715,rent:{"شقة":[18000, 23000],"فيلا":[19000, 24500],"دور":[16500, 24500],"دوبلاكس":[55500, 92500],"استديو":[9000, 11000]},ch:1.0},
-  {name:"الرائد",lat:24.816,lng:46.635,rent:{"شقة":[20000, 25500],"فيلا":[58500, 103000],"دور":[29000, 36000],"دوبلاكس":[34000, 43000],"استديو":[13000, 13000]},ch:1.0},
-  {name:"العوالي",lat:24.632,lng:46.618,rent:{"شقة":[15000, 20000],"فيلا":[21500, 25000],"دور":[12000, 19500],"دوبلاكس":[17000, 26000],"استديو":[5500, 8000]},ch:1.0},
-  {name:"المدينة الصناعية الجديدة",lat:24.758,lng:46.858,rent:{"شقة":[11500, 14500],"فيلا":[30000, 30000],"دور":[25000, 25000],"دوبلاكس":[85000, 141000],"استديو":[5000, 5000]},ch:1.0},
-  {name:"الوسام",lat:24.798,lng:46.708,rent:{"شقة":[26000, 26000],"فيلا":[48000, 48000],"دور":[12000, 12000],"دوبلاكس":[55500, 92500],"استديو":[14000, 24000]},ch:1.0},
-  {name:"ضاحية نمار",lat:24.602,lng:46.568,rent:{"شقة":[15000, 20000],"فيلا":[22000, 26000],"دور":[5000, 5000],"دوبلاكس":[35000, 35000],"استديو":[6500, 8000]},ch:1.0},
-  {name:"غرناطة",lat:24.775,lng:46.71,rent:{"شقة":[20000, 25000],"فيلا":[32500, 43000],"دور":[23000, 33000],"دوبلاكس":[60000, 60000],"استديو":[12000, 15500]},ch:1.9},
-  {name:"ظهرة لبن",lat:24.612,lng:46.598,rent:{"شقة":[18000, 24000],"فيلا":[17000, 39500],"دور":[24000, 32500],"دوبلاكس":[24500, 30000],"استديو":[9500, 15000]},ch:1.0},
-  {name:"الملك فهد",lat:24.765,lng:46.683,rent:{"شقة":[20000, 24000],"فيلا":[44500, 57000],"دور":[27500, 35000],"دوبلاكس":[25000, 25000],"استديو":[10500, 13000]},ch:1.0},
-  {name:"الريان",lat:24.678,lng:46.738,rent:{"شقة":[18000, 25500],"فيلا":[36000, 38000],"دور":[27000, 35000],"دوبلاكس":[36000, 36000],"استديو":[14000, 17500]},ch:1.0},
-  {name:"معكال",lat:24.81,lng:46.562,rent:{"شقة":[9000, 9500],"فيلا":[20000, 20000],"دور":[8000, 8000],"دوبلاكس":[25000, 41000],"استديو":[6500, 6500]},ch:1.0},
-  {name:"المعذر",lat:24.684,lng:46.741,rent:{"شقة":[15000, 21000],"فيلا":[56500, 56500],"دور":[20000, 26000],"دوبلاكس":[48000, 48000],"استديو":[11000, 13000]},ch:1.0},
-  {name:"السعادة",lat:24.696,lng:46.678,rent:{"شقة":[16000, 20000],"فيلا":[21000, 40000],"دور":[24000, 30000],"دوبلاكس":[24000, 24000],"استديو":[7000, 9500]},ch:1.0},
-  {name:"اليرموك",lat:24.698,lng:46.748,rent:{"شقة":[18000, 24000],"فيلا":[30000, 30000],"دور":[21000, 37000],"دوبلاكس":[12000, 12000],"استديو":[11000, 11000]},ch:1.0},
-  {name:"البساتين",lat:24.758,lng:46.758,rent:{"شقة":[44000, 44000],"فيلا":[113000, 189000],"دور":[44000, 74000],"دوبلاكس":[80000, 134000],"استديو":[20500, 34500]},ch:1.0},
-  {name:"الدحو",lat:24.721,lng:46.768,rent:{"شقة":[8000, 10500],"فيلا":[46500, 77500],"دور":[10000, 10000],"دوبلاكس":[32500, 54500],"استديو":[12000, 12000]},ch:1.0},
-  {name:"العليا",lat:24.6877,lng:46.6829,rent:{"شقة":[20000, 30000],"فيلا":[45000, 75000],"دور":[25000, 38000],"دوبلاكس":[40000, 40000],"استديو":[11000, 18000]},ch:6.3},
-  {name:"أم سليم",lat:24.71,lng:46.698,rent:{"شقة":[10000, 13000],"فيلا":[9500, 10500],"دور":[9000, 11000],"دوبلاكس":[15000, 15000],"استديو":[6000, 7000]},ch:1.0},
-  {name:"الخير",lat:24.85,lng:46.79,rent:{"شقة":[12000, 12000],"فيلا":[10000, 10000],"دور":[10500, 11000],"دوبلاكس":[150000, 150000],"استديو":[12000, 12500]},ch:1.0},
-  {name:"القدس",lat:24.688,lng:46.768,rent:{"شقة":[15500, 24000],"فيلا":[34500, 35000],"دور":[25500, 30000],"دوبلاكس":[36500, 36500],"استديو":[10000, 10000]},ch:1.0},
-  {name:"النرجس",lat:24.863,lng:46.6467,rent:{"شقة":[25000, 38000],"فيلا":[60000, 81000],"دور":[37500, 50000],"دوبلاكس":[46000, 55000],"استديو":[10000, 10000]},ch:5.4},
-  {name:"الزهرة",lat:24.648,lng:46.698,rent:{"شقة":[11500, 15000],"فيلا":[13500, 13500],"دور":[17000, 22000],"دوبلاكس":[12500, 13000],"استديو":[7000, 8000]},ch:1.0},
-  {name:"السليمانية",lat:24.7029,lng:46.6814,rent:{"شقة":[23000, 30000],"فيلا":[40000, 75000],"دور":[33500, 45500],"دوبلاكس":[38000, 42500],"استديو":[11000, 14500]},ch:3.1},
-  {name:"النخبة",lat:24.715,lng:46.698,rent:{"شقة":[11000, 11500],"فيلا":[40000, 40000],"دور":[36000, 36000],"دوبلاكس":[34500, 57500],"استديو":[9000, 15000]},ch:1.0},
-  {name:"الورود",lat:24.882,lng:46.665,rent:{"شقة":[12000, 21000],"فيلا":[24000, 40000],"دور":[16500, 26500],"دوبلاكس":[16000, 27000],"استديو":[5000, 6000]},ch:1.0},
-  {name:"العلا",lat:24.701,lng:46.708,rent:{"شقة":[10000, 10000],"فيلا":[42500, 70500],"دور":[16500, 27500],"دوبلاكس":[30000, 50000],"استديو":[21500, 21500]},ch:1.0},
-  {name:"القيروان",lat:24.823,lng:46.599,rent:{"شقة":[28000, 38000],"فيلا":[58000, 100000],"دور":[35000, 53000],"دوبلاكس":[49500, 55500],"استديو":[15500, 16500]},ch:-0.8},
-  {name:"عكاظ",lat:24.588,lng:46.758,rent:{"شقة":[14000, 18000],"فيلا":[26500, 32000],"دور":[19500, 30000],"دوبلاكس":[15000, 15000],"استديو":[6000, 7500]},ch:1.0},
-  {name:"العريجاء الغربي",lat:24.648,lng:46.638,rent:{"شقة":[9500, 15000],"فيلا":[14500, 16500],"دور":[16000, 20000],"دوبلاكس":[11000, 11000],"استديو":[5500, 5500]},ch:1.0},
-  {name:"البديعة",lat:24.687,lng:46.658,rent:{"شقة":[9500, 14000],"فيلا":[11000, 14500],"دور":[11000, 13000],"دوبلاكس":[8500, 8500],"استديو":[7000, 7500]},ch:1.0},
-  {name:"الصفاء",lat:24.638,lng:46.718,rent:{"شقة":[8000, 16000],"فيلا":[39500, 45000],"دور":[13500, 25000],"دوبلاكس":[57000, 65000],"استديو":[6000, 7500]},ch:1.0},
-  {name:"المصيف",lat:24.643,lng:46.678,rent:{"شقة":[18000, 25000],"فيلا":[41000, 50000],"دور":[21000, 38000],"دوبلاكس":[72000, 72000],"استديو":[12000, 16500]},ch:1.0},
-  {name:"طيبة",lat:24.718,lng:46.753,rent:{"شقة":[12000, 16000],"فيلا":[26000, 30000],"دور":[16000, 25500],"دوبلاكس":[20000, 20000],"استديو":[12000, 12000]},ch:1.0},
-  {name:"الغدير",lat:24.768,lng:46.598,rent:{"شقة":[27000, 35000],"فيلا":[108000, 126000],"دور":[33500, 42000],"دوبلاكس":[101000, 103000],"استديو":[16000, 16000]},ch:1.0},
-  {name:"الملك عبدالله",lat:24.738,lng:46.713,rent:{"شقة":[15500, 30000],"فيلا":[60000, 60000],"دور":[25000, 25000],"دوبلاكس":[58500, 58500],"استديو":[13000, 13000]},ch:1.0},
-  {name:"السلي",lat:24.588,lng:46.808,rent:{"شقة":[12000, 18000],"فيلا":[16500, 19500],"دور":[11000, 20000],"دوبلاكس":[44000, 73000],"استديو":[9500, 13000]},ch:1.0},
-  {name:"عليشة",lat:24.688,lng:46.593,rent:{"شقة":[10500, 13000],"فيلا":[15000, 15500],"دور":[11500, 16000],"دوبلاكس":[44000, 73000],"استديو":[8500, 8500]},ch:1.0},
-  {name:"الخليج",lat:24.695,lng:46.728,rent:{"شقة":[16000, 21500],"فيلا":[18500, 20000],"دور":[24500, 30000],"دوبلاكس":[25500, 26000],"استديو":[8000, 10000]},ch:1.0},
-  {name:"الزهراء",lat:24.648,lng:46.705,rent:{"شقة":[18000, 20000],"فيلا":[42000, 51000],"دور":[27500, 35000],"دوبلاكس":[65000, 65000],"استديو":[14000, 14000]},ch:1.0},
-  {name:"الجنادرية",lat:24.788,lng:46.828,rent:{"شقة":[14500, 20000],"فيلا":[31000, 36000],"دور":[20500, 30000],"دوبلاكس":[32000, 32000],"استديو":[7500, 8500]},ch:1.0},
-  {name:"المعيزيلة",lat:24.71,lng:46.761,rent:{"شقة":[15000, 20500],"فيلا":[14500, 23500],"دور":[17000, 29000],"دوبلاكس":[54000, 54000],"استديو":[10500, 12000]},ch:1.0},
-  {name:"السحاب",lat:24.743,lng:46.788,rent:{"شقة":[26000, 26000],"فيلا":[72000, 120000],"دور":[28000, 47000],"دوبلاكس":[51000, 85000],"استديو":[13000, 22000]},ch:1.0},
-  {name:"المونسية",lat:24.768,lng:46.738,rent:{"شقة":[18000, 26000],"فيلا":[33500, 62500],"دور":[27500, 37000],"دوبلاكس":[30000, 30000],"استديو":[13500, 17500]},ch:1.0},
-  {name:"الحزم",lat:24.758,lng:46.578,rent:{"شقة":[13000, 18000],"فيلا":[18500, 24500],"دور":[16500, 25000],"دوبلاكس":[14500, 19000],"استديو":[6500, 7500]},ch:1.0},
-  {name:"الهدا",lat:24.687,lng:46.738,rent:{"شقة":[7500, 12500],"فيلا":[104000, 131000],"دور":[25500, 26500],"دوبلاكس":[55500, 57500],"استديو":[36000, 43500]},ch:1.0},
-  {name:"عرقة",lat:24.708,lng:46.59,rent:{"شقة":[20000, 30000],"فيلا":[28500, 40500],"دور":[29500, 38000],"دوبلاكس":[42000, 48500],"استديو":[11500, 14500]},ch:1.0},
-];
-
-const BASE_PRICES={
-"الصحافة":{"شقة":[22000, 30000],"شقة_avg":44000,"فيلا":[47500, 70000],"فيلا_avg":120500,"دور":[45000, 55000],"دور_avg":65500,"دوبلاكس":[42000, 46500],"دوبلاكس_avg":97500,"استديو":[12000, 18500],"استديو_avg":28500},
-"الملك فيصل":{"شقة":[18000, 23000],"شقة_avg":34000,"فيلا":[17000, 23000],"فيلا_avg":71500,"دور":[25500, 33000],"دور_avg":44000,"دوبلاكس":[125000, 131500],"دوبلاكس_avg":139500,"استديو":[11000, 11500],"استديو_avg":21000},
-"أحد":{"شقة":[12000, 18000],"شقة_avg":21000,"فيلا":[14500, 14500],"فيلا_avg":39500,"دور":[15000, 23000],"دور_avg":31500,"دوبلاكس":[38000, 64000],"دوبلاكس_avg":51000,"استديو":[6000, 6000],"استديو_avg":13500},
-"سدرة":{"شقة":[11000, 11500],"شقة_avg":36500,"فيلا":[80000, 86000],"فيلا_avg":107500,"دور":[19000, 19000],"دور_avg":28500,"دوبلاكس":[90000, 90000],"دوبلاكس_avg":116000,"استديو":[43500, 43500],"استديو_avg":46500},
-"الغنامية":{"شقة":[12000, 12000],"شقة_avg":16500,"فيلا":[42500, 70500],"فيلا_avg":56500,"دور":[12000, 12000],"دور_avg":24500,"دوبلاكس":[30000, 50000],"دوبلاكس_avg":40000,"استديو":[8000, 13000],"استديو_avg":10500},
-"الروابي":{"شقة":[17000, 23000],"شقة_avg":28500,"فيلا":[15500, 25000],"فيلا_avg":74500,"دور":[17000, 33500],"دور_avg":45000,"دوبلاكس":[30500, 31500],"دوبلاكس_avg":57000,"استديو":[8000, 8000],"استديو_avg":23500},
-"الإزدهار":{"شقة":[20000, 28000],"شقة_avg":41500,"فيلا":[50000, 50000],"فيلا_avg":106000,"دور":[31500, 35500],"دور_avg":55500,"دوبلاكس":[28000, 38500],"دوبلاكس_avg":74500,"استديو":[12000, 12000],"استديو_avg":22500},
-"السويدي الغربي":{"شقة":[13000, 16500],"شقة_avg":20000,"فيلا":[13000, 20000],"فيلا_avg":45500,"دور":[16000, 24500],"دور_avg":31000,"دوبلاكس":[21500, 22000],"دوبلاكس_avg":32000,"استديو":[11000, 11500],"استديو_avg":18000},
-"سلطانة":{"شقة":[8500, 11500],"شقة_avg":16000,"فيلا":[14000, 19500],"فيلا_avg":45500,"دور":[11500, 16000],"دور_avg":26500,"دوبلاكس":[25000, 25000],"دوبلاكس_avg":32500,"استديو":[6000, 6500],"استديو_avg":11500},
-"البشائر":{"شقة":[19000, 19000],"شقة_avg":28500,"فيلا":[60000, 60000],"فيلا_avg":60000,"دور":[28000, 28000],"دور_avg":34000,"دوبلاكس":[52000, 86000],"دوبلاكس_avg":69000,"استديو":[13500, 22500],"استديو_avg":18000},
-"الوسيطاء":{"شقة":[9000, 9500],"شقة_avg":15500,"فيلا":[40000, 40000],"فيلا_avg":40000,"دور":[11000, 13000],"دور_avg":22000,"دوبلاكس":[28000, 47000],"دوبلاكس_avg":37500,"استديو":[7000, 7000],"استديو_avg":16000},
-"النور":{"شقة":[11000, 15000],"شقة_avg":23500,"فيلا":[12000, 12000],"فيلا_avg":56000,"دور":[9500, 14000],"دور_avg":29500,"دوبلاكس":[43000, 71000],"دوبلاكس_avg":57000,"استديو":[8000, 8000],"استديو_avg":15500},
-"المشرق":{"شقة":[12000, 12000],"شقة_avg":18500,"فيلا":[50000, 50000],"فيلا_avg":50000,"دور":[19000, 31000],"دور_avg":25000,"دوبلاكس":[34000, 56000],"دوبلاكس_avg":45000,"استديو":[8500, 14500],"استديو_avg":11500},
-"الدفاع":{"شقة":[10500, 11500],"شقة_avg":25000,"فيلا":[42000, 42000],"فيلا_avg":42500,"دور":[30000, 30000],"دور_avg":79000,"دوبلاكس":[45500, 75500],"دوبلاكس_avg":60500,"استديو":[18500, 18500],"استديو_avg":18500},
-"مغرزات":{"شقة":[24500, 31000],"شقة_avg":42500,"فيلا":[31000, 38000],"فيلا_avg":101500,"دور":[20500, 33000],"دور_avg":57000,"دوبلاكس":[8000, 8000],"دوبلاكس_avg":57000,"استديو":[8500, 8500],"استديو_avg":29500},
-"الفوطة":{"شقة":[11000, 15000],"شقة_avg":26500,"فيلا":[14000, 15500],"فيلا_avg":47500,"دور":[14000, 14500],"دور_avg":34000,"دوبلاكس":[20000, 20000],"دوبلاكس_avg":20000,"استديو":[7500, 8000],"استديو_avg":13000},
-"المرقب":{"شقة":[8000, 10500],"شقة_avg":14500,"فيلا":[18000, 18000],"فيلا_avg":18000,"دور":[9000, 9000],"دور_avg":25500,"دوبلاكس":[12000, 12000],"دوبلاكس_avg":56000,"استديو":[5000, 7000],"استديو_avg":10000},
-"التضامن":{"شقة":[23000, 38500],"شقة_avg":30828,"فيلا":[79500, 132500],"فيلا_avg":106000,"دور":[21500, 21500],"دور_avg":26000,"دوبلاكس":[56000, 94000],"دوبلاكس_avg":75000,"استديو":[14500, 24500],"استديو_avg":19500},
-"المنصورة":{"شقة":[13000, 18000],"شقة_avg":22000,"فيلا":[10500, 14000],"فيلا_avg":42000,"دور":[14000, 27000],"دور_avg":34000,"دوبلاكس":[42000, 42000],"دوبلاكس_avg":54000,"استديو":[7000, 7000],"استديو_avg":16000},
-"النسيم الشرقي":{"شقة":[14000, 18000],"شقة_avg":23000,"فيلا":[18000, 18000],"فيلا_avg":45000,"دور":[20000, 24500],"دور_avg":35000,"دوبلاكس":[17000, 17000],"دوبلاكس_avg":29500,"استديو":[8000, 11500],"استديو_avg":15500},
-"البطحاء":{"شقة":[6000, 10000],"شقة_avg":18500,"فيلا":[47500, 79500],"فيلا_avg":63500,"دور":[19000, 20500],"دور_avg":22500,"دوبلاكس":[34000, 56000],"دوبلاكس_avg":45000,"استديو":[8000, 8000],"استديو_avg":14500},
-"جرير":{"شقة":[12500, 19000],"شقة_avg":27000,"فيلا":[31000, 32500],"فيلا_avg":76000,"دور":[20500, 30500],"دور_avg":43000,"دوبلاكس":[30000, 30000],"دوبلاكس_avg":41500,"استديو":[11000, 12500],"استديو_avg":20000},
-"عتيقة":{"شقة":[9000, 12000],"شقة_avg":15000,"فيلا":[9500, 13000],"فيلا_avg":24500,"دور":[9500, 10000],"دور_avg":17500,"دوبلاكس":[27500, 45500],"دوبلاكس_avg":36500,"استديو":[5000, 6000],"استديو_avg":9000},
-"السفارات":{"شقة":[60000, 70000],"شقة_avg":101000,"فيلا":[98500, 120000],"فيلا_avg":242000,"دور":[80000, 80000],"دور_avg":106000,"دوبلاكس":[63500, 66000],"دوبلاكس_avg":117500,"استديو":[37500, 37500],"استديو_avg":85500},
-"العريجاء الأوسط":{"شقة":[10000, 14500],"شقة_avg":18500,"فيلا":[15000, 18000],"فيلا_avg":42500,"دور":[17000, 20500],"دور_avg":27000,"دوبلاكس":[17000, 21500],"دوبلاكس_avg":33000,"استديو":[5500, 6000],"استديو_avg":11500},
-"البيان":{"شقة":[17500, 24000],"شقة_avg":28500,"فيلا":[31000, 37500],"فيلا_avg":53000,"دور":[21000, 24500],"دور_avg":43000,"دوبلاكس":[20000, 20000],"دوبلاكس_avg":37000,"استديو":[12000, 18000],"استديو_avg":23000},
-"إشبيلية":{"شقة":[17000, 24000],"شقة_avg":31500,"فيلا":[50000, 54000],"فيلا_avg":166500,"دور":[25000, 37000],"دور_avg":47500,"دوبلاكس":[28500, 35500],"دوبلاكس_avg":62000,"استديو":[13000, 16500],"استديو_avg":22000},
-"الرفيعة":{"شقة":[12000, 17000],"شقة_avg":31000,"فيلا":[47000, 75000],"فيلا_avg":117000,"دور":[15000, 19500],"دور_avg":45500,"دوبلاكس":[55000, 55000],"دوبلاكس_avg":57500,"استديو":[12000, 12000],"استديو_avg":26000},
-"السدرة":{"شقة":[23000, 38500],"شقة_avg":30828,"فيلا":[125000, 125000],"فيلا_avg":125000,"دور":[17500, 17500],"دور_avg":17500,"دوبلاكس":[56000, 94000],"دوبلاكس_avg":75000,"استديو":[14500, 24500],"استديو_avg":19500},
-"النفل":{"شقة":[20500, 30000],"شقة_avg":40000,"فيلا":[53000, 81000],"فيلا_avg":153500,"دور":[37500, 45000],"دور_avg":61500,"دوبلاكس":[60000, 60000],"دوبلاكس_avg":71500,"استديو":[6000, 6000],"استديو_avg":24500},
-"أم الحمام الغربي":{"شقة":[14000, 19000],"شقة_avg":25500,"فيلا":[15000, 29500],"فيلا_avg":107000,"دور":[20000, 28500],"دور_avg":39000,"دوبلاكس":[28500, 28500],"دوبلاكس_avg":36500,"استديو":[6500, 10000],"استديو_avg":17000},
-"الفيصلية":{"شقة":[10000, 12000],"شقة_avg":17500,"فيلا":[44000, 52000],"فيلا_avg":70000,"دور":[13500, 18500],"دور_avg":30000,"دوبلاكس":[32000, 53000],"دوبلاكس_avg":42500,"استديو":[8500, 8500],"استديو_avg":14500},
-"الجزيرة":{"شقة":[14500, 20000],"شقة_avg":28500,"فيلا":[26000, 38000],"فيلا_avg":71500,"دور":[27000, 36000],"دور_avg":45500,"دوبلاكس":[35000, 35000],"دوبلاكس_avg":57500,"استديو":[10000, 10000],"استديو_avg":23000},
-"الوادي":{"شقة":[20000, 28000],"شقة_avg":36000,"فيلا":[26500, 39000],"فيلا_avg":100000,"دور":[35000, 50000],"دور_avg":58000,"دوبلاكس":[43000, 45000],"دوبلاكس_avg":63000,"استديو":[6500, 10500],"استديو_avg":20000},
-"منفوحة":{"شقة":[7500, 10500],"شقة_avg":13500,"فيلا":[8500, 11000],"فيلا_avg":49500,"دور":[9000, 10000],"دور_avg":18500,"دوبلاكس":[25500, 25500],"دوبلاكس_avg":25500,"استديو":[5000, 5000],"استديو_avg":7000},
-"قرطبة":{"شقة":[22000, 31000],"شقة_avg":49000,"فيلا":[63500, 66000],"فيلا_avg":234000,"دور":[35000, 45000],"دور_avg":57000,"دوبلاكس":[42500, 44000],"دوبلاكس_avg":66500,"استديو":[7500, 15000],"استديو_avg":27000},
-"الديرة":{"شقة":[9500, 14500],"شقة_avg":18500,"فيلا":[10000, 11500],"فيلا_avg":28000,"دور":[8000, 10500],"دور_avg":25500,"دوبلاكس":[34000, 56000],"دوبلاكس_avg":45000,"استديو":[7000, 8500],"استديو_avg":15500},
-"الرمال":{"شقة":[18000, 24000],"شقة_avg":31500,"فيلا":[30000, 50000],"فيلا_avg":74000,"دور":[28000, 33500],"دور_avg":46500,"دوبلاكس":[13000, 19000],"دوبلاكس_avg":38000,"استديو":[15000, 18000],"استديو_avg":21500},
-"الشفاء":{"شقة":[11000, 16000],"شقة_avg":19500,"فيلا":[20500, 24500],"فيلا_avg":43000,"دور":[17000, 22000],"دور_avg":28000,"دوبلاكس":[13000, 14500],"دوبلاكس_avg":29000,"استديو":[6000, 7000],"استديو_avg":15500},
-"النظيم":{"شقة":[10500, 16000],"شقة_avg":21000,"فيلا":[12000, 12500],"فيلا_avg":29500,"دور":[15000, 20000],"دور_avg":32000,"دوبلاكس":[11000, 11000],"دوبلاكس_avg":29000,"استديو":[5500, 6000],"استديو_avg":13000},
-"المروج":{"شقة":[20500, 27500],"شقة_avg":38500,"فيلا":[50000, 63000],"فيلا_avg":105500,"دور":[36000, 44000],"دور_avg":76000,"دوبلاكس":[31500, 42000],"دوبلاكس_avg":57500,"استديو":[20000, 22000],"استديو_avg":28500},
-"المصفاة":{"شقة":[12000, 18000],"شقة_avg":30000,"فيلا":[220000, 220000],"فيلا_avg":220000,"دور":[25500, 36000],"دور_avg":99500,"دوبلاكس":[55000, 91000],"دوبلاكس_avg":73000,"استديو":[14000, 24000],"استديو_avg":19000},
-"المناخ":{"شقة":[7500, 9500],"شقة_avg":22000,"فيلا":[25000, 30000],"فيلا_avg":88500,"دور":[10000, 10000],"دور_avg":29000,"دوبلاكس":[40000, 67000],"دوبلاكس_avg":53500,"استديو":[11000, 13000],"استديو_avg":17500},
-"الملك سلمان":{"شقة":[23500, 27000],"شقة_avg":49500,"فيلا":[44500, 70000],"فيلا_avg":135000,"دور":[22500, 45500],"دور_avg":67500,"دوبلاكس":[45000, 45000],"دوبلاكس_avg":69000,"استديو":[10500, 12500],"استديو_avg":27000},
-"الفاخرية":{"شقة":[7500, 13500],"شقة_avg":22000,"فيلا":[14500, 20000],"فيلا_avg":48000,"دور":[14500, 21500],"دور_avg":32000,"دوبلاكس":[14000, 14000],"دوبلاكس_avg":14000,"استديو":[6000, 6500],"استديو_avg":21500},
-"الدوبية":{"شقة":[6000, 7000],"شقة_avg":14500,"فيلا":[11000, 11000],"فيلا_avg":23500,"دور":[9000, 12500],"دور_avg":22500,"دوبلاكس":[26000, 44000],"دوبلاكس_avg":35000,"استديو":[6500, 6500],"استديو_avg":22500},
-"الضباط":{"شقة":[18500, 25000],"شقة_avg":34000,"فيلا":[24000, 24000],"فيلا_avg":81000,"دور":[23500, 25000],"دور_avg":54500,"دوبلاكس":[14000, 14000],"دوبلاكس_avg":54500,"استديو":[11500, 14500],"استديو_avg":24500},
-"النموذجية":{"شقة":[17000, 20000],"شقة_avg":35500,"فيلا":[32000, 35000],"فيلا_avg":89000,"دور":[46500, 48000],"دور_avg":71500,"دوبلاكس":[90000, 90000],"دوبلاكس_avg":93500,"استديو":[12000, 12000],"استديو_avg":15000},
-"العقيق":{"شقة":[20000, 28000],"شقة_avg":42000,"فيلا":[30500, 51500],"فيلا_avg":123000,"دور":[30500, 38500],"دور_avg":60500,"دوبلاكس":[45000, 65000],"دوبلاكس_avg":236000,"استديو":[14500, 20000],"استديو_avg":31000},
-"الشميسي":{"شقة":[8000, 10000],"شقة_avg":15500,"فيلا":[7500, 8000],"فيلا_avg":25000,"دور":[8000, 10500],"دور_avg":18000,"دوبلاكس":[28000, 47000],"دوبلاكس_avg":37500,"استديو":[5000, 7000],"استديو_avg":9000},
-"المنار":{"شقة":[15000, 24000],"شقة_avg":34000,"فيلا":[20000, 47500],"فيلا_avg":81000,"دور":[28500, 30000],"دور_avg":46000,"دوبلاكس":[28000, 28000],"دوبلاكس_avg":43000,"استديو":[7500, 9000],"استديو_avg":22500},
-"المنصورية":{"شقة":[12000, 12000],"شقة_avg":21000,"فيلا":[50000, 50000],"فيلا_avg":50000,"دور":[20000, 20000],"دور_avg":32500,"دوبلاكس":[38000, 64000],"دوبلاكس_avg":51000,"استديو":[10000, 16000],"استديو_avg":13000},
-"الرابية":{"شقة":[32000, 32000],"شقة_avg":32000,"فيلا":[82500, 137500],"فيلا_avg":110000,"دور":[32000, 54000],"دور_avg":43000,"دوبلاكس":[58000, 97000],"دوبلاكس_avg":77500,"استديو":[15000, 25000],"استديو_avg":20000},
-"الفرسان":{"شقة":[23000, 38500],"شقة_avg":30828,"فيلا":[45000, 45000],"فيلا_avg":45000,"دور":[31000, 52000],"دور_avg":41500,"دوبلاكس":[36000, 36000],"دوبلاكس_avg":36000,"استديو":[14500, 24500],"استديو_avg":19500},
-"المشاعل":{"شقة":[14000, 16500],"شقة_avg":28000,"فيلا":[40000, 40000],"فيلا_avg":40000,"دور":[13500, 17000],"دور_avg":81000,"دوبلاكس":[51000, 85000],"دوبلاكس_avg":68000,"استديو":[10000, 10000],"استديو_avg":28500},
-"المرجان":{"شقة":[21000, 25000],"شقة_avg":29500,"فيلا":[85000, 85000],"فيلا_avg":85000,"دور":[30000, 30000],"دور_avg":37500,"دوبلاكس":[56500, 56500],"دوبلاكس_avg":56500,"استديو":[19000, 19000],"استديو_avg":23500},
-"الزاهر":{"شقة":[15500, 16000],"شقة_avg":21000,"فيلا":[15000, 15000],"فيلا_avg":15000,"دور":[22000, 26000],"دور_avg":30000,"دوبلاكس":[38000, 64000],"دوبلاكس_avg":51000,"استديو":[15000, 15000],"استديو_avg":15000},
-"النسيم الغربي":{"شقة":[12500, 18000],"شقة_avg":21500,"فيلا":[18000, 25000],"فيلا_avg":52000,"دور":[17000, 22000],"دور_avg":31000,"دوبلاكس":[23500, 29000],"دوبلاكس_avg":47000,"استديو":[8000, 11000],"استديو_avg":15500},
-"طويق":{"شقة":[13500, 18000],"شقة_avg":23500,"فيلا":[24500, 38500],"فيلا_avg":47000,"دور":[18000, 25500],"دور_avg":32500,"دوبلاكس":[12000, 29500],"دوبلاكس_avg":37500,"استديو":[6000, 12000],"استديو_avg":17000},
-"ديراب":{"شقة":[12000, 16000],"شقة_avg":20000,"فيلا":[20000, 28500],"فيلا_avg":42500,"دور":[12000, 17500],"دور_avg":26000,"دوبلاكس":[22000, 22000],"دوبلاكس_avg":37000,"استديو":[5000, 5000],"استديو_avg":13000},
-"العريجاء":{"شقة":[8500, 12000],"شقة_avg":16500,"فيلا":[7500, 7500],"فيلا_avg":43000,"دور":[9000, 12000],"دور_avg":23000,"دوبلاكس":[30000, 50000],"دوبلاكس_avg":40000,"استديو":[6000, 7000],"استديو_avg":10500},
-"النزهة":{"شقة":[19000, 28000],"شقة_avg":38000,"فيلا":[48000, 68500],"فيلا_avg":113000,"دور":[25000, 37000],"دور_avg":64000,"دوبلاكس":[61000, 62500],"دوبلاكس_avg":67500,"استديو":[9500, 12000],"استديو_avg":22500},
-"بدر":{"شقة":[12000, 17000],"شقة_avg":20000,"فيلا":[20000, 35000],"فيلا_avg":42000,"دور":[18000, 25000],"دور_avg":30000,"دوبلاكس":[16500, 22500],"دوبلاكس_avg":33000,"استديو":[8000, 9500],"استديو_avg":13500},
-"الدريهمية":{"شقة":[12000, 16000],"شقة_avg":25500,"فيلا":[17000, 25000],"فيلا_avg":54000,"دور":[14500, 23500],"دور_avg":29500,"دوبلاكس":[30000, 30000],"دوبلاكس_avg":30000,"استديو":[7500, 10000],"استديو_avg":17000},
-"الندى":{"شقة":[27500, 36500],"شقة_avg":58000,"فيلا":[52500, 59000],"فيلا_avg":117500,"دور":[43000, 50000],"دور_avg":64500,"دوبلاكس":[42000, 43000],"دوبلاكس_avg":58500,"استديو":[8000, 8000],"استديو_avg":44000},
-"الصالحية":{"شقة":[7500, 10000],"شقة_avg":14500,"فيلا":[8000, 8000],"فيلا_avg":18500,"دور":[6000, 6500],"دور_avg":12500,"دوبلاكس":[26000, 44000],"دوبلاكس_avg":35000,"استديو":[7500, 8000],"استديو_avg":11000},
-"القري":{"شقة":[12000, 16000],"شقة_avg":23500,"فيلا":[60500, 100500],"فيلا_avg":80500,"دور":[23500, 39500],"دور_avg":31500,"دوبلاكس":[43000, 71000],"دوبلاكس_avg":57000,"استديو":[11000, 18000],"استديو_avg":14500},
-"القادسية":{"شقة":[18000, 24000],"شقة_avg":29500,"فيلا":[30500, 41500],"فيلا_avg":72500,"دور":[25000, 33000],"دور_avg":46500,"دوبلاكس":[33000, 33000],"دوبلاكس_avg":61000,"استديو":[8000, 12000],"استديو_avg":20500},
-"شبرا":{"شقة":[10000, 15000],"شقة_avg":20000,"فيلا":[21500, 24500],"فيلا_avg":47000,"دور":[16000, 20000],"دور_avg":29500,"دوبلاكس":[18000, 18000],"دوبلاكس_avg":31500,"استديو":[6000, 7000],"استديو_avg":17000},
-"الأندلس":{"شقة":[16500, 22500],"شقة_avg":30500,"فيلا":[30000, 43000],"فيلا_avg":67500,"دور":[26500, 30500],"دور_avg":44500,"دوبلاكس":[37000, 41000],"دوبلاكس_avg":63500,"استديو":[6000, 6000],"استديو_avg":16000},
-"الياسمين":{"شقة":[22000, 34000],"شقة_avg":50000,"فيلا":[20000, 53000],"فيلا_avg":125500,"دور":[38500, 45500],"دور_avg":62500,"دوبلاكس":[43500, 52000],"دوبلاكس_avg":73000,"استديو":[8000, 11000],"استديو_avg":25000},
-"الربيع":{"شقة":[21000, 31500],"شقة_avg":47000,"فيلا":[24500, 54500],"فيلا_avg":201000,"دور":[35500, 45500],"دور_avg":62500,"دوبلاكس":[48000, 49000],"دوبلاكس_avg":69500,"استديو":[11000, 11000],"استديو_avg":29000},
-"الحمراء":{"شقة":[18000, 26000],"شقة_avg":33500,"فيلا":[18000, 59000],"فيلا_avg":111000,"دور":[27500, 36500],"دور_avg":54500,"دوبلاكس":[38000, 38000],"دوبلاكس_avg":68000,"استديو":[10000, 15000],"استديو_avg":27000},
-"الرحمانية":{"شقة":[12000, 23500],"شقة_avg":50500,"فيلا":[75000, 95000],"فيلا_avg":126500,"دور":[12000, 16000],"دور_avg":78500,"دوبلاكس":[75000, 75000],"دوبلاكس_avg":125000,"استديو":[7000, 7000],"استديو_avg":23500},
-"الندوة":{"شقة":[15000, 20000],"شقة_avg":24500,"فيلا":[12000, 12000],"فيلا_avg":59500,"دور":[17500, 30000],"دور_avg":38500,"دوبلاكس":[24000, 24000],"دوبلاكس_avg":31000,"استديو":[15500, 16000],"استديو_avg":20000},
-"سلام":{"شقة":[10000, 11500],"شقة_avg":15500,"فيلا":[35500, 37000],"فيلا_avg":38500,"دور":[12000, 16000],"دور_avg":20000,"دوبلاكس":[28000, 47000],"دوبلاكس_avg":37500,"استديو":[6000, 6000],"استديو_avg":8500},
-"المروة":{"شقة":[13000, 18000],"شقة_avg":21500,"فيلا":[17500, 21000],"فيلا_avg":57000,"دور":[14000, 19000],"دور_avg":30000,"دوبلاكس":[23000, 23000],"دوبلاكس_avg":27500,"استديو":[11000, 11000],"استديو_avg":16500},
-"النهضة":{"شقة":[16000, 20000],"شقة_avg":26500,"فيلا":[23000, 24500],"فيلا_avg":62000,"دور":[24000, 30000],"دور_avg":41500,"دوبلاكس":[36500, 38000],"دوبلاكس_avg":49500,"استديو":[6000, 10000],"استديو_avg":17500},
-"السويدي":{"شقة":[11000, 14000],"شقة_avg":19500,"فيلا":[14000, 14500],"فيلا_avg":44000,"دور":[15500, 20000],"دور_avg":26000,"دوبلاكس":[15000, 15000],"دوبلاكس_avg":29000,"استديو":[5000, 10000],"استديو_avg":18000},
-"التعاون":{"شقة":[22000, 30000],"شقة_avg":43500,"فيلا":[40000, 70000],"فيلا_avg":117500,"دور":[23000, 50000],"دور_avg":66000,"دوبلاكس":[45000, 45000],"دوبلاكس_avg":67000,"استديو":[8500, 15000],"استديو_avg":20000},
-"الخالدية":{"شقة":[11500, 16000],"شقة_avg":20500,"فيلا":[17000, 20000],"فيلا_avg":40000,"دور":[15000, 24500],"دور_avg":28500,"دوبلاكس":[20500, 25000],"دوبلاكس_avg":35500,"استديو":[9000, 10500],"استديو_avg":12500},
-"السلام":{"شقة":[16000, 20000],"شقة_avg":27000,"فيلا":[33000, 37500],"فيلا_avg":73000,"دور":[25000, 30000],"دور_avg":40500,"دوبلاكس":[29500, 30000],"دوبلاكس_avg":43500,"استديو":[5000, 6500],"استديو_avg":18000},
-"العزيزية":{"شقة":[14000, 18000],"شقة_avg":21000,"فيلا":[20000, 25500],"فيلا_avg":44500,"دور":[18000, 25000],"دور_avg":31500,"دوبلاكس":[16000, 16000],"دوبلاكس_avg":40000,"استديو":[5500, 8000],"استديو_avg":13000},
-"الوزارات":{"شقة":[12500, 16000],"شقة_avg":24500,"فيلا":[26500, 26500],"فيلا_avg":77500,"دور":[13000, 15000],"دور_avg":37500,"دوبلاكس":[25000, 25000],"دوبلاكس_avg":25000,"استديو":[7000, 9000],"استديو_avg":19000},
-"الملقا":{"شقة":[26000, 37000],"شقة_avg":54000,"فيلا":[42000, 58000],"فيلا_avg":180000,"دور":[27000, 44000],"دور_avg":67000,"دوبلاكس":[46000, 59000],"دوبلاكس_avg":73000,"استديو":[12000, 19000],"استديو_avg":36000},
-"المؤتمرات":{"شقة":[21000, 27000],"شقة_avg":36500,"فيلا":[112000, 124500],"فيلا_avg":171000,"دور":[15000, 15000],"دور_avg":72500,"دوبلاكس":[87000, 91000],"دوبلاكس_avg":95000,"استديو":[20000, 20000],"استديو_avg":20000},
-"العمل":{"شقة":[11000, 14000],"شقة_avg":19000,"فيلا":[21000, 23000],"فيلا_avg":33500,"دور":[18000, 20000],"دور_avg":29000,"دوبلاكس":[34500, 57500],"دوبلاكس_avg":46000,"استديو":[6000, 7000],"استديو_avg":14500},
-"ظهرة البديعة":{"شقة":[11000, 16500],"شقة_avg":21500,"فيلا":[21500, 28500],"فيلا_avg":48500,"دور":[15000, 22500],"دور_avg":29500,"دوبلاكس":[28000, 28000],"دوبلاكس_avg":36500,"استديو":[4500, 5000],"استديو_avg":12000},
-"المرسلات":{"شقة":[18000, 28000],"شقة_avg":38000,"فيلا":[43000, 57500],"فيلا_avg":150000,"دور":[28000, 35000],"دور_avg":58500,"دوبلاكس":[46000, 46000],"دوبلاكس_avg":59000,"استديو":[8000, 8000],"استديو_avg":19000},
-"الشهداء":{"شقة":[21500, 27000],"شقة_avg":46500,"فيلا":[58500, 70000],"فيلا_avg":184000,"دور":[29000, 40500],"دور_avg":58000,"دوبلاكس":[54000, 54000],"دوبلاكس_avg":76000,"استديو":[15500, 16000],"استديو_avg":23500},
-"أم الحمام الشرقي":{"شقة":[12500, 17000],"شقة_avg":23000,"فيلا":[25000, 35500],"فيلا_avg":119500,"دور":[16500, 20000],"دور_avg":38000,"دوبلاكس":[50000, 50000],"دوبلاكس_avg":50000,"استديو":[8500, 10000],"استديو_avg":18000},
-"سكيرينة":{"شقة":[9000, 12000],"شقة_avg":14000,"فيلا":[14000, 14000],"فيلا_avg":42000,"دور":[10000, 15500],"دور_avg":22000,"دوبلاكس":[25500, 42500],"دوبلاكس_avg":34000,"استديو":[7000, 7500],"استديو_avg":8500},
-"عريض":{"شقة":[11500, 13000],"شقة_avg":19000,"فيلا":[10000, 10000],"فيلا_avg":34500,"دور":[10500, 17500],"دور_avg":28500,"دوبلاكس":[38000, 38000],"دوبلاكس_avg":38000,"استديو":[9000, 12000],"استديو_avg":15500},
-"ثليم":{"شقة":[10000, 12000],"شقة_avg":15500,"فيلا":[8000, 8000],"فيلا_avg":20000,"دور":[5000, 5000],"دور_avg":16500,"دوبلاكس":[12000, 12000],"دوبلاكس_avg":12000,"استديو":[7000, 8500],"استديو_avg":10000},
-"بنبان":{"شقة":[10500, 11000],"شقة_avg":27000,"فيلا":[30000, 30000],"فيلا_avg":62500,"دور":[10000, 10000],"دور_avg":50000,"دوبلاكس":[22000, 22000],"دوبلاكس_avg":28000,"استديو":[7000, 10500],"استديو_avg":47000},
-"أم الشعال":{"شقة":[19000, 21500],"شقة_avg":24000,"فيلا":[62000, 103000],"فيلا_avg":82500,"دور":[18500, 18500],"دور_avg":18500,"دوبلاكس":[44000, 73000],"دوبلاكس_avg":58500,"استديو":[11000, 19000],"استديو_avg":15000},
-"البرية":{"شقة":[14000, 17000],"شقة_avg":24500,"فيلا":[17500, 22000],"فيلا_avg":73500,"دور":[18000, 18000],"دور_avg":40000,"دوبلاكس":[44500, 74500],"دوبلاكس_avg":59500,"استديو":[11500, 19500],"استديو_avg":15500},
-"الوشام":{"شقة":[15000, 18000],"شقة_avg":25000,"فيلا":[18000, 27500],"فيلا_avg":60000,"دور":[11500, 14000],"دور_avg":26500,"دوبلاكس":[57000, 57000],"دوبلاكس_avg":57000,"استديو":[6500, 9000],"استديو_avg":18000},
-"المعذر الشمالي":{"شقة":[14500, 20000],"شقة_avg":45000,"فيلا":[71500, 80500],"فيلا_avg":121500,"دور":[34500, 34500],"دور_avg":81000,"دوبلاكس":[59500, 68500],"دوبلاكس_avg":121500,"استديو":[8000, 8000],"استديو_avg":44500},
-"لبن":{"شقة":[18000, 25000],"شقة_avg":29500,"فيلا":[14000, 14000],"فيلا_avg":66500,"دور":[20000, 23500],"دور_avg":47500,"دوبلاكس":[24000, 25000],"دوبلاكس_avg":47500,"استديو":[7500, 7500],"استديو_avg":21000},
-"الشرفية":{"شقة":[10500, 14500],"شقة_avg":23000,"فيلا":[31500, 38000],"فيلا_avg":84000,"دور":[13000, 15500],"دور_avg":33500,"دوبلاكس":[8000, 8000],"دوبلاكس_avg":29000,"استديو":[6500, 9500],"استديو_avg":19000},
-"العماجية":{"شقة":[5000, 5500],"شقة_avg":15000,"فيلا":[38500, 64500],"فيلا_avg":51500,"دور":[60000, 60000],"دور_avg":60000,"دوبلاكس":[27500, 45500],"دوبلاكس_avg":36500,"استديو":[7000, 12000],"استديو_avg":9500},
-"الجرادية":{"شقة":[10000, 13000],"شقة_avg":16000,"فيلا":[12000, 13000],"فيلا_avg":25000,"دور":[7000, 9000],"دور_avg":18000,"دوبلاكس":[29000, 49000],"دوبلاكس_avg":39000,"استديو":[7500, 8000],"استديو_avg":10000},
-"غبيرا":{"شقة":[9500, 12500],"شقة_avg":16500,"فيلا":[9500, 11000],"فيلا_avg":26500,"دور":[7500, 8000],"دور_avg":17000,"دوبلاكس":[30000, 50000],"دوبلاكس_avg":40000,"استديو":[6000, 9500],"استديو_avg":13000},
-"صياح":{"شقة":[6000, 9000],"شقة_avg":15000,"فيلا":[14500, 16500],"فيلا_avg":19000,"دور":[12000, 12000],"دور_avg":17000,"دوبلاكس":[27500, 45500],"دوبلاكس_avg":36500,"استديو":[7000, 12000],"استديو_avg":9500},
-"الروضة":{"شقة":[17000, 22000],"شقة_avg":31500,"فيلا":[28000, 36500],"فيلا_avg":78500,"دور":[23500, 33000],"دور_avg":46500,"دوبلاكس":[23000, 35500],"دوبلاكس_avg":50500,"استديو":[5500, 6000],"استديو_avg":18000},
-"المهدية":{"شقة":[19500, 27000],"شقة_avg":32500,"فيلا":[42500, 60000],"فيلا_avg":73000,"دور":[18500, 26000],"دور_avg":48500,"دوبلاكس":[24000, 24000],"دوبلاكس_avg":47500,"استديو":[12000, 14000],"استديو_avg":24000},
-"النخيل":{"شقة":[26000, 40000],"شقة_avg":57500,"فيلا":[43000, 62500],"فيلا_avg":162500,"دور":[15000, 17500],"دور_avg":75000,"دوبلاكس":[55000, 55000],"دوبلاكس_avg":105000,"استديو":[13000, 15500],"استديو_avg":35500},
-"المحمدية":{"شقة":[16000, 26000],"شقة_avg":52000,"فيلا":[35000, 75000],"فيلا_avg":156500,"دور":[35000, 45000],"دور_avg":84000,"دوبلاكس":[50500, 61500],"دوبلاكس_avg":107500,"استديو":[18000, 18000],"استديو_avg":37000},
-"الفاروق":{"شقة":[8500, 13000],"شقة_avg":26000,"فيلا":[20000, 20000],"فيلا_avg":87000,"دور":[20000, 20000],"دور_avg":36000,"دوبلاكس":[40000, 40000],"دوبلاكس_avg":40000,"استديو":[18000, 18000],"استديو_avg":18000},
-"الدار البيضاء":{"شقة":[13000, 18000],"شقة_avg":21500,"فيلا":[15500, 20000],"فيلا_avg":37000,"دور":[15500, 22000],"دور_avg":28000,"دوبلاكس":[18000, 18000],"دوبلاكس_avg":31500,"استديو":[6000, 10000],"استديو_avg":18500},
-"الربوة":{"شقة":[17000, 25000],"شقة_avg":37000,"فيلا":[45000, 57500],"فيلا_avg":99000,"دور":[20000, 35000],"دور_avg":47500,"دوبلاكس":[29500, 38500],"دوبلاكس_avg":77500,"استديو":[6500, 10000],"استديو_avg":16000},
-"خشم العان":{"شقة":[11000, 12000],"شقة_avg":23000,"فيلا":[25000, 25000],"فيلا_avg":38000,"دور":[17000, 17000],"دور_avg":46500,"دوبلاكس":[30000, 30000],"دوبلاكس_avg":30000,"استديو":[14500, 14500],"استديو_avg":14500},
-"الحائر":{"شقة":[10000, 12500],"شقة_avg":16500,"فيلا":[12000, 12500],"فيلا_avg":27000,"دور":[10000, 11500],"دور_avg":20000,"دوبلاكس":[16500, 16500],"دوبلاكس_avg":16500,"استديو":[6000, 6000],"استديو_avg":10000},
-"الرماية":{"شقة":[12000, 17000],"شقة_avg":23500,"فيلا":[36000, 36000],"فيلا_avg":56000,"دور":[40000, 40000],"دور_avg":51000,"دوبلاكس":[43000, 71000],"دوبلاكس_avg":57000,"استديو":[13500, 14000],"استديو_avg":14500},
-"الفلاح":{"شقة":[19000, 25500],"شقة_avg":36500,"فيلا":[43000, 54000],"فيلا_avg":145000,"دور":[26500, 38500],"دور_avg":62500,"دوبلاكس":[50000, 50000],"دوبلاكس_avg":65000,"استديو":[11000, 13000],"استديو_avg":28500},
-"حطين":{"شقة":[25000, 35500],"شقة_avg":62000,"فيلا":[79500, 108000],"فيلا_avg":192000,"دور":[29000, 49000],"دور_avg":68000,"دوبلاكس":[48500, 52000],"دوبلاكس_avg":108500,"استديو":[10000, 10000],"استديو_avg":33500},
-"الناصرية":{"شقة":[8500, 13500],"شقة_avg":20000,"فيلا":[45000, 45000],"فيلا_avg":58500,"دور":[8000, 8000],"دور_avg":23500,"دوبلاكس":[36500, 60500],"دوبلاكس_avg":48500,"استديو":[13000, 13000],"استديو_avg":16500},
-"العارض":{"شقة":[22500, 31000],"شقة_avg":43000,"فيلا":[61000, 85000],"فيلا_avg":212000,"دور":[30000, 45000],"دور_avg":58000,"دوبلاكس":[47000, 53000],"دوبلاكس_avg":73000,"استديو":[14500, 21000],"استديو_avg":28500},
-"الملز":{"شقة":[17000, 24000],"شقة_avg":30500,"فيلا":[20000, 24000],"فيلا_avg":66500,"دور":[23000, 30000],"دور_avg":43500,"دوبلاكس":[22500, 24000],"دوبلاكس_avg":47500,"استديو":[8500, 10000],"استديو_avg":19000},
-"الفيحاء":{"شقة":[17000, 22000],"شقة_avg":27000,"فيلا":[18500, 24000],"فيلا_avg":64000,"دور":[25000, 33000],"دور_avg":40500,"دوبلاكس":[30000, 30000],"دوبلاكس_avg":40000,"استديو":[12000, 14000],"استديو_avg":19500},
-"جبرة":{"شقة":[8000, 11000],"شقة_avg":15500,"فيلا":[25000, 25000],"فيلا_avg":28500,"دور":[15000, 15500],"دور_avg":27500,"دوبلاكس":[28000, 47000],"دوبلاكس_avg":37500,"استديو":[6000, 6000],"استديو_avg":13500},
-"المربع":{"شقة":[18000, 23000],"شقة_avg":30500,"فيلا":[19000, 24500],"فيلا_avg":53500,"دور":[16500, 24500],"دور_avg":52500,"دوبلاكس":[55500, 92500],"دوبلاكس_avg":74000,"استديو":[9000, 11000],"استديو_avg":23000},
-"الرائد":{"شقة":[20000, 25500],"شقة_avg":56000,"فيلا":[58500, 103000],"فيلا_avg":172500,"دور":[29000, 36000],"دور_avg":61000,"دوبلاكس":[34000, 43000],"دوبلاكس_avg":63500,"استديو":[13000, 13000],"استديو_avg":18500},
-"العوالي":{"شقة":[15000, 20000],"شقة_avg":24500,"فيلا":[21500, 25000],"فيلا_avg":48000,"دور":[12000, 19500],"دور_avg":33500,"دوبلاكس":[17000, 26000],"دوبلاكس_avg":33500,"استديو":[5500, 8000],"استديو_avg":15500},
-"المدينة الصناعية الجديدة":{"شقة":[11500, 14500],"شقة_avg":46500,"فيلا":[30000, 30000],"فيلا_avg":90000,"دور":[25000, 25000],"دور_avg":73500,"دوبلاكس":[85000, 141000],"دوبلاكس_avg":113000,"استديو":[5000, 5000],"استديو_avg":10000},
-"الوسام":{"شقة":[26000, 26000],"شقة_avg":30500,"فيلا":[48000, 48000],"فيلا_avg":48000,"دور":[12000, 12000],"دور_avg":12000,"دوبلاكس":[55500, 92500],"دوبلاكس_avg":74000,"استديو":[14000, 24000],"استديو_avg":19000},
-"ضاحية نمار":{"شقة":[15000, 20000],"شقة_avg":22500,"فيلا":[22000, 26000],"فيلا_avg":39000,"دور":[5000, 5000],"دور_avg":29500,"دوبلاكس":[35000, 35000],"دوبلاكس_avg":40500,"استديو":[6500, 8000],"استديو_avg":12500},
-"غرناطة":{"شقة":[20000, 25000],"شقة_avg":35500,"فيلا":[32500, 43000],"فيلا_avg":133000,"دور":[23000, 33000],"دور_avg":51000,"دوبلاكس":[60000, 60000],"دوبلاكس_avg":138500,"استديو":[12000, 15500],"استديو_avg":24500},
-"ظهرة لبن":{"شقة":[18000, 24000],"شقة_avg":28500,"فيلا":[17000, 39500],"فيلا_avg":54000,"دور":[24000, 32500],"دور_avg":43500,"دوبلاكس":[24500, 30000],"دوبلاكس_avg":42000,"استديو":[9500, 15000],"استديو_avg":20500},
-"الملك فهد":{"شقة":[20000, 24000],"شقة_avg":36500,"فيلا":[44500, 57000],"فيلا_avg":96000,"دور":[27500, 35000],"دور_avg":52500,"دوبلاكس":[25000, 25000],"دوبلاكس_avg":77500,"استديو":[10500, 13000],"استديو_avg":30000},
-"الريان":{"شقة":[18000, 25500],"شقة_avg":38000,"فيلا":[36000, 38000],"فيلا_avg":92500,"دور":[27000, 35000],"دور_avg":52500,"دوبلاكس":[36000, 36000],"دوبلاكس_avg":58500,"استديو":[14000, 17500],"استديو_avg":21500},
-"معكال":{"شقة":[9000, 9500],"شقة_avg":13500,"فيلا":[20000, 20000],"فيلا_avg":20000,"دور":[8000, 8000],"دور_avg":18500,"دوبلاكس":[25000, 41000],"دوبلاكس_avg":33000,"استديو":[6500, 6500],"استديو_avg":6500},
-"المعذر":{"شقة":[15000, 21000],"شقة_avg":28500,"فيلا":[56500, 56500],"فيلا_avg":159000,"دور":[20000, 26000],"دور_avg":45000,"دوبلاكس":[48000, 48000],"دوبلاكس_avg":87500,"استديو":[11000, 13000],"استديو_avg":22000},
-"السعادة":{"شقة":[16000, 20000],"شقة_avg":26500,"فيلا":[21000, 40000],"فيلا_avg":104500,"دور":[24000, 30000],"دور_avg":40000,"دوبلاكس":[24000, 24000],"دوبلاكس_avg":39500,"استديو":[7000, 9500],"استديو_avg":16500},
-"اليرموك":{"شقة":[18000, 24000],"شقة_avg":29000,"فيلا":[30000, 30000],"فيلا_avg":73000,"دور":[21000, 37000],"دور_avg":46500,"دوبلاكس":[12000, 12000],"دوبلاكس_avg":43000,"استديو":[11000, 11000],"استديو_avg":21500},
-"البساتين":{"شقة":[44000, 44000],"شقة_avg":44000,"فيلا":[113000, 189000],"فيلا_avg":151000,"دور":[44000, 74000],"دور_avg":59000,"دوبلاكس":[80000, 134000],"دوبلاكس_avg":107000,"استديو":[20500, 34500],"استديو_avg":27500},
-"الدحو":{"شقة":[8000, 10500],"شقة_avg":18000,"فيلا":[46500, 77500],"فيلا_avg":62000,"دور":[10000, 10000],"دور_avg":10000,"دوبلاكس":[32500, 54500],"دوبلاكس_avg":43500,"استديو":[12000, 12000],"استديو_avg":12000},
-"العليا":{"شقة":[20000, 30000],"شقة_avg":50000,"فيلا":[45000, 75000],"فيلا_avg":116000,"دور":[25000, 38000],"دور_avg":64500,"دوبلاكس":[40000, 40000],"دوبلاكس_avg":88000,"استديو":[11000, 18000],"استديو_avg":38500},
-"أم سليم":{"شقة":[10000, 13000],"شقة_avg":17500,"فيلا":[9500, 10500],"فيلا_avg":27000,"دور":[9000, 11000],"دور_avg":22500,"دوبلاكس":[15000, 15000],"دوبلاكس_avg":15000,"استديو":[6000, 7000],"استديو_avg":10000},
-"الخير":{"شقة":[12000, 12000],"شقة_avg":27000,"فيلا":[10000, 10000],"فيلا_avg":25000,"دور":[10500, 11000],"دور_avg":23500,"دوبلاكس":[150000, 150000],"دوبلاكس_avg":150000,"استديو":[12000, 12500],"استديو_avg":39500},
-"القدس":{"شقة":[15500, 24000],"شقة_avg":35000,"فيلا":[34500, 35000],"فيلا_avg":96500,"دور":[25500, 30000],"دور_avg":54000,"دوبلاكس":[36500, 36500],"دوبلاكس_avg":56500,"استديو":[10000, 10000],"استديو_avg":20500},
-"النرجس":{"شقة":[25000, 38000],"شقة_avg":49500,"فيلا":[60000, 81000],"فيلا_avg":119500,"دور":[37500, 50000],"دور_avg":65000,"دوبلاكس":[46000, 55000],"دوبلاكس_avg":73000,"استديو":[10000, 10000],"استديو_avg":24500},
-"الزهرة":{"شقة":[11500, 15000],"شقة_avg":21000,"فيلا":[13500, 13500],"فيلا_avg":40500,"دور":[17000, 22000],"دور_avg":28000,"دوبلاكس":[12500, 13000],"دوبلاكس_avg":29500,"استديو":[7000, 8000],"استديو_avg":16000},
-"السليمانية":{"شقة":[23000, 30000],"شقة_avg":40500,"فيلا":[40000, 75000],"فيلا_avg":103000,"دور":[33500, 45500],"دور_avg":65000,"دوبلاكس":[38000, 42500],"دوبلاكس_avg":91000,"استديو":[11000, 14500],"استديو_avg":31000},
-"النخبة":{"شقة":[11000, 11500],"شقة_avg":19000,"فيلا":[40000, 40000],"فيلا_avg":40000,"دور":[36000, 36000],"دور_avg":36000,"دوبلاكس":[34500, 57500],"دوبلاكس_avg":46000,"استديو":[9000, 15000],"استديو_avg":12000},
-"الورود":{"شقة":[12000, 21000],"شقة_avg":32500,"فيلا":[24000, 40000],"فيلا_avg":100000,"دور":[16500, 26500],"دور_avg":47500,"دوبلاكس":[16000, 27000],"دوبلاكس_avg":66500,"استديو":[5000, 6000],"استديو_avg":20000},
-"العلا":{"شقة":[10000, 10000],"شقة_avg":16500,"فيلا":[42500, 70500],"فيلا_avg":56500,"دور":[16500, 27500],"دور_avg":22000,"دوبلاكس":[30000, 50000],"دوبلاكس_avg":40000,"استديو":[21500, 21500],"استديو_avg":21500},
-"القيروان":{"شقة":[28000, 38000],"شقة_avg":54500,"فيلا":[58000, 100000],"فيلا_avg":152000,"دور":[35000, 53000],"دور_avg":71000,"دوبلاكس":[49500, 55500],"دوبلاكس_avg":88000,"استديو":[15500, 16500],"استديو_avg":52000},
-"عكاظ":{"شقة":[14000, 18000],"شقة_avg":21500,"فيلا":[26500, 32000],"فيلا_avg":43000,"دور":[19500, 30000],"دور_avg":34000,"دوبلاكس":[15000, 15000],"دوبلاكس_avg":32000,"استديو":[6000, 7500],"استديو_avg":15000},
-"العريجاء الغربي":{"شقة":[9500, 15000],"شقة_avg":19500,"فيلا":[14500, 16500],"فيلا_avg":44000,"دور":[16000, 20000],"دور_avg":27500,"دوبلاكس":[11000, 11000],"دوبلاكس_avg":32000,"استديو":[5500, 5500],"استديو_avg":16000},
-"البديعة":{"شقة":[9500, 14000],"شقة_avg":18000,"فيلا":[11000, 14500],"فيلا_avg":39000,"دور":[11000, 13000],"دور_avg":24000,"دوبلاكس":[8500, 8500],"دوبلاكس_avg":9500,"استديو":[7000, 7500],"استديو_avg":11000},
-"الصفاء":{"شقة":[8000, 16000],"شقة_avg":37500,"فيلا":[39500, 45000],"فيلا_avg":83500,"دور":[13500, 25000],"دور_avg":45500,"دوبلاكس":[57000, 65000],"دوبلاكس_avg":71500,"استديو":[6000, 7500],"استديو_avg":10500},
-"المصيف":{"شقة":[18000, 25000],"شقة_avg":34000,"فيلا":[41000, 50000],"فيلا_avg":91000,"دور":[21000, 38000],"دور_avg":54000,"دوبلاكس":[72000, 72000],"دوبلاكس_avg":100000,"استديو":[12000, 16500],"استديو_avg":26000},
-"طيبة":{"شقة":[12000, 16000],"شقة_avg":22000,"فيلا":[26000, 30000],"فيلا_avg":44000,"دور":[16000, 25500],"دور_avg":35000,"دوبلاكس":[20000, 20000],"دوبلاكس_avg":30500,"استديو":[12000, 12000],"استديو_avg":15000},
-"الغدير":{"شقة":[27000, 35000],"شقة_avg":46500,"فيلا":[108000, 126000],"فيلا_avg":205500,"دور":[33500, 42000],"دور_avg":79000,"دوبلاكس":[101000, 103000],"دوبلاكس_avg":105000,"استديو":[16000, 16000],"استديو_avg":30000},
-"الملك عبدالله":{"شقة":[15500, 30000],"شقة_avg":45000,"فيلا":[60000, 60000],"فيلا_avg":115500,"دور":[25000, 25000],"دور_avg":67000,"دوبلاكس":[58500, 58500],"دوبلاكس_avg":78000,"استديو":[13000, 13000],"استديو_avg":19000},
-"السلي":{"شقة":[12000, 18000],"شقة_avg":24000,"فيلا":[16500, 19500],"فيلا_avg":52000,"دور":[11000, 20000],"دور_avg":37500,"دوبلاكس":[44000, 73000],"دوبلاكس_avg":58500,"استديو":[9500, 13000],"استديو_avg":18000},
-"عليشة":{"شقة":[10500, 13000],"شقة_avg":24000,"فيلا":[15000, 15500],"فيلا_avg":49500,"دور":[11500, 16000],"دور_avg":37500,"دوبلاكس":[44000, 73000],"دوبلاكس_avg":58500,"استديو":[8500, 8500],"استديو_avg":16500},
-"الخليج":{"شقة":[16000, 21500],"شقة_avg":26500,"فيلا":[18500, 20000],"فيلا_avg":80000,"دور":[24500, 30000],"دور_avg":41500,"دوبلاكس":[25500, 26000],"دوبلاكس_avg":38000,"استديو":[8000, 10000],"استديو_avg":19000},
-"الزهراء":{"شقة":[18000, 20000],"شقة_avg":44500,"فيلا":[42000, 51000],"فيلا_avg":79500,"دور":[27500, 35000],"دور_avg":54500,"دوبلاكس":[65000, 65000],"دوبلاكس_avg":65000,"استديو":[14000, 14000],"استديو_avg":18500},
-"الجنادرية":{"شقة":[14500, 20000],"شقة_avg":25000,"فيلا":[31000, 36000],"فيلا_avg":82000,"دور":[20500, 30000],"دور_avg":40500,"دوبلاكس":[32000, 32000],"دوبلاكس_avg":42000,"استديو":[7500, 8500],"استديو_avg":18000},
-"المعيزيلة":{"شقة":[15000, 20500],"شقة_avg":27500,"فيلا":[14500, 23500],"فيلا_avg":68000,"دور":[17000, 29000],"دور_avg":44000,"دوبلاكس":[54000, 54000],"دوبلاكس_avg":68000,"استديو":[10500, 12000],"استديو_avg":19500},
-"السحاب":{"شقة":[26000, 26000],"شقة_avg":28000,"فيلا":[72000, 120000],"فيلا_avg":96000,"دور":[28000, 47000],"دور_avg":37500,"دوبلاكس":[51000, 85000],"دوبلاكس_avg":68000,"استديو":[13000, 22000],"استديو_avg":17500},
-"المونسية":{"شقة":[18000, 26000],"شقة_avg":35000,"فيلا":[33500, 62500],"فيلا_avg":108500,"دور":[27500, 37000],"دور_avg":47500,"دوبلاكس":[30000, 30000],"دوبلاكس_avg":151000,"استديو":[13500, 17500],"استديو_avg":27500},
-"الحزم":{"شقة":[13000, 18000],"شقة_avg":21500,"فيلا":[18500, 24500],"فيلا_avg":41000,"دور":[16500, 25000],"دور_avg":30500,"دوبلاكس":[14500, 19000],"دوبلاكس_avg":29000,"استديو":[6500, 7500],"استديو_avg":14500},
-"الهدا":{"شقة":[7500, 12500],"شقة_avg":67500,"فيلا":[104000, 131000],"فيلا_avg":231500,"دور":[25500, 26500],"دور_avg":120500,"دوبلاكس":[55500, 57500],"دوبلاكس_avg":83500,"استديو":[36000, 43500],"استديو_avg":70500},
-"عرقة":{"شقة":[20000, 30000],"شقة_avg":42500,"فيلا":[28500, 40500],"فيلا_avg":129500,"دور":[29500, 38000],"دور_avg":51000,"دوبلاكس":[42000, 48500],"دوبلاكس_avg":65500,"استديو":[11500, 14500],"استديو_avg":24500},
-};
-HOODS.forEach(h=>{ BASE_PRICES[h.name]=h.rent; });
-
-let currentUseType = "سكني";
-
-function setUseType(type, el){
-  currentUseType = type;
-  document.querySelectorAll('#use-tog .tog').forEach(b=>b.className='tog');
-  el.className='tog on';
-  updateRegaTable();
-}
-
-function updateRegaTable(){
-  const data = REGA_CITY_DATA[currentUseType] || {};
-  const period = document.getElementById('cmp-period')?.value || 'شهري';
-  const divisor = period === 'شهري' ? 12 : 4;
-
-  const icons = {"شقة":"🏢","استديو":"🛋️","دوبلاكس":"🏘️","فيلا":"🏡","دور":"🏠","مكتب":"🏢","محل":"🏪"};
-  const rows = Object.entries(data).map(([type, d]) => {
-    const dispAvg = period === 'شهري' ? Math.round(d.avg/12) : Math.round(d.avg/4);
-    const ch = HOODS.find(h=>h.rent[type]) ? '' : '';
-    return `
-      <div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border2);gap:10px">
-        <div style="width:36px;height:36px;background:rgba(13,43,30,.07);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${icons[type]||'🏠'}</div>
-        <div style="flex:1">
-          <div style="font-weight:800;color:var(--g);font-size:14px">${type}</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px">${d.count.toLocaleString('ar-SA')} صفقة</div>
-        </div>
-        <div style="text-align:left">
-          <div style="font-weight:900;font-size:16px;color:var(--g)">${dispAvg.toLocaleString('ar-SA')}</div>
-          <div style="font-size:10px;color:var(--muted)">ر.س / ${period==='شهري'?'شهر':'ربع سنة'}</div>
-        </div>
-        <div style="display:flex;gap:6px">
-          <button style="width:32px;height:32px;background:var(--sand);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px" title="عرض على الخريطة" onclick="filterMapByType('${type}')">📍</button>
-          <button style="width:32px;height:32px;background:var(--sand);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px" title="الاتجاه" onclick="">↗</button>
-        </div>
-      </div>`;
-  }).join('');
-
-  const el = document.getElementById('rega-overview-table');
-  if(el) el.innerHTML = rows || '<div style="padding:20px;text-align:center;color:var(--muted)">لا توجد بيانات</div>';
-}
-
-function filterMapByType(type){
-  const sel = document.getElementById('cmp-type');
-  if(sel) { sel.value = type; }
-  // تحديث الخريطة
-  if(leafMap) {
-    Object.values(mapMarkers).forEach(m => m.refresh());
-  }
-}
-
-function initLeafMap(){
-  leafMap=L.map('map-el',{center:[24.700,46.670],zoom:10});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(leafMap);
-
-  // حدود الرياض التقريبية
-  const riyadhBounds = [
-    [24.97,46.47],[24.97,47.00],[24.50,47.00],[24.50,46.47]
-  ];
-
-  HOODS.forEach(h=>{
-    const isSel=()=>selected.includes(h.name);
-    const makeIcon=(sel)=>{
-      const nm=h.name;
-      const sz=sel?44:Math.max(36, nm.length*9);
-      return L.divIcon({
-        className:'',
-        html:`<div style="min-width:${sz}px;height:${sel?44:36}px;background:${sel?'#B8892A':'#0D2B1E'};border:2.5px solid #fff;border-radius:22px;display:flex;align-items:center;justify-content:center;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:800;color:#fff;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:pointer;padding:0 8px;white-space:nowrap">${nm}</div>`,
-        iconSize:[sz,sel?44:36],iconAnchor:[sz/2,sel?22:18]
-      });
-    };
-    const mk=L.marker([h.lat,h.lng],{icon:makeIcon(false)}).addTo(leafMap);
-    mk.on('click',()=>{
-      const t=document.getElementById('cmp-type').value;
-      const range=h.rent[t]||h.rent["شقة"]||[0,0];
-      const avg=Math.round((range[0]+range[1])/2);
-      const avgMo=Math.round(avg/12);
-      const sel=isSel();
-      const ch=h.ch>=0?`<span style="color:#2E7D32">↑ ${h.ch}%</span>`:`<span style="color:#C62828">↓ ${Math.abs(h.ch)}%</span>`;
-      mk.bindPopup(L.popup({closeButton:true,maxWidth:220}).setContent(`
-        <div style="font-size:15px;font-weight:800;color:#0D2B1E;margin-bottom:6px">📍 ${h.name}</div>
-        <div style="font-size:12px;color:#7A8C80;margin-bottom:4px">إيجار ${t} — مؤشر REGA</div>
-        <div style="font-size:18px;font-weight:900;color:#0D2B1E;margin-bottom:2px">${avg.toLocaleString('ar-SA')} <span style="font-size:11px;font-weight:400">ر.س/سنة</span></div>
-        <div style="font-size:12px;color:#7A8C80;margin-bottom:4px">${avgMo.toLocaleString('ar-SA')} ر.س/شهر · التغير: ${ch}</div>
-        <div style="font-size:11px;color:#7A8C80;margin-bottom:10px">النطاق: ${range[0].toLocaleString('ar-SA')} — ${range[1].toLocaleString('ar-SA')} ر.س</div>
-        <button style="width:100%;padding:9px;background:${sel?'#B8892A':'#0D2B1E'};color:#fff;border:none;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer" onclick="window.__toggleHood('${h.name}')">
-          ${sel?'✓ محدد — اضغط لإلغاء':'＋ أضف للمقارنة'}
-        </button>
-      `)).openPopup();
-    });
-    mapMarkers[h.name]={mk,refresh(){mk.setIcon(makeIcon(isSel()));}};
-  });
-
-  window.__toggleHood=function(name){
-    const i=selected.indexOf(name);
-    if(i>-1){selected.splice(i,1);}else{if(selected.length>=3){showToast('أقصى عدد 3 أحياء');return;}selected.push(name);}
-    mapMarkers[name].refresh();renderPills();
-    document.getElementById('cmp-btn').disabled=selected.length<2;
-    leafMap.closePopup();
-  };
-
-  // تهيئة الجدول
-  updateRegaTable();
-}
-function renderPills(){
-  const c=document.getElementById('sel-pills'),e=document.getElementById('sel-empty');
-  c.innerHTML='';e.style.display=selected.length?'none':'';
-  selected.forEach(name=>{const p=document.createElement('span');p.className='pill';p.innerHTML=`${name}<button onclick="window.__toggleHood('${name}')">✕</button>`;c.appendChild(p);});
-}
-
-async function doEstimate(){
-  const area=document.getElementById('area').value;
-  if(!area){showToast('أدخل المساحة أولاً');return;}
-  const hood=document.getElementById('hood').value,ptype=document.getElementById('ptype').value,rooms=document.getElementById('rooms').value,age=document.getElementById('age').value,floor=document.getElementById('floor').value;
-  document.getElementById('est-out').innerHTML=`<div class="loading"><div class="spinner"></div><div>جاري تحليل بيانات مؤشر الإيجار...</div></div>`;
-  let dbPrice=null;
-  try{const {data}=await sb.from('prices').select('avg_price,min_price,max_price,change_pct,source').eq('neighborhood',hood).eq('type',ptype).maybeSingle();if(data)dbPrice=data;}catch(e){}
-  const hoodPrices=BASE_PRICES[hood]||{};
-  const realAvg=hoodPrices[ptype+"_avg"]||0;
-  const realMin=hoodPrices[ptype]?hoodPrices[ptype][0]:35000;
-  const realMax=hoodPrices[ptype]?hoodPrices[ptype][1]:55000;
-  let range=dbPrice?[dbPrice.min_price,dbPrice.max_price]:[realMin,realMax];
-  if(realAvg>0&&!dbPrice){range=[realMin,realMax];}
-  let avg=(range[0]+range[1])/2;
-  const aF=Math.pow(Number(area)/100,0.65);
-  avg*=aF;
-  avg*=(1+({"1":-0.12,"2":-0.05,"3":0,"4":0.08,"5+":0.15}[rooms]||0));
-  avg*=(1+({"جديد":0.12,"3-7 سنوات":0,"7-15 سنة":-0.1,"أكثر من 15":-0.18}[age]||0));
-  avg*=(1+({"أرضي":-0.05,"أول":0,"ثاني":0.03,"ثالث+":0.05,"بنتهاوس":0.18}[floor]||0));
-  if(furnished)avg*=1.25;
-  avg=Math.round(avg/500)*500;
-  const mn=Math.round(avg*0.88/500)*500,mx=Math.round(avg*1.12/500)*500,mo=Math.round(avg/12/50)*50;
-  const mid=(range[0]+range[1])/2*aF;
-  let verdict=avg<mid*0.92?"أقل من السوق":avg>mid*1.08?"أعلى من السوق":"في نطاق السوق";
-  const vC={"أقل من السوق":{bg:"#E8F5E9",c:"#2E7D32",ic:"✅"},"في نطاق السوق":{bg:"#E3F2FD",c:"#1565C0",ic:"📊"},"أعلى من السوق":{bg:"#FFEBEE",c:"#C62828",ic:"⚠️"}};
-  const v=vC[verdict];
-  if(currentUser){try{await sb.from('saved_estimates').insert({user_id:currentUser.id,neighborhood:hood,property_type:ptype,area:Number(area),rooms:Number(rooms)||0,estimated_price:avg});}catch(e){}}
-  document.getElementById('est-out').innerHTML=`
-    <div class="ai-result">
-      <div class="ai-meta">${ptype} · ${hood} · ${area} م² · ${rooms} غرف</div>
-      ${dbPrice?'<div class="src-badge">📡 بيانات الهيئة العامة للعقار</div>':'<div class="src-badge">📊 مؤشر إيجار REGA</div>'}
-      <div class="ai-sum">القيمة الإيجارية التقديرية لـ${ptype} في ${hood} بمساحة ${area}م²</div>
-      <div class="ai-price">${avg.toLocaleString('ar-SA')} <span class="ai-unit">ر.س</span></div>
-      <div class="ai-range">النطاق: ${mn.toLocaleString('ar-SA')} — ${mx.toLocaleString('ar-SA')} ر.س/سنة</div>
-      <div class="badges">
-        <span class="badge" style="background:${v.bg};color:${v.c}">${v.ic} ${verdict}</span>
-        <span class="badge" style="background:rgba(13,43,30,.08);color:var(--g)">شهرياً: ${mo.toLocaleString('ar-SA')} ر.س</span>
-      </div>
-    </div>
-    <div class="ai-acts">
-      <button style="background:#fff;color:var(--g);border:2px solid var(--g)" onclick="switchTab('finance',document.querySelectorAll('.tab')[1])">🧮 حاسبة الإيجار</button>
-      <button style="background:linear-gradient(135deg,var(--g),var(--g3));color:#fff" onclick="switchTab('compare',document.querySelectorAll('.tab')[2])">🗺️ قارن الأحياء</button>
-    </div>
-    ${currentUser?'<div style="text-align:center;font-size:11px;color:var(--muted);margin-top:10px">✅ تم حفظ التقييم في حسابك</div>':''}`;
-}
-
-function doRentCalc(){
-  const rentVal=Number(document.getElementById('rentVal').value);
-  const months=Number(document.getElementById('supportMonths').value);
-  const payFreq=Number(document.getElementById('payFreq').value);
-  if(!rentVal){showToast('أدخل قيمة الإيجار السنوي');return;}
-
-  // الإيجار الإجمالي للفترة
-  const totalRent = rentVal * (months/12);
-  // رسوم البنك 2% من إجمالي الإيجار
-  const bankFee = totalRent * 0.02;
-  // إجمالي المبلغ المستحق للبنك
-  const totalDue = totalRent + bankFee;
-  // عدد الأقساط
-  const numPayments = Math.round(months / 12 * payFreq);
-  // قيمة القسط
-  const installment = totalDue / numPayments;
-  // القسط الشهري دائماً
-  const monthlyInstall = totalDue / months;
-  const payLabel={12:'الشهري',4:'ربع السنوي',2:'نصف السنوي'}[payFreq];
-
-  document.getElementById('fin-out').innerHTML=`
-    <div class="fin-card" style="border:1.5px solid rgba(13,43,30,.2)">
-      <div style="font-size:28px;margin-bottom:6px">🏦</div>
-      <div style="font-size:14px;font-weight:700;color:var(--muted);margin-bottom:6px">البنك يدفع الإيجار — أنت تسدد على أقساط</div>
-      <div style="background:#F7F2EA;border-radius:10px;padding:15px;margin-bottom:14px">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">القسط الشهري للبنك</div>
-        <div class="fin-big" style="color:var(--g)">${Math.ceil(monthlyInstall).toLocaleString('ar-SA')} <span style="font-size:14px;font-weight:400">ر.س</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">لمدة ${months} شهر</div>
-      </div>
-      <div class="fin-g">
-        <div class="fin-i" style="background:rgba(13,43,30,.07)">
-          <div class="fin-il">إجمالي الإيجار</div>
-          <div class="fin-iv" style="color:var(--g)">${totalRent.toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</div>
-        </div>
-        <div class="fin-i" style="background:rgba(184,137,42,.1)">
-          <div class="fin-il">رسوم البنك 2%</div>
-          <div class="fin-iv" style="color:var(--gold)">${bankFee.toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</div>
-        </div>
-        <div class="fin-i" style="background:rgba(13,43,30,.07)">
-          <div class="fin-il">القسط ${payLabel}</div>
-          <div class="fin-iv" style="color:var(--g)">${Math.ceil(installment).toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</div>
-        </div>
-        <div class="fin-i" style="background:rgba(184,137,42,.1)">
-          <div class="fin-il">إجمالي ما تدفع للبنك</div>
-          <div class="fin-iv" style="color:var(--gold)">${Math.ceil(totalDue).toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</div>
-        </div>
-      </div>
-      <!-- ملخص -->
-      <div style="background:rgba(13,43,30,.04);border-radius:10px;padding:14px;margin-top:4px;text-align:right">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:700">ملخص العملية:</div>
-        <div style="font-size:13px;color:var(--mid);line-height:2">
-          🏠 قيمة إيجارك السنوي: <strong>${rentVal.toLocaleString('ar-SA')} ر.س</strong><br>
-          🏦 البنك يدفع للمالك: <strong>${totalRent.toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</strong> كاملة<br>
-          📊 رسوم البنك (2%): <strong>${bankFee.toLocaleString('ar-SA',{maximumFractionDigits:0})} ر.س</strong><br>
-          📅 أنت تسدد: <strong>${Math.ceil(monthlyInstall).toLocaleString('ar-SA')} ر.س شهرياً</strong> لمدة ${months} شهر
-        </div>
-      </div>
-    </div>
-    <div class="disc"><div class="disc-lbl">📌 تنبيه</div><div class="disc-body">هذه الحسابات تقديرية. الشروط والنسب الفعلية تُحدَّد من البنك الممول حسب سياسته وملف المستأجر الائتماني.</div></div>`;
-}
-
-function doCompare(){
-  if(selected.length<2){showToast('اختر حيّين على الأقل');return;}
-  const cType=document.getElementById('cmp-type').value;
-  const hoods=selected.map(name=>{
-    const d=BASE_PRICES[name]||{شقة:[35000,55000],فيلا:[100000,140000],دور:[55000,75000]};
-    const range=d[cType]||d["شقة"];
-    const price=Math.round((range[0]+range[1])/2);
-    return {name,price,mn:range[0],mx:range[1],verdict:price>60000?"مرتفع":price>40000?"متوسط":"منخفض"};
-  });
-  const maxR=Math.max(...hoods.map(h=>h.price));
-  const cheapest=hoods.reduce((a,b)=>a.price<b.price?a:b);
-  const most=hoods.reduce((a,b)=>a.price>b.price?a:b);
-  const vC={"مرتفع":"#C62828","متوسط":"#1565C0","منخفض":"#2E7D32"},vB={"مرتفع":"#FFEBEE","متوسط":"#E3F2FD","منخفض":"#E8F5E9"};
-  document.getElementById('cmp-out').innerHTML=`
-    <div style="animation:fadeUp .35s ease">
-      <div class="cmp-hd">📊 مقارنة إيجار ${cType} · ${selected.join(' · ')}</div>
-      <div class="cmp-body">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;text-align:center">الإيجار السنوي — مؤشر إيجار REGA</div>
-        ${hoods.map(h=>`<div class="cmp-row" style="${h.name===cheapest.name?'background:#F8FFF8;border-radius:8px;padding:11px 8px;':''}">
-          <div style="min-width:82px"><div style="font-weight:800;color:var(--g)">${h.name===cheapest.name?'💚 ':''}${h.name}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">${h.mn.toLocaleString('ar-SA')} — ${h.mx.toLocaleString('ar-SA')}</div></div>
-          <div class="cmp-bar-w"><div class="cmp-bar" style="width:${Math.round((h.price/maxR)*100)}%"></div></div>
-          <div style="text-align:left;min-width:110px"><div style="font-weight:800;font-size:15px">${h.price.toLocaleString('ar-SA')} ر.س</div><div style="display:flex;gap:4px;margin-top:4px"><span class="cmp-v" style="background:${vB[h.verdict]};color:${vC[h.verdict]}">${h.verdict}</span></div></div>
-        </div>`).join('')}
-      </div>
-    </div>
-    <div style="background:rgba(13,43,30,.05);border-radius:var(--rsm);border:1px solid var(--border2);padding:14px 16px;margin-bottom:14px;font-size:13px;color:var(--mid);line-height:1.8">
-      📍 <strong>${cheapest.name}</strong> الأقل إيجاراً: <strong>${cheapest.price.toLocaleString('ar-SA')} ر.س/سنة</strong>
-      ${hoods.length>1?` · <strong>${most.name}</strong> الأعلى: <strong>${most.price.toLocaleString('ar-SA')} ر.س/سنة</strong>`:''}
-    </div>`;
-}
-
-let toastTimer;
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.className='toast';},3000);}
-
-initAuth();
-loadTickerFromJSON();
+        L.marker([24.783,46.6196])
+          .addTo(map)
+          .bindTooltip('الصحافة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الصحافة</b><br>lat:24.783<br>lng:46.6196');
+    
+        L.marker([24.701,46.743])
+          .addTo(map)
+          .bindTooltip('الملك فيصل', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الملك فيصل</b><br>lat:24.701<br>lng:46.743');
+    
+        L.marker([24.658,46.643])
+          .addTo(map)
+          .bindTooltip('أحد', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>أحد</b><br>lat:24.658<br>lng:46.643');
+    
+        L.marker([24.65,46.68])
+          .addTo(map)
+          .bindTooltip('سدرة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>سدرة</b><br>lat:24.65<br>lng:46.68');
+    
+        L.marker([24.845,46.648])
+          .addTo(map)
+          .bindTooltip('الغنامية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الغنامية</b><br>lat:24.845<br>lng:46.648');
+    
+        L.marker([24.68,46.765])
+          .addTo(map)
+          .bindTooltip('الروابي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الروابي</b><br>lat:24.68<br>lng:46.765');
+    
+        L.marker([24.772,46.653])
+          .addTo(map)
+          .bindTooltip('الإزدهار', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الإزدهار</b><br>lat:24.772<br>lng:46.653');
+    
+        L.marker([24.643,46.628])
+          .addTo(map)
+          .bindTooltip('السويدي الغربي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>السويدي الغربي</b><br>lat:24.643<br>lng:46.628');
+    
+        L.marker([24.812,46.698])
+          .addTo(map)
+          .bindTooltip('سلطانة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>سلطانة</b><br>lat:24.812<br>lng:46.698');
+    
+        L.marker([24.585,46.785])
+          .addTo(map)
+          .bindTooltip('البشائر', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>البشائر</b><br>lat:24.585<br>lng:46.785');
+    
+        L.marker([24.705,46.795])
+          .addTo(map)
+          .bindTooltip('الوسيطاء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الوسيطاء</b><br>lat:24.705<br>lng:46.795');
+    
+        L.marker([24.715,46.652])
+          .addTo(map)
+          .bindTooltip('النور', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النور</b><br>lat:24.715<br>lng:46.652');
+    
+        L.marker([24.82,46.69])
+          .addTo(map)
+          .bindTooltip('المشرق', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المشرق</b><br>lat:24.82<br>lng:46.69');
+    
+        L.marker([24.705,46.728])
+          .addTo(map)
+          .bindTooltip('الدفاع', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الدفاع</b><br>lat:24.705<br>lng:46.728');
+    
+        L.marker([24.75,46.653])
+          .addTo(map)
+          .bindTooltip('مغرزات', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>مغرزات</b><br>lat:24.75<br>lng:46.653');
+    
+        L.marker([24.681,46.743])
+          .addTo(map)
+          .bindTooltip('الفوطة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الفوطة</b><br>lat:24.681<br>lng:46.743');
+    
+        L.marker([24.696,46.713])
+          .addTo(map)
+          .bindTooltip('المرقب', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المرقب</b><br>lat:24.696<br>lng:46.713');
+    
+        L.marker([24.668,46.682])
+          .addTo(map)
+          .bindTooltip('التضامن', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>التضامن</b><br>lat:24.668<br>lng:46.682');
+    
+        L.marker([24.697,46.701])
+          .addTo(map)
+          .bindTooltip('المنصورة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المنصورة</b><br>lat:24.697<br>lng:46.701');
+    
+        L.marker([24.71,46.765])
+          .addTo(map)
+          .bindTooltip('النسيم الشرقي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النسيم الشرقي</b><br>lat:24.71<br>lng:46.765');
+    
+        L.marker([24.692,46.731])
+          .addTo(map)
+          .bindTooltip('البطحاء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>البطحاء</b><br>lat:24.692<br>lng:46.731');
+    
+        L.marker([24.638,46.708])
+          .addTo(map)
+          .bindTooltip('جرير', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>جرير</b><br>lat:24.638<br>lng:46.708');
+    
+        L.marker([24.68,46.74])
+          .addTo(map)
+          .bindTooltip('عتيقة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>عتيقة</b><br>lat:24.68<br>lng:46.74');
+    
+        L.marker([24.805,46.628])
+          .addTo(map)
+          .bindTooltip('السفارات', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>السفارات</b><br>lat:24.805<br>lng:46.628');
+    
+        L.marker([24.66,46.65])
+          .addTo(map)
+          .bindTooltip('العريجاء الأوسط', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العريجاء الأوسط</b><br>lat:24.66<br>lng:46.65');
+    
+        L.marker([24.812,46.718])
+          .addTo(map)
+          .bindTooltip('البيان', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>البيان</b><br>lat:24.812<br>lng:46.718');
+    
+        L.marker([24.7895,46.708])
+          .addTo(map)
+          .bindTooltip('إشبيلية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>إشبيلية</b><br>lat:24.7895<br>lng:46.708');
+    
+        L.marker([24.71,46.678])
+          .addTo(map)
+          .bindTooltip('الرفيعة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الرفيعة</b><br>lat:24.71<br>lng:46.678');
+    
+        L.marker([24.678,46.698])
+          .addTo(map)
+          .bindTooltip('السدرة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>السدرة</b><br>lat:24.678<br>lng:46.698');
+    
+        L.marker([24.802,46.675])
+          .addTo(map)
+          .bindTooltip('النفل', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النفل</b><br>lat:24.802<br>lng:46.675');
+    
+        L.marker([24.652,46.618])
+          .addTo(map)
+          .bindTooltip('أم الحمام الغربي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>أم الحمام الغربي</b><br>lat:24.652<br>lng:46.618');
+    
+        L.marker([24.658,46.668])
+          .addTo(map)
+          .bindTooltip('الفيصلية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الفيصلية</b><br>lat:24.658<br>lng:46.668');
+    
+        L.marker([24.648,46.728])
+          .addTo(map)
+          .bindTooltip('الجزيرة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الجزيرة</b><br>lat:24.648<br>lng:46.728');
+    
+        L.marker([24.782,46.605])
+          .addTo(map)
+          .bindTooltip('الوادي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الوادي</b><br>lat:24.782<br>lng:46.605');
+    
+        L.marker([24.628,46.688])
+          .addTo(map)
+          .bindTooltip('منفوحة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>منفوحة</b><br>lat:24.628<br>lng:46.688');
+    
+        L.marker([24.7945,46.7015])
+          .addTo(map)
+          .bindTooltip('قرطبة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>قرطبة</b><br>lat:24.7945<br>lng:46.7015');
+    
+        L.marker([24.6912,46.7253])
+          .addTo(map)
+          .bindTooltip('الديرة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الديرة</b><br>lat:24.6912<br>lng:46.7253');
+    
+        L.marker([24.728,46.758])
+          .addTo(map)
+          .bindTooltip('الرمال', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الرمال</b><br>lat:24.728<br>lng:46.758');
+    
+        L.marker([24.628,46.658])
+          .addTo(map)
+          .bindTooltip('الشفاء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الشفاء</b><br>lat:24.628<br>lng:46.658');
+    
+        L.marker([24.75,46.77])
+          .addTo(map)
+          .bindTooltip('النظيم', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النظيم</b><br>lat:24.75<br>lng:46.77');
+    
+        L.marker([24.735,46.687])
+          .addTo(map)
+          .bindTooltip('المروج', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المروج</b><br>lat:24.735<br>lng:46.687');
+    
+        L.marker([24.565,46.655])
+          .addTo(map)
+          .bindTooltip('المصفاة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المصفاة</b><br>lat:24.565<br>lng:46.655');
+    
+        L.marker([24.701,46.722])
+          .addTo(map)
+          .bindTooltip('المناخ', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المناخ</b><br>lat:24.701<br>lng:46.722');
+    
+        L.marker([24.675,46.785])
+          .addTo(map)
+          .bindTooltip('الملك سلمان', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الملك سلمان</b><br>lat:24.675<br>lng:46.785');
+    
+        L.marker([24.715,46.662])
+          .addTo(map)
+          .bindTooltip('الفاخرية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الفاخرية</b><br>lat:24.715<br>lng:46.662');
+    
+        L.marker([24.682,46.687])
+          .addTo(map)
+          .bindTooltip('الدوبية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الدوبية</b><br>lat:24.682<br>lng:46.687');
+    
+        L.marker([24.728,46.743])
+          .addTo(map)
+          .bindTooltip('الضباط', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الضباط</b><br>lat:24.728<br>lng:46.743');
+    
+        L.marker([24.715,46.708])
+          .addTo(map)
+          .bindTooltip('النموذجية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النموذجية</b><br>lat:24.715<br>lng:46.708');
+    
+        L.marker([24.754,46.623])
+          .addTo(map)
+          .bindTooltip('العقيق', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العقيق</b><br>lat:24.754<br>lng:46.623');
+    
+        L.marker([24.671,46.728])
+          .addTo(map)
+          .bindTooltip('الشميسي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الشميسي</b><br>lat:24.671<br>lng:46.728');
+    
+        L.marker([24.685,46.775])
+          .addTo(map)
+          .bindTooltip('المنار', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المنار</b><br>lat:24.685<br>lng:46.775');
+    
+        L.marker([24.655,46.655])
+          .addTo(map)
+          .bindTooltip('المنصورية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المنصورية</b><br>lat:24.655<br>lng:46.655');
+    
+        L.marker([24.638,46.668])
+          .addTo(map)
+          .bindTooltip('الرابية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الرابية</b><br>lat:24.638<br>lng:46.668');
+    
+        L.marker([24.721,46.618])
+          .addTo(map)
+          .bindTooltip('الفرسان', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الفرسان</b><br>lat:24.721<br>lng:46.618');
+    
+        L.marker([24.698,46.603])
+          .addTo(map)
+          .bindTooltip('المشاعل', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المشاعل</b><br>lat:24.698<br>lng:46.603');
+    
+        L.marker([24.623,46.718])
+          .addTo(map)
+          .bindTooltip('المرجان', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المرجان</b><br>lat:24.623<br>lng:46.718');
+    
+        L.marker([24.595,46.765])
+          .addTo(map)
+          .bindTooltip('الزاهر', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الزاهر</b><br>lat:24.595<br>lng:46.765');
+    
+        L.marker([24.71,46.743])
+          .addTo(map)
+          .bindTooltip('النسيم الغربي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النسيم الغربي</b><br>lat:24.71<br>lng:46.743');
+    
+        L.marker([24.6267,46.5677])
+          .addTo(map)
+          .bindTooltip('طويق', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>طويق</b><br>lat:24.6267<br>lng:46.5677');
+    
+        L.marker([24.638,46.588])
+          .addTo(map)
+          .bindTooltip('ديراب', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>ديراب</b><br>lat:24.638<br>lng:46.588');
+    
+        L.marker([24.653,46.653])
+          .addTo(map)
+          .bindTooltip('العريجاء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العريجاء</b><br>lat:24.653<br>lng:46.653');
+    
+        L.marker([24.757,46.637])
+          .addTo(map)
+          .bindTooltip('النزهة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النزهة</b><br>lat:24.757<br>lng:46.637');
+    
+        L.marker([24.605,46.688])
+          .addTo(map)
+          .bindTooltip('بدر', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>بدر</b><br>lat:24.605<br>lng:46.688');
+    
+        L.marker([24.618,46.628])
+          .addTo(map)
+          .bindTooltip('الدريهمية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الدريهمية</b><br>lat:24.618<br>lng:46.628');
+    
+        L.marker([24.848,46.636])
+          .addTo(map)
+          .bindTooltip('الندى', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الندى</b><br>lat:24.848<br>lng:46.636');
+    
+        L.marker([24.702,46.698])
+          .addTo(map)
+          .bindTooltip('الصالحية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الصالحية</b><br>lat:24.702<br>lng:46.698');
+    
+        L.marker([24.805,46.705])
+          .addTo(map)
+          .bindTooltip('القري', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>القري</b><br>lat:24.805<br>lng:46.705');
+    
+        L.marker([24.7156,46.7782])
+          .addTo(map)
+          .bindTooltip('القادسية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>القادسية</b><br>lat:24.7156<br>lng:46.7782');
+    
+        L.marker([24.683,46.723])
+          .addTo(map)
+          .bindTooltip('شبرا', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>شبرا</b><br>lat:24.683<br>lng:46.723');
+    
+        L.marker([24.705,46.71])
+          .addTo(map)
+          .bindTooltip('الأندلس', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الأندلس</b><br>lat:24.705<br>lng:46.71');
+    
+        L.marker([24.8407,46.6523])
+          .addTo(map)
+          .bindTooltip('الياسمين', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الياسمين</b><br>lat:24.8407<br>lng:46.6523');
+    
+        L.marker([24.835,46.688])
+          .addTo(map)
+          .bindTooltip('الربيع', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الربيع</b><br>lat:24.835<br>lng:46.688');
+    
+        L.marker([24.725,46.695])
+          .addTo(map)
+          .bindTooltip('الحمراء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الحمراء</b><br>lat:24.725<br>lng:46.695');
+    
+        L.marker([24.725,46.678])
+          .addTo(map)
+          .bindTooltip('الرحمانية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الرحمانية</b><br>lat:24.725<br>lng:46.678');
+    
+        L.marker([24.692,46.668])
+          .addTo(map)
+          .bindTooltip('الندوة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الندوة</b><br>lat:24.692<br>lng:46.668');
+    
+        L.marker([24.682,46.718])
+          .addTo(map)
+          .bindTooltip('سلام', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>سلام</b><br>lat:24.682<br>lng:46.718');
+    
+        L.marker([24.823,46.668])
+          .addTo(map)
+          .bindTooltip('المروة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المروة</b><br>lat:24.823<br>lng:46.668');
+    
+        L.marker([24.68,46.755])
+          .addTo(map)
+          .bindTooltip('النهضة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النهضة</b><br>lat:24.68<br>lng:46.755');
+    
+        L.marker([24.643,46.648])
+          .addTo(map)
+          .bindTooltip('السويدي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>السويدي</b><br>lat:24.643<br>lng:46.648');
+    
+        L.marker([24.753,46.723])
+          .addTo(map)
+          .bindTooltip('التعاون', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>التعاون</b><br>lat:24.753<br>lng:46.723');
+    
+        L.marker([24.718,46.782])
+          .addTo(map)
+          .bindTooltip('الخالدية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الخالدية</b><br>lat:24.718<br>lng:46.782');
+    
+        L.marker([24.668,46.743])
+          .addTo(map)
+          .bindTooltip('السلام', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>السلام</b><br>lat:24.668<br>lng:46.743');
+    
+        L.marker([24.662,46.713])
+          .addTo(map)
+          .bindTooltip('العزيزية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العزيزية</b><br>lat:24.662<br>lng:46.713');
+    
+        L.marker([24.681,46.713])
+          .addTo(map)
+          .bindTooltip('الوزارات', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الوزارات</b><br>lat:24.681<br>lng:46.713');
+    
+        L.marker([24.8285,46.6357])
+          .addTo(map)
+          .bindTooltip('الملقا', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الملقا</b><br>lat:24.8285<br>lng:46.6357');
+    
+        L.marker([24.705,46.668])
+          .addTo(map)
+          .bindTooltip('المؤتمرات', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المؤتمرات</b><br>lat:24.705<br>lng:46.668');
+    
+        L.marker([24.672,46.678])
+          .addTo(map)
+          .bindTooltip('العمل', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العمل</b><br>lat:24.672<br>lng:46.678');
+    
+        L.marker([24.678,46.638])
+          .addTo(map)
+          .bindTooltip('ظهرة البديعة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>ظهرة البديعة</b><br>lat:24.678<br>lng:46.638');
+    
+        L.marker([24.745,46.62])
+          .addTo(map)
+          .bindTooltip('المرسلات', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المرسلات</b><br>lat:24.745<br>lng:46.62');
+    
+        L.marker([24.767,46.672])
+          .addTo(map)
+          .bindTooltip('الشهداء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الشهداء</b><br>lat:24.767<br>lng:46.672');
+    
+        L.marker([24.652,46.638])
+          .addTo(map)
+          .bindTooltip('أم الحمام الشرقي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>أم الحمام الشرقي</b><br>lat:24.652<br>lng:46.638');
+    
+        L.marker([24.735,46.815])
+          .addTo(map)
+          .bindTooltip('سكيرينة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>سكيرينة</b><br>lat:24.735<br>lng:46.815');
+    
+        L.marker([24.86,46.56])
+          .addTo(map)
+          .bindTooltip('عريض', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>عريض</b><br>lat:24.86<br>lng:46.56');
+    
+        L.marker([24.765,46.835])
+          .addTo(map)
+          .bindTooltip('ثليم', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>ثليم</b><br>lat:24.765<br>lng:46.835');
+    
+        L.marker([24.91,46.59])
+          .addTo(map)
+          .bindTooltip('بنبان', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>بنبان</b><br>lat:24.91<br>lng:46.59');
+    
+        L.marker([24.648,46.588])
+          .addTo(map)
+          .bindTooltip('أم الشعال', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>أم الشعال</b><br>lat:24.648<br>lng:46.588');
+    
+        L.marker([24.825,46.705])
+          .addTo(map)
+          .bindTooltip('البرية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>البرية</b><br>lat:24.825<br>lng:46.705');
+    
+        L.marker([24.71,46.692])
+          .addTo(map)
+          .bindTooltip('الوشام', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الوشام</b><br>lat:24.71<br>lng:46.692');
+    
+        L.marker([24.69,46.728])
+          .addTo(map)
+          .bindTooltip('المعذر الشمالي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المعذر الشمالي</b><br>lat:24.69<br>lng:46.728');
+    
+        L.marker([24.608,46.578])
+          .addTo(map)
+          .bindTooltip('لبن', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>لبن</b><br>lat:24.608<br>lng:46.578');
+    
+        L.marker([24.701,46.732])
+          .addTo(map)
+          .bindTooltip('الشرفية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الشرفية</b><br>lat:24.701<br>lng:46.732');
+    
+        L.marker([24.718,46.728])
+          .addTo(map)
+          .bindTooltip('العماجية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العماجية</b><br>lat:24.718<br>lng:46.728');
+    
+        L.marker([24.787,46.57])
+          .addTo(map)
+          .bindTooltip('الجرادية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الجرادية</b><br>lat:24.787<br>lng:46.57');
+    
+        L.marker([24.728,46.648])
+          .addTo(map)
+          .bindTooltip('غبيرا', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>غبيرا</b><br>lat:24.728<br>lng:46.648');
+    
+        L.marker([24.668,46.688])
+          .addTo(map)
+          .bindTooltip('صياح', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>صياح</b><br>lat:24.668<br>lng:46.688');
+    
+        L.marker([24.741,46.741])
+          .addTo(map)
+          .bindTooltip('الروضة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الروضة</b><br>lat:24.741<br>lng:46.741');
+    
+        L.marker([24.798,46.582])
+          .addTo(map)
+          .bindTooltip('المهدية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المهدية</b><br>lat:24.798<br>lng:46.582');
+    
+        L.marker([24.808,46.592])
+          .addTo(map)
+          .bindTooltip('النخيل', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النخيل</b><br>lat:24.808<br>lng:46.592');
+    
+        L.marker([24.738,46.698])
+          .addTo(map)
+          .bindTooltip('المحمدية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المحمدية</b><br>lat:24.738<br>lng:46.698');
+    
+        L.marker([24.672,46.718])
+          .addTo(map)
+          .bindTooltip('الفاروق', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الفاروق</b><br>lat:24.672<br>lng:46.718');
+    
+        L.marker([24.575,46.705])
+          .addTo(map)
+          .bindTooltip('الدار البيضاء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الدار البيضاء</b><br>lat:24.575<br>lng:46.705');
+    
+        L.marker([24.715,46.672])
+          .addTo(map)
+          .bindTooltip('الربوة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الربوة</b><br>lat:24.715<br>lng:46.672');
+    
+        L.marker([24.835,46.815])
+          .addTo(map)
+          .bindTooltip('خشم العان', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>خشم العان</b><br>lat:24.835<br>lng:46.815');
+    
+        L.marker([24.555,46.725])
+          .addTo(map)
+          .bindTooltip('الحائر', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الحائر</b><br>lat:24.555<br>lng:46.725');
+    
+        L.marker([24.613,46.678])
+          .addTo(map)
+          .bindTooltip('الرماية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الرماية</b><br>lat:24.613<br>lng:46.678');
+    
+        L.marker([24.781,46.625])
+          .addTo(map)
+          .bindTooltip('الفلاح', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الفلاح</b><br>lat:24.781<br>lng:46.625');
+    
+        L.marker([24.7964,46.6282])
+          .addTo(map)
+          .bindTooltip('حطين', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>حطين</b><br>lat:24.7964<br>lng:46.6282');
+    
+        L.marker([24.708,46.765])
+          .addTo(map)
+          .bindTooltip('الناصرية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الناصرية</b><br>lat:24.708<br>lng:46.765');
+    
+        L.marker([24.878,46.612])
+          .addTo(map)
+          .bindTooltip('العارض', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العارض</b><br>lat:24.878<br>lng:46.612');
+    
+        L.marker([24.689,46.721])
+          .addTo(map)
+          .bindTooltip('الملز', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الملز</b><br>lat:24.689<br>lng:46.721');
+    
+        L.marker([24.662,46.748])
+          .addTo(map)
+          .bindTooltip('الفيحاء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الفيحاء</b><br>lat:24.662<br>lng:46.748');
+    
+        L.marker([24.72,46.77])
+          .addTo(map)
+          .bindTooltip('جبرة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>جبرة</b><br>lat:24.72<br>lng:46.77');
+    
+        L.marker([24.688,46.715])
+          .addTo(map)
+          .bindTooltip('المربع', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المربع</b><br>lat:24.688<br>lng:46.715');
+    
+        L.marker([24.816,46.635])
+          .addTo(map)
+          .bindTooltip('الرائد', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الرائد</b><br>lat:24.816<br>lng:46.635');
+    
+        L.marker([24.632,46.618])
+          .addTo(map)
+          .bindTooltip('العوالي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العوالي</b><br>lat:24.632<br>lng:46.618');
+    
+        L.marker([24.75,46.85])
+          .addTo(map)
+          .bindTooltip('المدينة الصناعية الجديدة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المدينة الصناعية الجديدة</b><br>lat:24.75<br>lng:46.85');
+    
+        L.marker([24.798,46.708])
+          .addTo(map)
+          .bindTooltip('الوسام', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الوسام</b><br>lat:24.798<br>lng:46.708');
+    
+        L.marker([24.602,46.568])
+          .addTo(map)
+          .bindTooltip('ضاحية نمار', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>ضاحية نمار</b><br>lat:24.602<br>lng:46.568');
+    
+        L.marker([24.775,46.71])
+          .addTo(map)
+          .bindTooltip('غرناطة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>غرناطة</b><br>lat:24.775<br>lng:46.71');
+    
+        L.marker([24.612,46.598])
+          .addTo(map)
+          .bindTooltip('ظهرة لبن', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>ظهرة لبن</b><br>lat:24.612<br>lng:46.598');
+    
+        L.marker([24.765,46.683])
+          .addTo(map)
+          .bindTooltip('الملك فهد', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الملك فهد</b><br>lat:24.765<br>lng:46.683');
+    
+        L.marker([24.678,46.738])
+          .addTo(map)
+          .bindTooltip('الريان', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الريان</b><br>lat:24.678<br>lng:46.738');
+    
+        L.marker([24.81,46.562])
+          .addTo(map)
+          .bindTooltip('معكال', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>معكال</b><br>lat:24.81<br>lng:46.562');
+    
+        L.marker([24.684,46.741])
+          .addTo(map)
+          .bindTooltip('المعذر', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المعذر</b><br>lat:24.684<br>lng:46.741');
+    
+        L.marker([24.696,46.678])
+          .addTo(map)
+          .bindTooltip('السعادة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>السعادة</b><br>lat:24.696<br>lng:46.678');
+    
+        L.marker([24.698,46.748])
+          .addTo(map)
+          .bindTooltip('اليرموك', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>اليرموك</b><br>lat:24.698<br>lng:46.748');
+    
+        L.marker([24.758,46.758])
+          .addTo(map)
+          .bindTooltip('البساتين', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>البساتين</b><br>lat:24.758<br>lng:46.758');
+    
+        L.marker([24.715,46.765])
+          .addTo(map)
+          .bindTooltip('الدحو', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الدحو</b><br>lat:24.715<br>lng:46.765');
+    
+        L.marker([24.6877,46.6829])
+          .addTo(map)
+          .bindTooltip('العليا', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العليا</b><br>lat:24.6877<br>lng:46.6829');
+    
+        L.marker([24.71,46.698])
+          .addTo(map)
+          .bindTooltip('أم سليم', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>أم سليم</b><br>lat:24.71<br>lng:46.698');
+    
+        L.marker([24.85,46.79])
+          .addTo(map)
+          .bindTooltip('الخير', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الخير</b><br>lat:24.85<br>lng:46.79');
+    
+        L.marker([24.685,46.765])
+          .addTo(map)
+          .bindTooltip('القدس', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>القدس</b><br>lat:24.685<br>lng:46.765');
+    
+        L.marker([24.863,46.6467])
+          .addTo(map)
+          .bindTooltip('النرجس', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النرجس</b><br>lat:24.863<br>lng:46.6467');
+    
+        L.marker([24.648,46.698])
+          .addTo(map)
+          .bindTooltip('الزهرة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الزهرة</b><br>lat:24.648<br>lng:46.698');
+    
+        L.marker([24.7029,46.6814])
+          .addTo(map)
+          .bindTooltip('السليمانية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>السليمانية</b><br>lat:24.7029<br>lng:46.6814');
+    
+        L.marker([24.715,46.698])
+          .addTo(map)
+          .bindTooltip('النخبة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>النخبة</b><br>lat:24.715<br>lng:46.698');
+    
+        L.marker([24.882,46.665])
+          .addTo(map)
+          .bindTooltip('الورود', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الورود</b><br>lat:24.882<br>lng:46.665');
+    
+        L.marker([24.701,46.708])
+          .addTo(map)
+          .bindTooltip('العلا', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العلا</b><br>lat:24.701<br>lng:46.708');
+    
+        L.marker([24.823,46.599])
+          .addTo(map)
+          .bindTooltip('القيروان', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>القيروان</b><br>lat:24.823<br>lng:46.599');
+    
+        L.marker([24.585,46.755])
+          .addTo(map)
+          .bindTooltip('عكاظ', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>عكاظ</b><br>lat:24.585<br>lng:46.755');
+    
+        L.marker([24.648,46.638])
+          .addTo(map)
+          .bindTooltip('العريجاء الغربي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>العريجاء الغربي</b><br>lat:24.648<br>lng:46.638');
+    
+        L.marker([24.687,46.658])
+          .addTo(map)
+          .bindTooltip('البديعة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>البديعة</b><br>lat:24.687<br>lng:46.658');
+    
+        L.marker([24.638,46.718])
+          .addTo(map)
+          .bindTooltip('الصفاء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الصفاء</b><br>lat:24.638<br>lng:46.718');
+    
+        L.marker([24.715,46.735])
+          .addTo(map)
+          .bindTooltip('المصيف', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المصيف</b><br>lat:24.715<br>lng:46.735');
+    
+        L.marker([24.718,46.753])
+          .addTo(map)
+          .bindTooltip('طيبة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>طيبة</b><br>lat:24.718<br>lng:46.753');
+    
+        L.marker([24.768,46.598])
+          .addTo(map)
+          .bindTooltip('الغدير', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الغدير</b><br>lat:24.768<br>lng:46.598');
+    
+        L.marker([24.738,46.713])
+          .addTo(map)
+          .bindTooltip('الملك عبدالله', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الملك عبدالله</b><br>lat:24.738<br>lng:46.713');
+    
+        L.marker([24.585,46.805])
+          .addTo(map)
+          .bindTooltip('السلي', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>السلي</b><br>lat:24.585<br>lng:46.805');
+    
+        L.marker([24.688,46.593])
+          .addTo(map)
+          .bindTooltip('عليشة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>عليشة</b><br>lat:24.688<br>lng:46.593');
+    
+        L.marker([24.695,46.728])
+          .addTo(map)
+          .bindTooltip('الخليج', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الخليج</b><br>lat:24.695<br>lng:46.728');
+    
+        L.marker([24.648,46.705])
+          .addTo(map)
+          .bindTooltip('الزهراء', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الزهراء</b><br>lat:24.648<br>lng:46.705');
+    
+        L.marker([24.805,46.815])
+          .addTo(map)
+          .bindTooltip('الجنادرية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الجنادرية</b><br>lat:24.805<br>lng:46.815');
+    
+        L.marker([24.71,46.761])
+          .addTo(map)
+          .bindTooltip('المعيزيلة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المعيزيلة</b><br>lat:24.71<br>lng:46.761');
+    
+        L.marker([24.735,46.785])
+          .addTo(map)
+          .bindTooltip('السحاب', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>السحاب</b><br>lat:24.735<br>lng:46.785');
+    
+        L.marker([24.768,46.738])
+          .addTo(map)
+          .bindTooltip('المونسية', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>المونسية</b><br>lat:24.768<br>lng:46.738');
+    
+        L.marker([24.758,46.578])
+          .addTo(map)
+          .bindTooltip('الحزم', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الحزم</b><br>lat:24.758<br>lng:46.578');
+    
+        L.marker([24.687,46.738])
+          .addTo(map)
+          .bindTooltip('الهدا', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>الهدا</b><br>lat:24.687<br>lng:46.738');
+    
+        L.marker([24.708,46.59])
+          .addTo(map)
+          .bindTooltip('عرقة', {permanent:true, direction:'top', className:'hood-label'})
+          .bindPopup('<b>عرقة</b><br>lat:24.708<br>lng:46.59');
+    
 </script>
 </body>
 </html>
